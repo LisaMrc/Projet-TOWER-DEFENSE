@@ -1,0 +1,7 @@
+build/
+bin/
+.vs/
+.vscode/
+.cache/
+
+.DS_Store
