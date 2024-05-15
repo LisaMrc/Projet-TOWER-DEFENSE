@@ -2,6 +2,8 @@
 
 #include <glad/glad.h>
 #include <simpletext.h>
+#include "code/screens/screens.hpp"
+#include "code/entities/entities.hpp"
 
 class App {
 public:
