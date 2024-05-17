@@ -36,14 +36,11 @@ void App::setup() {
     TextRenderer.EnableBlending(true);
 }
 
-void App::update() {
-
+void App::update()
+{
     const double currentTime { glfwGetTime() };
     const double elapsedTime { currentTime - _previousTime};
     _previousTime = currentTime;
-
-    _angle += 10.0f * elapsedTime;
-    // _angle = std::fmod(_angle, 360.0f);
     
     render();
 }
@@ -54,11 +51,7 @@ void App::render() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glPushMatrix();
-    glScalef(0.8f, 0.8f, 0.8f);
-    glRotatef(_angle, 0.0f, 0.0f, 1.0f);
-    draw_quad_with_texture(_texture);
-    glPopMatrix();
+    grid();
 
     TextRenderer.Render();
 }

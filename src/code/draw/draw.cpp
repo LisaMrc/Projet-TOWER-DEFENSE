@@ -32,5 +32,4 @@ void grid()
 
 // std::vector<float> Case::convert_coord(std::vector<int> abs_coord)
 // {
-
 // }
