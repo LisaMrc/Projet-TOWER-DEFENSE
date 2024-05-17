@@ -14,12 +14,14 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
     img::Image test {img::load(make_absolute_path("images/level.png", true), 3, true)};
     
     // LAND TEXTURES
-    img::Image grass {img::load(make_absolute_path("images/Textures/Grass.bmp", true), 3, true)};
-    img::Image path {img::load(make_absolute_path("images/Textures/Path.bmp", true), 3, true)};
+    img::Image grass {img::load(make_absolute_path("images/textures/land/grass.bmp", true), 3, true)};
+    img::Image path {img::load(make_absolute_path("images/textures/land/path.bmp", true), 3, true)};
     
     // ENTITIES TEXTURES
-    img::Image grass {img::load(make_absolute_path("images/Textures/Grass.bmp", true), 3, true)};
-    
+    img::Image king {img::load(make_absolute_path("images/textures/entities/king.png", true), 3, true)};
+    img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 3, true)};
+    img::Image tower {img::load(make_absolute_path("images/textures/entities/tower.png", true), 3, true)};
+
     _texture = loadTexture(test);
 }
 

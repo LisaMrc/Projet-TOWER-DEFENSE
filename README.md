@@ -7,4 +7,4 @@
 🟢 Task completed
 🔴 Encountered a bug
 
-💡 or GAN = Game Developers Notes (commentaries)
+GDN = Game Developers Notes (commentaries)
