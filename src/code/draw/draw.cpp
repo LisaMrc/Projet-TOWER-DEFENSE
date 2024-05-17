@@ -12,13 +12,13 @@
 #include "GLHelpers.hpp"
 #include <iostream>
 
-// Game Devs Note (GAN) : we have decided to grid the square screen by a 8x8 grid. The integer "u" corresponds to the number of units on the rows and columns
+// 💡 we have decided to grid the square screen by a 8x8 grid. The integer "u" corresponds to the number of units on the rows and columns
 
 float const u = 8;
 
 void grid()
 {
-    glColor2f(1, 0, 0);
+    glColor3f(1, 0, 0);
     glBegin(GL_LINES);
     for (float i = -1; i < 1; i+=1-1/u)
     {

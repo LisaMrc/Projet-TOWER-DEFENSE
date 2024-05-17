@@ -1,14 +1,10 @@
-# OpenGLTemplate
-
-
 # Commits lexicon
-
-📝 Change lexicon
+📝 Change README
 👾 Update pixel art / graphic design
-🚚 Organize files
-🔧 Improved code (performance / typos / bugs)
-💡 Update comments
+🛠️ Improved code (performance / typos / bugs)
 
 🔵 Doing task
 🟢 Task completed
 🔴 Encountered a bug
+
+💡 or GAN = Game Developers Notes (commentaries)

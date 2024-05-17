@@ -11,8 +11,14 @@
 
 App::App() : _previousTime(0.0), _viewSize(2.0) {
    // load what needs to be loaded here (for example textures)
-
     img::Image test {img::load(make_absolute_path("images/level.png", true), 3, true)};
+    
+    // LAND TEXTURES
+    img::Image grass {img::load(make_absolute_path("images/Textures/Grass.bmp", true), 3, true)};
+    img::Image path {img::load(make_absolute_path("images/Textures/Path.bmp", true), 3, true)};
+    
+    // ENTITIES TEXTURES
+    img::Image grass {img::load(make_absolute_path("images/Textures/Grass.bmp", true), 3, true)};
     
     _texture = loadTexture(test);
 }
