@@ -18,7 +18,7 @@ float const u = 8;
 
 void grid()
 {
-    glColor2f(1, 0, 0);
+    glColor3f(1, 0, 0);
     glBegin(GL_LINES);
     for (float i = -1; i < 1; i+=1-1/u)
     {
