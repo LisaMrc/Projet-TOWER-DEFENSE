@@ -52,7 +52,6 @@ void App::render() {
     glLoadIdentity();
 
     grid();
-    is_loaded_map_valid();
 
     TextRenderer.Render();
 }
@@ -61,6 +60,7 @@ void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods
 }
 
 void App::mouse_button_callback(int /*button*/, int /*action*/, int /*mods*/) {
+
 }
 
 void App::scroll_callback(double /*xoffset*/, double /*yoffset*/) {

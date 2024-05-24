@@ -17,8 +17,12 @@ void clic_button_callback(GLFWwindow* window, int button, int action, int mods){
     glfwGetCursorPos(window, &xpos, &ypos);
 	GLint windowWidth, windowHeight;
 	glfwGetWindowSize(window, &windowWidth, &windowHeight);		
-	xpos = 2*(xpos-windowWidth/2.f)/windowWidth; //convertion coordonnées de notre repèe dans le repère d'openGL donc point (0,0) au centre
-	ypos = -2*(ypos-windowHeight/2.f)/windowWidth;
+	xpos = (xpos-windowWidth/2.f)/windowWidth; //convertion coordonnées de notre repèe dans le repère d'openGL donc point (0,0) au centre
+	ypos = (ypos-windowHeight/2.f)/windowWidth;
+
+    std::cout << "x:" << xpos;
+    std::cout << "y:" << ypos;
+
     if (xpos>-0.5 && xpos<0.5  && ypos>-0.25 && ypos<0 ){//les coordonnées du curseur (xpos et ypos) correspondent a la position du bouton start alors :
         if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
             //lancer l'ecran du jeu
@@ -37,3 +41,4 @@ void clic_button_callback(GLFWwindow* window, int button, int action, int mods){
 }
 
 
+ 
