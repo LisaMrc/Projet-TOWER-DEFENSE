@@ -11,9 +11,17 @@
 
 App::App() : _previousTime(0.0), _viewSize(2.0) {
    // load what needs to be loaded here (for example textures)
-
     img::Image test {img::load(make_absolute_path("images/level.png", true), 3, true)};
     
+    // LAND TEXTURES
+    img::Image grass {img::load(make_absolute_path("images/textures/land/grass.bmp", true), 3, true)};
+    img::Image path {img::load(make_absolute_path("images/textures/land/path.bmp", true), 3, true)};
+    
+    // ENTITIES TEXTURES
+    img::Image king {img::load(make_absolute_path("images/textures/entities/king.png", true), 3, true)};
+    img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 3, true)};
+    img::Image tower {img::load(make_absolute_path("images/textures/entities/tower.png", true), 3, true)};
+
     _texture = loadTexture(test);
 }
 
@@ -28,14 +36,11 @@ void App::setup() {
     TextRenderer.EnableBlending(true);
 }
 
-void App::update() {
-
+void App::update()
+{
     const double currentTime { glfwGetTime() };
     const double elapsedTime { currentTime - _previousTime};
     _previousTime = currentTime;
-
-    _angle += 10.0f * elapsedTime;
-    // _angle = std::fmod(_angle, 360.0f);
     
     render();
 }
@@ -46,11 +51,7 @@ void App::render() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glPushMatrix();
-    glScalef(0.8f, 0.8f, 0.8f);
-    glRotatef(_angle, 0.0f, 0.0f, 1.0f);
-    draw_quad_with_texture(_texture);
-    glPopMatrix();
+    grid();
 
     TextRenderer.Render();
 }

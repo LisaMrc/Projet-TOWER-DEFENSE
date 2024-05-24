@@ -12,7 +12,7 @@
 #include "GLHelpers.hpp"
 #include <iostream>
 
-// Game Devs Note (GAN) : we have decided to grid the square screen by a 8x8 grid. The integer "u" corresponds to the number of units on the rows and columns
+// GDN : we have decided to grid the square screen by a 8x8 grid. The integer "u" corresponds to the number of units on the rows and columns
 
 float const u = 8;
 
@@ -32,5 +32,4 @@ void grid()
 
 // std::vector<float> Case::convert_coord(std::vector<int> abs_coord)
 // {
-
 // }
