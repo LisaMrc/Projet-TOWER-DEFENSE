@@ -65,6 +65,18 @@ int main()
     });
     glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) {
         window_as_app(window).mouse_button_callback(button, action, mods);
+
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        GLint windowWidth, windowHeight;
+        glfwGetWindowSize(window, &windowWidth, &windowHeight);
+        int offset = (windowWidth-windowHeight)/2;	//decallage sur les côté	
+        xpos = (xpos-offset)/windowHeight; 
+        ypos = (ypos)/windowHeight;
+       
+        std::cout << "x:" << (int)(xpos * 8);
+        std::cout << "y:" << (int)(ypos * 8);
+        std::cout << std::endl;
     });
     glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
         window_as_app(window).scroll_callback(xoffset, yoffset);
