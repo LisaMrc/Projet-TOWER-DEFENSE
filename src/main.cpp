@@ -7,6 +7,7 @@
 
 #include "App.hpp"
 
+#include "code/draw/draw.hpp"
 namespace {
     App& window_as_app(GLFWwindow* window)
     {
@@ -19,8 +20,6 @@ constexpr double TARGET_TIME_FOR_FRAME { 1.0 / 60.0 };
 
 int main()
 {
-
-
     // Set an error callback to display glfw errors
     glfwSetErrorCallback([](int error, const char* description) {
         std::cerr << "Error " << error << ": " << description << std::endl;
@@ -85,6 +84,9 @@ int main()
     }
 
     app.setup();
+
+    // Verify if itd file is valid
+    is_loaded_map_valid();
 
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(window))

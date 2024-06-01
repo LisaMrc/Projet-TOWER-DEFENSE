@@ -19,4 +19,5 @@ struct Case
 };
 
 void grid();
-bool is_loaded_map_valid();
+void is_loaded_map_valid();
+void analyse_map();

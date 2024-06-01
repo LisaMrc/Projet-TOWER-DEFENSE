@@ -52,7 +52,6 @@ void App::render() {
     glLoadIdentity();
 
     grid();
-    is_loaded_map_valid();
 
     TextRenderer.Render();
 }

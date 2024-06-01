@@ -6,5 +6,3 @@
 🔵 Doing task
 🟢 Task completed
 🔴 Encountered a bug
-
-GDN = Game Developers Notes (commentaries)
