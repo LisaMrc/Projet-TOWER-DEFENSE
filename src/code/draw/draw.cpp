@@ -18,7 +18,7 @@
 #include <filesystem>
 
 // #include <glm/gtx/matrix_transform_2d.hpp>
-// #include <sil/sil.hpp>
+#include "sil.hpp"
 
 #include "draw.hpp"
 #include <unordered_map>
@@ -257,10 +257,12 @@ std::unordered_map<int, std::pair<float, int>> Graph::dijkstra(Graph::WeightedGr
 
 void is_loaded_map_valid()
 {
+    // charge le fichier itd
     std::ifstream myfile ("../../../data/map.itd");
     std::string myline;
     std::vector<std::vector<std::string>>table;
 
+    // Ouvre le fichier et sépare chaque ligne, puis chaque mot de chaque ligne dans un vecteur (table)
     if (myfile.is_open())
     {
         while (myfile)
@@ -276,7 +278,7 @@ void is_loaded_map_valid()
         std::cout << "File not found : could not be opened" << std::endl;
     }
 
-    // Vérification : les triplets après les mots "path", "in" ou "out" sont-ils valides ? + création d'une map où seront rangées les couleurs
+    // Vérification : les triplets après les mots "path", "in" ou "out" sont-ils valides ? + remplissage de la map où seront rangées les couleurs (colors_map_from_itd)
     for (std::vector<std::string> line : table)
     {
         if (line[0] == "path")
@@ -297,7 +299,7 @@ void is_loaded_map_valid()
     colors_map_from_itd[std::vector<int>{0, 0, 0}] = CaseType::GRASS;
 
     // Création d'une adjacency_matrix par rapport au fichier itd
-    const std::vector<std::vector<float>> & adjacency_matrix{};
+    std::vector<std::vector<float>> adjacency_matrix{};
 
     for (size_t i = 0; i < 7; i++)
     {
