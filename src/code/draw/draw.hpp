@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include <utility>
+#include <filesystem>
 
 enum class CaseType
 {
@@ -42,5 +43,5 @@ namespace Graph {
 
 void grid();
 void is_loaded_map_valid();
-void analyse_map();
+std::unordered_map<std::vector<int>, CaseType> analyse_map() 
 std::filesystem::path make_absolute_path(std::filesystem::path const& path, bool check_path_exists);

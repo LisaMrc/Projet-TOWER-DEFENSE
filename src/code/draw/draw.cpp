@@ -15,6 +15,7 @@
 #include <vector>
 #include <string>
 #include <iterator>
+#include <filesystem>
 
 // #include <glm/gtx/matrix_transform_2d.hpp>
 // #include <sil/sil.hpp>
@@ -25,7 +26,7 @@
 #include <queue>
 
 // Variables globales
-std::unordered_map<CaseType, std::vector<int>>colors_map_from_itd;
+std::unordered_map<std::vector<int>, CaseType>colors_map_from_itd;
 
 std::vector<std::string> split_string(std::string const& s)
 {
@@ -280,20 +281,20 @@ void is_loaded_map_valid()
     {
         if (line[0] == "path")
         {
-            colors_map_from_itd[CaseType::PATH] = std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])};
+            colors_map_from_itd[std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])}] = CaseType::PATH; 
         }
         else if (line[0] == "in")
         {
-            colors_map_from_itd[CaseType::IN] = std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])};
+            colors_map_from_itd[std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])}] = CaseType::IN;
         }
         else if (line[0] == "out")
         {
-            colors_map_from_itd[CaseType::OUT] = std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])};
+            colors_map_from_itd[std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])}] = CaseType::OUT;
         }
     }
 
     // Ajout de la couleur qui définit "l'herbe"
-    colors_map_from_itd[CaseType::GRASS] = std::vector<int>{0, 0, 0};
+    colors_map_from_itd[std::vector<int>{0, 0, 0}] = CaseType::GRASS;
 
     // Création d'une adjacency_matrix par rapport au fichier itd
     const std::vector<std::vector<float>> & adjacency_matrix{};
@@ -314,7 +315,7 @@ void is_loaded_map_valid()
     std::cout << "Loaded map valid" << std::endl;
 }
 
-void analyse_map() 
+std::unordered_map<std::vector<int>, CaseType> analyse_map() 
 {
     img::Image map {img::load(make_absolute_path("../../../data/map.png", true), 3, false)};
 
@@ -324,50 +325,18 @@ void analyse_map()
     {
         for (int y = map.height(); y > 0; y--)
         {
-            float tmp_r {map.pixel(x,y).r};
-            float tmp_g {map.pixel(x,y).g};
-            float tmp_b {map.pixel(x,y).b};
+            std::vector<int> tmp_px_colors {map.pixel(x,y).r, map.pixel(x,y).g, map.pixel(x,y).b};
 
-            // "une case est X" signifie
-            // on compare les valeurs des pixels (tmp_r, tmp_b et tmp_g) avec les valeurs stockées dans la map
-        
-            if ( /*une case est blanche*/)
+            auto it {colors_map_from_itd.find(tmp_px_colors)};
+
+            if (it != colors_map_from_itd.end())
             {
-                cases_from_map[{x, map.height()-y}] = CaseType::GRASS;
-            }
-            else if ( /*une case est rouge*/)
-            {
-                colors_map_from_itd[CaseType::IN] = std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])};
-            }
-            else if ( /*une case est bleue*/)
-            {
-                colors_map_from_itd[CaseType::OUT] = std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])};
-            }
-            else if ( /*une case est noire*/)
-            {
-                colors_map_from_itd[CaseType::OUT] = std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])};
+                cases_from_map[{x, map.height()-y}] = (*it).second;
+
+            } else {
+                std::cout << "Erreur : la couleur n'existe pas" << std::endl;
             }
         }
     }
-}
-
-void mirror2(sil::Image image) /*2e version*/
-{
-    for (float x{0}; x < image.width()/2.f; x++)
-    {
-        for (float y{0}; y < image.height(); y++)
-        {   float tmp_r {image.pixel(x,y).r};
-            float tmp_g {image.pixel(x,y).g};
-            float tmp_b {image.pixel(x,y).b};
-
-            //on peut utiliser swap(a,b) en pratique
-            image.pixel(x,y).r = image.pixel(image.width()-(x+1),y).r;
-            image.pixel(x,y).g = image.pixel(image.width()-(x+1),y).g;
-            image.pixel(x,y).b = image.pixel(image.width()-(x+1),y).b;
-            image.pixel(image.width()-(x+1),y).r = tmp_r;
-            image.pixel(image.width()-(x+1),y).g = tmp_g;
-            image.pixel(image.width()-(x+1),y).b = tmp_b;
-        }
-    }
-    image.save("output/06_mirror2.png");
+    return cases_from_map;
 }
