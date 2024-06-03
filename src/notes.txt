@@ -5,3 +5,25 @@ const glm::u8vec3 start
 for (unsigned int y{0}; y > height; ++y){
     for unsigned int u 0 x 
 }
+
+____
+
+Problèmes de débug 02.06
+
+error C3083: 'filesystem' : le symbole situé à gauche de '::' doit être un type
+'path' n'est pas membre de 'std'
+-> std::filesystem::path make_absolute_path(std::filesystem::path const& path, bool check_path_exists);
+
+error C4430: spécificateur de type manquant - int est pris en compte par défaut. Remarque : C++ ne prend pas en charge int par défaut
+-> dans draw.hpp mais aucun endroit spécifié
+
+aucune fonction surchargée n'a de conversion valide pour le pointeur 'this'
+-> adjacency_matrix.push_back(tmp_vec);
+
+____
+
+Rappels :
+
+Sélectionner la valeur à gauche / droite d'un indicateur d'une map : it.first / it.second
+
+Insérer des valeurs dans une map : umap["GeeksforGeeks"] = 10;

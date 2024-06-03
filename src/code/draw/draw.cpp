@@ -15,10 +15,17 @@
 #include <vector>
 #include <string>
 #include <iterator>
-#include <boost/lexical_cast.hpp>
 
-#include <glm/gtx/matrix_transform_2d.hpp>
-#include <sil/sil.hpp>
+// #include <glm/gtx/matrix_transform_2d.hpp>
+// #include <sil/sil.hpp>
+
+#include "draw.hpp"
+#include <unordered_map>
+#include <stack>
+#include <queue>
+
+// Variables globales
+std::unordered_map<CaseType, std::vector<int>>colors_map_from_itd;
 
 std::vector<std::string> split_string(std::string const& s)
 {
@@ -44,9 +51,208 @@ void grid()
     glEnd();
 }
 
-// std::vector<float> Case::convert_coord(std::vector<int> abs_coord)
-// {
-// }
+std::filesystem::path make_absolute_path(std::filesystem::path const& path, bool check_path_exists)
+{
+    auto const res {path.is_relative() ? CMAKE_SOURCE_DIR / path : path };
+
+    if (check_path_exists && !std::filesystem::exists(res))
+    {
+        using namespace std::literals;
+        auto const msg { "Path \""s + res.string() + "\" does not exist. Make sure you didn't misspell it or made it relative to the wrong folder. All relative paths will be relative to the directory containing your CMakeLists.txt file." };
+        std::cerr << msg << '\n';
+        throw std::runtime_error{msg};
+    }
+
+    return res;
+}
+
+void Graph::WeightedGraph::add_vertex(int id)
+{
+   auto it = adjacency_list.find (id);
+
+    if (it == adjacency_list.end())
+        adjacency_list[id];
+    else
+        std::cout << id << " is already in the graph" << std::endl;
+}
+
+void Graph::WeightedGraph::add_directed_edge(int from, int to, float weight)
+{
+    add_vertex(to);
+    adjacency_list[from].push_back({to, weight});
+}
+
+void Graph::WeightedGraph::add_undirected_edge(int const from, int const to, float const weight)
+{
+    add_directed_edge(from, to, 1.0F);
+    add_directed_edge(to, from, 1.0F);
+}
+
+Graph::WeightedGraph Graph::build_from_adjacency_matrix(const std::vector<std::vector<float>> &adjacency_matrix)
+{
+    Graph::WeightedGraph output_graph{};
+
+    for (int x = 0; x < adjacency_matrix.size(); x++)
+    {
+        for (int y = 0; y < adjacency_matrix.size(); y++)
+        {
+            if (adjacency_matrix[x][y] != 0)
+            {
+                output_graph.add_directed_edge(x, y, adjacency_matrix[x][y]);
+            }
+        }
+    }
+    return output_graph;
+}
+
+void Graph::WeightedGraph::print_DFS(int const start) const
+{
+    // TODO : translate comments
+
+    std::stack<int> stack;
+    int current_node{};
+    std::vector<int>visited_edges{};
+    stack.push(start);
+
+    while (!(stack.empty()))
+    {
+        // add nodes to visited edges list
+        visited_edges.push_back(stack.top());
+
+        // Garder en mémoire la node
+        current_node = stack.top();
+
+        // retirer le dernier élt de la pile
+        stack.pop();
+
+        // trouver la node dans la adjacency_list
+        auto it = adjacency_list.find (current_node);
+
+        // trouver les nodes liées
+        auto adjacencies = (*it).second;
+
+        // Ajouter les nodes liées dans la pile
+        for (int i = 0; i < adjacencies.size(); i++)
+        {
+            stack.push(adjacencies[i].to);
+        }
+    }
+
+    for (int visited_edge : visited_edges)
+    {
+        std::cout << visited_edge << std::endl;
+    }
+}
+
+void Graph::WeightedGraph::print_BFS(int const start) const
+{
+    std::queue<int> queue;
+    queue.push(start);
+
+    int current_node{};
+    std::vector<int>visited_edges{};
+
+    while (!(queue.empty()))
+    {
+        // Garder en mémoire la node
+        current_node = queue.front();
+
+        // ajouter la node à la liste des sommets visités
+        visited_edges.push_back(current_node);
+
+        // retirer le premier élt de la file
+        queue.pop();
+
+        // trouver la node dans la adjacency_list
+        auto it = adjacency_list.find (current_node);
+
+        // trouver les nodes liées
+        auto adjacencies = (*it).second;
+
+        // Ajouter les nodes liées dans la pile
+        for (int i = 0; i < adjacencies.size(); i++)
+        {
+            queue.push(adjacencies[i].to);
+        }
+    }
+
+    for (int visited_edge : visited_edges)
+    {
+        std::cout << visited_edge << std::endl;
+    }
+}
+
+std::unordered_map<int, std::pair<float, int>> Graph::dijkstra(Graph::WeightedGraph const& graph, int const& start, int const end)
+{
+    int current_node{};
+
+    // On crée un tableau associatif pour stocker les distances les plus courtes connues pour aller du sommet de départ à chaque sommet visité
+    // La clé est l'identifiant du sommet et la valeur est un pair (distance, sommet précédent)
+    std::unordered_map<int, std::pair<float, int>> distances {};
+
+    // On crée une file de priorité pour stocker les sommets à visiter
+    // la pair contient la distance pour aller jusqu'au sommet et l'identifiant du sommet
+    // Ce type compliqué permet d'indiquer que l'on souhaite trier les éléments par ordre croissant (std::greater) et donc les éléments les plus petits seront au début de la file (top) (Min heap)
+    std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>> to_visit {};
+
+    // 1. On ajoute le sommet de départ à la liste des sommets à visiter avec une distance de 0 (on est déjà sur le sommet de départ)
+    to_visit.push(std::make_pair(0, start));
+
+    // ajouter la node à la liste des sommets visités
+    distances.insert(std::make_pair(start, std::make_pair(0, start))); 
+
+    // Tant qu'il reste des sommets à visiter
+    while (!(to_visit.empty()))
+    {
+        // 2. On récupère le sommet le plus proche du sommet de départ dans la liste de priorité to_visit
+        current_node = to_visit.top().second;
+
+        // 3.Si on atteins le point d'arrivé, on s'arrête
+        if (current_node == end)
+        {
+            return distances;
+        }
+
+        // 3. On parcourt la liste des voisins (grâce à la liste d'adjacence) du nœud courant
+        for (Graph::WeightedGraphEdge edge : graph.adjacency_list.find(current_node)->second) 
+        {
+            // 4. on regarde si le nœud existe dans le tableau associatif (si oui il a déjà été visité)
+            auto find_node {distances.find(edge.to)};
+            bool visited{};
+
+            if (find_node == distances.end())
+            {
+                visited = 0;
+            }
+            else
+            {
+                visited = 1;
+            }
+
+            if (!visited)
+            {
+                // 5. Si le nœud n'a pas été visité, on l'ajoute au tableau associatif en calculant la distance pour aller jusqu'à ce nœud
+                // la distance actuelle + le point de l'arrête)
+                distances.insert(std::make_pair(edge.to, std::make_pair(distances.find(current_node)->second.first + edge.weight, current_node)));
+                
+                // 6. On ajout également le nœud de destination à la liste des nœud à visiter (avec la distance également pour prioriser les nœuds les plus proches)
+                to_visit.push(std::make_pair(edge.weight, edge.to));
+            }
+            else
+            {
+                // 7. S'il a déjà été visité, On teste si la distance dans le tableau associatif est plus grande
+                // Si c'est le cas on à trouvé un plus court chemin, on met à jour le tableau associatif et on ajoute de nouveau le sommet de destination dans la liste "à visiter"
+                if (distances.find(current_node)->second.first + edge.weight < distances.find(edge.to)->second.first)
+                {
+                    distances.find(edge.to)->second.first = distances.find(current_node)->second.first + edge.weight;
+                    distances.find(edge.to)->second.second = current_node;
+                }
+            } 
+        }
+    }
+
+    return distances;
+}
 
 void is_loaded_map_valid()
 {
@@ -65,81 +271,103 @@ void is_loaded_map_valid()
     }
     else
     {
-        //  cas 3 : fichier image existant
+        // Vérification : est-ce que le fichier existe ?
         std::cout << "File not found : could not be opened" << std::endl;
     }
 
-    // cas 2 : triplet rgb valide
-    for (size_t i = 0; i < table.size(); i++)
+    // Vérification : les triplets après les mots "path", "in" ou "out" sont-ils valides ? + création d'une map où seront rangées les couleurs
+    for (std::vector<std::string> line : table)
     {
-        bool is_digit = 1;
-
-        while (is_digit)
+        if (line[0] == "path")
         {
-            if (line[0] == "path")
-            {
-                int r_path = std::stoi(line[1]);
-                int g_path = std::stoi(line[2]);
-                int b_path = std::stoi(line[3]);
-            }
-            else if (line[0] == "in")
-            {
-                int r_in = std::stoi(line[1]);
-                int g_in = std::stoi(line[2]);
-                int b_in = std::stoi(line[3]);
-            }
-            else if (line[0] == "path")
-            {
-                int r_out = std::stoi(line[1]);
-                int g_out = std::stoi(line[2]);
-                int b_out = std::stoi(line[3]);
-            }
-
-            // is digit
+            colors_map_from_itd[CaseType::PATH] = std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])};
+        }
+        else if (line[0] == "in")
+        {
+            colors_map_from_itd[CaseType::IN] = std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])};
+        }
+        else if (line[0] == "out")
+        {
+            colors_map_from_itd[CaseType::OUT] = std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])};
         }
     }
 
-    // cas 4 et 5 : Existence d'au moins une zone d'entrée et de sortie et Existence d'au moins un chemin entre la zone d'entrée et de sortie
-    for (int i = 10; i < count; i++)
+    // Ajout de la couleur qui définit "l'herbe"
+    colors_map_from_itd[CaseType::GRASS] = std::vector<int>{0, 0, 0};
+
+    // Création d'une adjacency_matrix par rapport au fichier itd
+    const std::vector<std::vector<float>> & adjacency_matrix{};
+
+    for (size_t i = 0; i < 7; i++)
     {
-        /* code : Lancer Dijkstra */
+        std::vector<float>tmp_vec {0, 0, 0, 0, 0, 0, 0, 0};
+        adjacency_matrix.push_back(tmp_vec);
+        adjacency_matrix[i][i] = 1;
     }
-    
+
+    // Création d'un graphe
+    Graph::WeightedGraph map_graph = Graph::build_from_adjacency_matrix(adjacency_matrix);
+
+    // Vérification de l'existence d'au moins une zone d'entrée et de sortie (Dijkstra)
+    Graph::dijkstra(map_graph, 0, 7);
 
     std::cout << "Loaded map valid" << std::endl;
 }
 
-// récupérer une donnée depuis une ligne:
-// std::string line{"monster_count 8"};
-// stringstream line_stream;
- 
-// // inserting string s in geek stream
-// line_stream << line;
- 
-// // The object has the value 12345
-// // and stream it to the integer x
-// std::string line_name;
-// int monster_count = 0;
-
-// line_stream >> line_name;
-// line_stream >> monster_count ;
- 
-//     // Now the variable x holds the
-//     // value 12345
-// cout << "Value " << line_name << " : " << monster_count;
-
-void analyse_map(sil::Image image) 
+void analyse_map() 
 {
-    std::vector<Case>cases_in_map{};
+    img::Image map {img::load(make_absolute_path("../../../data/map.png", true), 3, false)};
 
-    for (glm::vec3 & color : image.pixels()) 
+    std::unordered_map<std::vector<int>, CaseType>cases_from_map;
+
+    for (int x = 0; x < map.width(); x++)
     {
-        Case tmp_case{};
-
-        if (color.r = 0.f;)
+        for (int y = map.height(); y > 0; y--)
         {
-            /* code */
+            float tmp_r {map.pixel(x,y).r};
+            float tmp_g {map.pixel(x,y).g};
+            float tmp_b {map.pixel(x,y).b};
+
+            // "une case est X" signifie
+            // on compare les valeurs des pixels (tmp_r, tmp_b et tmp_g) avec les valeurs stockées dans la map
+        
+            if ( /*une case est blanche*/)
+            {
+                cases_from_map[{x, map.height()-y}] = CaseType::GRASS;
+            }
+            else if ( /*une case est rouge*/)
+            {
+                colors_map_from_itd[CaseType::IN] = std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])};
+            }
+            else if ( /*une case est bleue*/)
+            {
+                colors_map_from_itd[CaseType::OUT] = std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])};
+            }
+            else if ( /*une case est noire*/)
+            {
+                colors_map_from_itd[CaseType::OUT] = std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])};
+            }
         }
     }
-    image.save("output/01_onlyGreen.png");
+}
+
+void mirror2(sil::Image image) /*2e version*/
+{
+    for (float x{0}; x < image.width()/2.f; x++)
+    {
+        for (float y{0}; y < image.height(); y++)
+        {   float tmp_r {image.pixel(x,y).r};
+            float tmp_g {image.pixel(x,y).g};
+            float tmp_b {image.pixel(x,y).b};
+
+            //on peut utiliser swap(a,b) en pratique
+            image.pixel(x,y).r = image.pixel(image.width()-(x+1),y).r;
+            image.pixel(x,y).g = image.pixel(image.width()-(x+1),y).g;
+            image.pixel(x,y).b = image.pixel(image.width()-(x+1),y).b;
+            image.pixel(image.width()-(x+1),y).r = tmp_r;
+            image.pixel(image.width()-(x+1),y).g = tmp_g;
+            image.pixel(image.width()-(x+1),y).b = tmp_b;
+        }
+    }
+    image.save("output/06_mirror2.png");
 }
