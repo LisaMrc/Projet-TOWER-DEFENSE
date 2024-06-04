@@ -34,11 +34,11 @@ std::vector<std::string> split_string(std::string const& s)
     return std::vector<std::string>(std::istream_iterator<std::string>(in), std::istream_iterator<std::string>()); 
 }
 
-// GDN : we have decided to grid the square screen by a 8x8 grid
-float const u = 4;
-
 void grid()
 {
+    // GDN : we have decided to grid the square screen by a 8x8 grid
+    float const u = 4;
+
     glColor3f(1, 0, 0);
     glBegin(GL_LINES);
     for (float i = -1; i < 1 + 1/u; i+=1/u)

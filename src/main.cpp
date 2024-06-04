@@ -97,9 +97,6 @@ int main()
 
     app.setup();
 
-    // Verify if itd file is valid
-    is_loaded_map_valid();
-
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(window))
     {
