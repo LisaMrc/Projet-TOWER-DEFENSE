@@ -241,67 +241,67 @@ std::unordered_map<int, std::pair<float, int>> Graph::dijkstra(Graph::WeightedGr
 
 std::unordered_map<glm::vec3, CaseType> is_loaded_map_valid()
 {
-    // charge le fichier itd
-    std::ifstream myfile ("../../../data/map.itd");
-    std::string myline;
+    std::ifstream map_itd ("../../data/map.itd");
+
+    std::string line;
+    std::vector<std::string> splitted_line;
     std::vector<std::vector<std::string>>table;
 
-    // Ouvre le fichier et sépare chaque ligne, puis chaque mot de chaque ligne dans un vecteur (table)
-    if (myfile.is_open())
-    {
-        while (myfile)
+    // Vérification : est-ce que le fichier existe ?
+    if (map_itd)
+    {   
+        // Sépare chaque ligne, puis chaque mot de chaque ligne dans un vecteur, puis l'ajoute à table
+        while (std::getline (map_itd, line))
         {
-            std::getline (myfile, myline);
-            std::vector<std::string> splitted_line = split_string(myline);
+            splitted_line = split_string(line);
             table.push_back(splitted_line);
         }
     }
     else
     {
-        // Vérification : est-ce que le fichier existe ?
         std::cout << "File not found : could not be opened" << std::endl;
     }
 
     std::unordered_map<glm::vec3, CaseType>colors_map_from_itd;
 
+
     // Vérification : les triplets après les mots "path", "in" ou "out" sont-ils valides ? + remplissage de la map où seront rangées les couleurs (colors_map_from_itd)
-    for (std::vector<std::string> line : table)
+    for (std::vector<std::string> splitted_line : table)
     {
-        if (line[0] == "path")
+        if (splitted_line[0] == "path")
         {
-            colors_map_from_itd[glm::vec3{stoi(line[1]), stoi(line[2]), stoi(line[3])}] = CaseType::PATH; 
+            colors_map_from_itd[glm::vec3{stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])}] = CaseType::PATH; 
         }
-        else if (line[0] == "in")
+        else if (splitted_line[0] == "in")
         {
-            colors_map_from_itd[glm::vec3{stoi(line[1]), stoi(line[2]), stoi(line[3])}] = CaseType::IN;
+            colors_map_from_itd[glm::vec3{stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])}] = CaseType::IN;
         }
-        else if (line[0] == "out")
+        else if (splitted_line[0] == "out")
         {
-            colors_map_from_itd[glm::vec3{stoi(line[1]), stoi(line[2]), stoi(line[3])}] = CaseType::OUT;
+            colors_map_from_itd[glm::vec3{stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])}] = CaseType::OUT;
         }
     }
 
     // Ajout de la couleur qui définit "l'herbe"
     colors_map_from_itd[glm::vec3{0, 0, 0}] = CaseType::GRASS;
 
-    // Création d'une adjacency_matrix par rapport au fichier itd
-    std::vector<std::vector<float>> adjacency_matrix{};
+    // // Création d'une adjacency_matrix par rapport au fichier itd
+    // std::vector<std::vector<float>> adjacency_matrix{};
 
-    for (size_t i = 0; i < 7; i++)
-    {
-        std::vector<float>tmp_vec {0, 0, 0, 0, 0, 0, 0, 0};
-        adjacency_matrix.push_back(tmp_vec);
-        adjacency_matrix[i][i] = 1;
-    }
+    // for (size_t i = 0; i < 7; i++)
+    // {
+    //     std::vector<float>tmp_vec {0, 0, 0, 0, 0, 0, 0, 0};
+    //     adjacency_matrix.push_back(tmp_vec);
+    //     adjacency_matrix[i][i] = 1;
+    // }
 
-    // Création d'un graphe
-    Graph::WeightedGraph map_graph = Graph::build_from_adjacency_matrix(adjacency_matrix);
+    // // Création d'un graphe
+    // Graph::WeightedGraph map_graph = Graph::build_from_adjacency_matrix(adjacency_matrix);
 
-    // Vérification de l'existence d'au moins une zone d'entrée et de sortie (Dijkstra)
-    Graph::dijkstra(map_graph, 0, 7);
+    // // Vérification de l'existence d'au moins une zone d'entrée et de sortie (Dijkstra)
+    // // Graph::dijkstra(map_graph, 0, 7);
 
     std::cout << "Loaded map is valid" << std::endl;
-
     return colors_map_from_itd;
 }
 
