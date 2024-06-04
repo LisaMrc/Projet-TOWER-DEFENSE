@@ -10,7 +10,7 @@ static std::filesystem::path make_absolute_path(std::filesystem::path const& pat
     auto const res = [&]() { // IIFE
         if (!path.is_relative())
             return path;
-        return SIL_CMAKE_SOURCE_DIR / path;
+        return CMAKE_SOURCE_DIR / path;
     }();
 
     if (check_path_exists && !std::filesystem::exists(res))

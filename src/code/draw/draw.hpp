@@ -3,6 +3,11 @@
 #include <unordered_map>
 #include <utility>
 #include <filesystem>
+#include "utils.hpp"
+
+#include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/gtx/hash.hpp"
 
 enum class CaseType
 {
@@ -42,6 +47,5 @@ namespace Graph {
 }
 
 void grid();
-void is_loaded_map_valid();
-std::unordered_map<std::vector<int>, CaseType> analyse_map();
-std::filesystem::path make_absolute_path(std::filesystem::path const& path, bool check_path_exists);
+std::unordered_map<glm::vec3, CaseType> is_loaded_map_valid();
+std::vector<CaseType> analyse_map(const std::unordered_map<glm::vec3, CaseType>& colors_map_from_itd) ;

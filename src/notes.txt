@@ -27,3 +27,17 @@ Rappels :
 Sélectionner la valeur à gauche / droite d'un indicateur d'une map : it.first / it.second
 
 Insérer des valeurs dans une map : umap["GeeksforGeeks"] = 10;
+
+____
+Débug du 06.04 - 10h32 à 12h32 : 
+
+Compte-rendu
+- sil.cpp modifiés
+- make_absolute_path enlevé, remplacé par #utils.hpp
+- correction de la fonction analyse_map (en utilisant sil::image) + transformation de la 2e map en vecteur 2D
+- is_loaded_map_valid renvoie std::unordered_map<glm::vec3, CaseType>colors_map_from_itd;
+
+Questions :
+- #include <filesystem> gardé. Dois-je l'enlever ?
+- Problème lors de l'utilisation de la bibliothèque sil (name followed by '::' must be a class or namespace name + ne trouve pas sil.hpp lors de l'include)
+- plus astucieux de faire exécuter la fonction is_loaded_map_valid dans analyse_map pour ne pas avoir une variable supplémentaire dans le main ?

@@ -1,9 +1,13 @@
 #include "../../App.hpp"
 #include "../ui/shape.hpp"
+#include "draw.hpp"
+#include "sil.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <img/img.hpp>
+#include <filesystem>
+// #include <glm/gtx/matrix_transform_2d.hpp>
 
 #include "simpletext.h"
 #include "utils.hpp"
@@ -15,18 +19,13 @@
 #include <vector>
 #include <string>
 #include <iterator>
-#include <filesystem>
-
-// #include <glm/gtx/matrix_transform_2d.hpp>
-#include "sil.hpp"
-
-#include "draw.hpp"
 #include <unordered_map>
 #include <stack>
 #include <queue>
 
-// Variables globales
-std::unordered_map<std::vector<int>, CaseType>colors_map_from_itd;
+#include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/gtx/hash.hpp"
 
 std::vector<std::string> split_string(std::string const& s)
 {
@@ -50,21 +49,6 @@ void grid()
         glVertex2f(i, 1);
     }
     glEnd();
-}
-
-std::filesystem::path make_absolute_path(std::filesystem::path const& path, bool check_path_exists)
-{
-    auto const res {path.is_relative() ? CMAKE_SOURCE_DIR / path : path };
-
-    if (check_path_exists && !std::filesystem::exists(res))
-    {
-        using namespace std::literals;
-        auto const msg { "Path \""s + res.string() + "\" does not exist. Make sure you didn't misspell it or made it relative to the wrong folder. All relative paths will be relative to the directory containing your CMakeLists.txt file." };
-        std::cerr << msg << '\n';
-        throw std::runtime_error{msg};
-    }
-
-    return res;
 }
 
 void Graph::WeightedGraph::add_vertex(int id)
@@ -255,7 +239,7 @@ std::unordered_map<int, std::pair<float, int>> Graph::dijkstra(Graph::WeightedGr
     return distances;
 }
 
-void is_loaded_map_valid()
+std::unordered_map<glm::vec3, CaseType> is_loaded_map_valid()
 {
     // charge le fichier itd
     std::ifstream myfile ("../../../data/map.itd");
@@ -278,25 +262,27 @@ void is_loaded_map_valid()
         std::cout << "File not found : could not be opened" << std::endl;
     }
 
+    std::unordered_map<glm::vec3, CaseType>colors_map_from_itd;
+
     // Vérification : les triplets après les mots "path", "in" ou "out" sont-ils valides ? + remplissage de la map où seront rangées les couleurs (colors_map_from_itd)
     for (std::vector<std::string> line : table)
     {
         if (line[0] == "path")
         {
-            colors_map_from_itd[std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])}] = CaseType::PATH; 
+            colors_map_from_itd[glm::vec3{stoi(line[1]), stoi(line[2]), stoi(line[3])}] = CaseType::PATH; 
         }
         else if (line[0] == "in")
         {
-            colors_map_from_itd[std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])}] = CaseType::IN;
+            colors_map_from_itd[glm::vec3{stoi(line[1]), stoi(line[2]), stoi(line[3])}] = CaseType::IN;
         }
         else if (line[0] == "out")
         {
-            colors_map_from_itd[std::vector<int>{stoi(line[1]), stoi(line[2]), stoi(line[3])}] = CaseType::OUT;
+            colors_map_from_itd[glm::vec3{stoi(line[1]), stoi(line[2]), stoi(line[3])}] = CaseType::OUT;
         }
     }
 
     // Ajout de la couleur qui définit "l'herbe"
-    colors_map_from_itd[std::vector<int>{0, 0, 0}] = CaseType::GRASS;
+    colors_map_from_itd[glm::vec3{0, 0, 0}] = CaseType::GRASS;
 
     // Création d'une adjacency_matrix par rapport au fichier itd
     std::vector<std::vector<float>> adjacency_matrix{};
@@ -314,26 +300,26 @@ void is_loaded_map_valid()
     // Vérification de l'existence d'au moins une zone d'entrée et de sortie (Dijkstra)
     Graph::dijkstra(map_graph, 0, 7);
 
-    std::cout << "Loaded map valid" << std::endl;
+    std::cout << "Loaded map is valid" << std::endl;
+
+    return colors_map_from_itd;
 }
 
-std::unordered_map<std::vector<int>, CaseType> analyse_map() 
+std::vector<CaseType> analyse_map(const std::unordered_map<glm::vec3, CaseType>& colors_map_from_itd) 
 {
-    img::Image map {img::load(make_absolute_path("../../../data/map.png", true), 3, false)};
+    sil::Image map {sil::Image("../../../data/map.png")};
 
-    std::unordered_map<std::vector<int>, CaseType>cases_from_map;
+    std::vector<CaseType> cases_from_map;
+    cases_from_map.reserve(map.width() * map.height());
 
     for (int x = 0; x < map.width(); x++)
     {
-        for (int y = map.height(); y > 0; y--)
+        for (int y = 0; y < map.height(); y++)
         {
-            std::vector<int> tmp_px_colors {map.pixel(x,y).r, map.pixel(x,y).g, map.pixel(x,y).b};
-
-            auto it {colors_map_from_itd.find(tmp_px_colors)};
-
+            const auto it {colors_map_from_itd.find(map.pixel(x,y))};
             if (it != colors_map_from_itd.end())
             {
-                cases_from_map[{x, map.height()-y}] = (*it).second;
+                cases_from_map[x + map.width()* y] = (*it).second;
 
             } else {
                 std::cout << "Erreur : la couleur n'existe pas" << std::endl;
