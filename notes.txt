@@ -1,13 +1,3 @@
-const glm::u8vec3 start
-const glm::u8vec3 start
-const glm::u8vec3 start
-
-for (unsigned int y{0}; y > height; ++y){
-    for unsigned int u 0 x 
-}
-
-____
-
 Problèmes de débug 02.06
 
 error C3083: 'filesystem' : le symbole situé à gauche de '::' doit être un type
@@ -31,13 +21,17 @@ Insérer des valeurs dans une map : umap["GeeksforGeeks"] = 10;
 ____
 Débug du 06.04 - 10h32 à 12h32 : 
 
-Compte-rendu
+Compte-rendu :
 - sil.cpp modifiés
 - make_absolute_path enlevé, remplacé par #utils.hpp
 - correction de la fonction analyse_map (en utilisant sil::image) + transformation de la 2e map en vecteur 2D
 - is_loaded_map_valid renvoie std::unordered_map<glm::vec3, CaseType>colors_map_from_itd;
 
+=> build sans erreur
+=> launch avec erreur (alors que la fonction is_loaded_map_valid n'est pas appelée dans main ou app...?)
+
 Questions :
 - #include <filesystem> gardé. Dois-je l'enlever ?
-- Problème lors de l'utilisation de la bibliothèque sil (name followed by '::' must be a class or namespace name + ne trouve pas sil.hpp lors de l'include)
 - plus astucieux de faire exécuter la fonction is_loaded_map_valid dans analyse_map pour ne pas avoir une variable supplémentaire dans le main ?
+- où insérer ces fonctions dans main et app ?
+- Le chemin pour ouvrir mon fichier itd me paraît bon, pourquoi ais-je une erreur lors du launch ?
