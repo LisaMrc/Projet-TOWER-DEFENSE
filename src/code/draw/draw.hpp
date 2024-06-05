@@ -46,6 +46,10 @@ namespace Graph {
     std::unordered_map<int, std::pair<float, int>> dijkstra(WeightedGraph const& graph, int const& start, int const end);
 }
 
-void grid();
-std::unordered_map<glm::vec3, CaseType> is_loaded_map_valid();
-std::vector<CaseType> analyse_map(const std::unordered_map<glm::vec3, CaseType>& colors_map_from_itd) ;
+void draw_grid();
+std::vector<std::vector<std::string>>split_itd_file();
+
+std::unordered_map<glm::vec3, CaseType> associate_RGB_to_CaseType(const std::vector<std::vector<std::string>> splitted_itd_file);
+std::vector<CaseType> associate_px_pos_to_CaseType(const std::unordered_map<glm::vec3, CaseType> RGB_CaseType_map);
+
+std::vector<std::vector<float>> create_adjacency_matrix(const std::vector<std::vector<std::string>> splitted_itd_file);

@@ -35,8 +35,17 @@ void App::setup() {
     TextRenderer.SetColorf(SimpleText::BACKGROUND_COLOR, 0.f, 0.f, 0.f, 0.f);
     TextRenderer.EnableBlending(true);
 
-    // Verify if itd file is valid
-    is_loaded_map_valid();
+    // Verify if itd file is valid, extract information from it
+    std::vector<std::vector<std::string>> splitted_itd_file = split_itd_file();
+
+    // Map printing
+    std::unordered_map<glm::vec3, CaseType> RGB_CaseType_map = associate_RGB_to_CaseType(splitted_itd_file);
+    // associate_px_pos_to_CaseType(RGB_CaseType_map);
+
+    // Create graph for ennemies from itd
+    // std::vector<std::vector<float>> adjacency_matrix { create_adjacency_matrix(splitted_itd_file)};
+    // Graph::WeightedGraph graph { Graph::build_from_adjacency_matrix(adjacency_matrix)};
+    // dijkstra(graph, 0, 7);
 }
 
 void App::update()
@@ -54,7 +63,7 @@ void App::render() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    grid();
+    draw_grid();
 
     TextRenderer.Render();
 }

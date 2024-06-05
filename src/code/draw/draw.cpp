@@ -1,19 +1,8 @@
 #include "../../App.hpp"
-#include "../ui/shape.hpp"
 #include "draw.hpp"
 #include "sil.hpp"
-
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <img/img.hpp>
-#include <filesystem>
-// #include <glm/gtx/matrix_transform_2d.hpp>
-
-#include "simpletext.h"
 #include "utils.hpp"
-#include "GLHelpers.hpp"
 
-#include <sstream>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -27,14 +16,15 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/hash.hpp"
 
+
+
 std::vector<std::string> split_string(std::string const& s)
 {
-    std::istringstream in(s); // transforme une chaîne en flux de caractères, cela simule un flux comme l'est std::cin
-    // l’itérateur va lire chaque element de "in", comme un flux d'entrée, chaque élément est séparé par un espace
+    std::istringstream in(s);
     return std::vector<std::string>(std::istream_iterator<std::string>(in), std::istream_iterator<std::string>()); 
 }
 
-void grid()
+void draw_grid()
 {
     // GDN : we have decided to grid the square screen by a 8x8 grid
     float const u = 4;
@@ -239,13 +229,15 @@ std::unordered_map<int, std::pair<float, int>> Graph::dijkstra(Graph::WeightedGr
     return distances;
 }
 
-std::unordered_map<glm::vec3, CaseType> is_loaded_map_valid()
+const char * filepath {"../../data/map.itd"};
+
+std::vector<std::vector<std::string>>split_itd_file()
 {
-    std::ifstream map_itd ("../../data/map.itd");
+    std::ifstream map_itd (filepath);
 
     std::string line;
     std::vector<std::string> splitted_line;
-    std::vector<std::vector<std::string>>table;
+    std::vector<std::vector<std::string>>splitted_itd_file;
 
     // Vérification : est-ce que le fichier existe ?
     if (map_itd)
@@ -254,7 +246,7 @@ std::unordered_map<glm::vec3, CaseType> is_loaded_map_valid()
         while (std::getline (map_itd, line))
         {
             splitted_line = split_string(line);
-            table.push_back(splitted_line);
+            splitted_itd_file.push_back(splitted_line);
         }
     }
     else
@@ -262,69 +254,123 @@ std::unordered_map<glm::vec3, CaseType> is_loaded_map_valid()
         std::cout << "File not found : could not be opened" << std::endl;
     }
 
-    std::unordered_map<glm::vec3, CaseType>colors_map_from_itd;
+    return splitted_itd_file;
+}
 
+std::unordered_map<glm::vec3, CaseType> associate_RGB_to_CaseType(std::vector<std::vector<std::string>> splitted_itd_file)
+{
+    std::unordered_map<glm::vec3, CaseType> RGB_CaseType_map;
 
-    // Vérification : les triplets après les mots "path", "in" ou "out" sont-ils valides ? + remplissage de la map où seront rangées les couleurs (colors_map_from_itd)
-    for (std::vector<std::string> splitted_line : table)
+    // Vérification : les triplets après les mots "path", "in" ou "out" sont-ils valides ? + remplissage de la map où seront associées les couleurs à un type de case (RGB_CaseType_map), selon le fichier itd
+    for (std::vector<std::string> splitted_line : splitted_itd_file)
     {
         if (splitted_line[0] == "path")
         {
-            colors_map_from_itd[glm::vec3{stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])}] = CaseType::PATH; 
+            RGB_CaseType_map[glm::vec3{stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])}] = CaseType::PATH; 
         }
         else if (splitted_line[0] == "in")
         {
-            colors_map_from_itd[glm::vec3{stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])}] = CaseType::IN;
+            RGB_CaseType_map[glm::vec3{stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])}] = CaseType::IN;
         }
         else if (splitted_line[0] == "out")
         {
-            colors_map_from_itd[glm::vec3{stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])}] = CaseType::OUT;
+            RGB_CaseType_map[glm::vec3{stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])}] = CaseType::OUT;
         }
     }
 
     // Ajout de la couleur qui définit "l'herbe"
-    colors_map_from_itd[glm::vec3{0, 0, 0}] = CaseType::GRASS;
+    RGB_CaseType_map[glm::vec3{0, 0, 0}] = CaseType::GRASS;
 
-    // // Création d'une adjacency_matrix par rapport au fichier itd
-    // std::vector<std::vector<float>> adjacency_matrix{};
-
-    // for (size_t i = 0; i < 7; i++)
-    // {
-    //     std::vector<float>tmp_vec {0, 0, 0, 0, 0, 0, 0, 0};
-    //     adjacency_matrix.push_back(tmp_vec);
-    //     adjacency_matrix[i][i] = 1;
-    // }
-
-    // // Création d'un graphe
-    // Graph::WeightedGraph map_graph = Graph::build_from_adjacency_matrix(adjacency_matrix);
-
-    // // Vérification de l'existence d'au moins une zone d'entrée et de sortie (Dijkstra)
-    // // Graph::dijkstra(map_graph, 0, 7);
-
-    std::cout << "Loaded map is valid" << std::endl;
-    return colors_map_from_itd;
+    return RGB_CaseType_map;
 }
 
-std::vector<CaseType> analyse_map(const std::unordered_map<glm::vec3, CaseType>& colors_map_from_itd) 
+std::vector<CaseType> associate_px_pos_to_CaseType(const std::unordered_map<glm::vec3, CaseType> RGB_CaseType_map)
 {
-    sil::Image map {sil::Image("../../../data/map.png")};
+    sil::Image map {sil::Image("data/map.png")};
+    std::vector<CaseType> px_pos_CaseType_vec;
+    px_pos_CaseType_vec.reserve(map.width() * map.height());
 
-    std::vector<CaseType> cases_from_map;
-    cases_from_map.reserve(map.width() * map.height());
-
-    for (int x = 0; x < map.width(); x++)
+    for (int x = 0; x < map.width()-8; x++)
     {
-        for (int y = 0; y < map.height(); y++)
+        for (int y = 0; y < map.height()-8; y++)
         {
-            const auto it {colors_map_from_itd.find(map.pixel(x,y))};
-            if (it != colors_map_from_itd.end())
-            {
-                cases_from_map[x + map.width()* y] = (*it).second;
+            const auto it {RGB_CaseType_map.find(map.pixel(x,y))};
 
-            } else {
+            if (it != RGB_CaseType_map.end())
+            {
+                px_pos_CaseType_vec[x + map.width()*y] = (*it).second;
+            } 
+            else
+            {
                 std::cout << "Erreur : la couleur n'existe pas" << std::endl;
             }
         }
     }
-    return cases_from_map;
+
+    return px_pos_CaseType_vec;
+}
+
+std::vector<std::vector<float>> create_adjacency_matrix(const std::vector<std::vector<std::string>> splitted_itd_file)
+{
+    std::vector<std::vector<int>> nodes_list {};
+    int number_of_nodes {};
+
+    std::vector<float> adjacency_line {};
+    std::vector<std::vector<float>> adjacency_matrix {};
+
+    // Initialisation de la matrice d'adjacence
+    for (int i=0; i < number_of_nodes; i++)
+    {
+        adjacency_line.push_back(0);
+    }
+    for (int i=0; i < number_of_nodes; i++)
+    {
+        adjacency_matrix.push_back(adjacency_line);
+    }
+
+    for (std::vector<std::string> vec_str : splitted_itd_file)
+    {
+        // Nombre de nodes
+        if (vec_str[0] == "graph")
+        {
+            number_of_nodes = std::stoi(vec_str[1]);
+        }
+
+        // Stockage des nodes
+        else if (vec_str[0] == "node")
+        {
+            std::vector<int> vec_tmp {};
+                
+            for (int j=1; j<vec_str.size(); j++)
+            {
+                vec_tmp.push_back(std::stoi(vec_str[j]));
+            }
+            
+            nodes_list.push_back(vec_tmp);
+        }
+    }
+
+        // Création des voisins
+        for (int i=0; i < nodes_list.size(); i++)
+        {
+            if (nodes_list[i].size() > 3)
+            {
+                for (int j=3; j<nodes_list[i].size(); j++)
+                {
+                    int ind = nodes_list[i][j];
+                    adjacency_matrix[i][ind] = 1;
+                }
+            }
+        }
+
+    // Mise à jour des distances entre deux noeuds (en nombre de cases)
+    for (int i=0; i<number_of_nodes; i++) {
+        for (int j=0; j<number_of_nodes; j++) {
+            if (adjacency_matrix[i][j] == 1) {
+                adjacency_matrix[i][j] = abs(nodes_list[j][1] - nodes_list[i][1])  +  abs(nodes_list[j][2] - nodes_list[i][2]);
+            }
+        }
+    }
+
+    return adjacency_matrix;
 }
