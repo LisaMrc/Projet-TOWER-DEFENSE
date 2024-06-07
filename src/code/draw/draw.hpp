@@ -40,16 +40,21 @@ namespace Graph {
 
         void print_DFS(int const start) const;
         void print_BFS(int const start) const;
+
+        std::unordered_map<int, std::pair<float, int>> dijkstra(int const &start, int const end);
     };
 
     WeightedGraph build_from_adjacency_matrix(std::vector<std::vector<float>> const& adjacency_matrix);
-    std::unordered_map<int, std::pair<float, int>> dijkstra(WeightedGraph const& graph, int const& start, int const end);
 }
 
 void draw_grid();
+
 std::vector<std::vector<std::string>>split_itd_file();
 
 std::unordered_map<glm::vec3, CaseType> associate_RGB_to_CaseType(const std::vector<std::vector<std::string>> splitted_itd_file);
 std::vector<CaseType> associate_px_pos_to_CaseType(const std::unordered_map<glm::vec3, CaseType> RGB_CaseType_map);
+void draw_map(std::vector<CaseType> RGB_CaseType_map);
 
 std::vector<std::vector<float>> create_adjacency_matrix(const std::vector<std::vector<std::string>> splitted_itd_file);
+
+void draw_map();

@@ -16,8 +16,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/hash.hpp"
 
-
-
 std::vector<std::string> split_string(std::string const& s)
 {
     std::istringstream in(s);
@@ -157,76 +155,39 @@ void Graph::WeightedGraph::print_BFS(int const start) const
     }
 }
 
-std::unordered_map<int, std::pair<float, int>> Graph::dijkstra(Graph::WeightedGraph const& graph, int const& start, int const end)
-{
-    int current_node{};
-
-    // On crée un tableau associatif pour stocker les distances les plus courtes connues pour aller du sommet de départ à chaque sommet visité
-    // La clé est l'identifiant du sommet et la valeur est un pair (distance, sommet précédent)
-    std::unordered_map<int, std::pair<float, int>> distances {};
-
-    // On crée une file de priorité pour stocker les sommets à visiter
-    // la pair contient la distance pour aller jusqu'au sommet et l'identifiant du sommet
-    // Ce type compliqué permet d'indiquer que l'on souhaite trier les éléments par ordre croissant (std::greater) et donc les éléments les plus petits seront au début de la file (top) (Min heap)
-    std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>> to_visit {};
-
-    // 1. On ajoute le sommet de départ à la liste des sommets à visiter avec une distance de 0 (on est déjà sur le sommet de départ)
-    to_visit.push(std::make_pair(0, start));
-
-    // ajouter la node à la liste des sommets visités
-    distances.insert(std::make_pair(start, std::make_pair(0, start))); 
-
-    // Tant qu'il reste des sommets à visiter
-    while (!(to_visit.empty()))
+std::unordered_map<int, std::pair<float, int>> Graph::WeightedGraph::dijkstra(int const &start, int const end)
     {
-        // 2. On récupère le sommet le plus proche du sommet de départ dans la liste de priorité to_visit
-        current_node = to_visit.top().second;
+        std::unordered_map<int, std::pair<float, int>> distances{};
+        std::priority_queue<std::pair<float, int>, std::vector<std::pair<float, int>>, std::greater<std::pair<float, int>>> to_visit{};
+        std::vector<int> visited;
+        to_visit.push({0.f, start});
 
-        // 3.Si on atteins le point d'arrivé, on s'arrête
-        if (current_node == end)
+        while (!to_visit.empty())
         {
-            return distances;
-        }
+            int current_node{to_visit.top().second};
+            float current_distanceToStart{to_visit.top().first};
+            to_visit.pop();
 
-        // 3. On parcourt la liste des voisins (grâce à la liste d'adjacence) du nœud courant
-        for (Graph::WeightedGraphEdge edge : graph.adjacency_list.find(current_node)->second) 
-        {
-            // 4. on regarde si le nœud existe dans le tableau associatif (si oui il a déjà été visité)
-            auto find_node {distances.find(edge.to)};
-            bool visited{};
+            if (current_node == end)
+                return distances;
 
-            if (find_node == distances.end())
+            for (auto edge : this->adjacency_list.at(current_node))
             {
-                visited = 0;
-            }
-            else
-            {
-                visited = 1;
-            }
-
-            if (!visited)
-            {
-                // 5. Si le nœud n'a pas été visité, on l'ajoute au tableau associatif en calculant la distance pour aller jusqu'à ce nœud
-                // la distance actuelle + le point de l'arrête)
-                distances.insert(std::make_pair(edge.to, std::make_pair(distances.find(current_node)->second.first + edge.weight, current_node)));
-                
-                // 6. On ajout également le nœud de destination à la liste des nœud à visiter (avec la distance également pour prioriser les nœuds les plus proches)
-                to_visit.push(std::make_pair(edge.weight, edge.to));
-            }
-            else
-            {
-                // 7. S'il a déjà été visité, On teste si la distance dans le tableau associatif est plus grande
-                // Si c'est le cas on à trouvé un plus court chemin, on met à jour le tableau associatif et on ajoute de nouveau le sommet de destination dans la liste "à visiter"
-                if (distances.find(current_node)->second.first + edge.weight < distances.find(edge.to)->second.first)
+                int current_adj_node{edge.to};
+                float current_adj_distanceToParent{edge.weight};
+                if (std::find(visited.begin(), visited.end(), current_adj_node) == visited.end())
                 {
-                    distances.find(edge.to)->second.first = distances.find(current_node)->second.first + edge.weight;
-                    distances.find(edge.to)->second.second = current_node;
+                    float adj_distanceToStart = current_distanceToStart + current_adj_distanceToParent;
+                    if (distances.find(current_adj_node) == distances.end())
+                        distances.insert({current_adj_node, {adj_distanceToStart, current_node}});
+                    else if (distances.at(current_adj_node).first > adj_distanceToStart)
+                        distances[current_adj_node] = {adj_distanceToStart, current_node};
+                    to_visit.push({adj_distanceToStart, current_adj_node});
                 }
-            } 
+            }
+            visited.push_back(current_node);
         }
-    }
-
-    return distances;
+        return distances;
 }
 
 const char * filepath {"../../data/map.itd"};
@@ -288,7 +249,7 @@ std::vector<CaseType> associate_px_pos_to_CaseType(const std::unordered_map<glm:
 {
     sil::Image map {sil::Image("data/map.png")};
     std::vector<CaseType> px_pos_CaseType_vec;
-    px_pos_CaseType_vec.reserve(map.width() * map.height());
+    px_pos_CaseType_vec.resize(map.width() * map.height());
 
     for (int x = 0; x < map.width()-8; x++)
     {
@@ -306,7 +267,6 @@ std::vector<CaseType> associate_px_pos_to_CaseType(const std::unordered_map<glm:
             }
         }
     }
-
     return px_pos_CaseType_vec;
 }
 
@@ -317,16 +277,6 @@ std::vector<std::vector<float>> create_adjacency_matrix(const std::vector<std::v
 
     std::vector<float> adjacency_line {};
     std::vector<std::vector<float>> adjacency_matrix {};
-
-    // Initialisation de la matrice d'adjacence
-    for (int i=0; i < number_of_nodes; i++)
-    {
-        adjacency_line.push_back(0);
-    }
-    for (int i=0; i < number_of_nodes; i++)
-    {
-        adjacency_matrix.push_back(adjacency_line);
-    }
 
     for (std::vector<std::string> vec_str : splitted_itd_file)
     {
@@ -350,21 +300,32 @@ std::vector<std::vector<float>> create_adjacency_matrix(const std::vector<std::v
         }
     }
 
-        // Création des voisins
-        for (int i=0; i < nodes_list.size(); i++)
+    // Initialisation de la matrice d'adjacence
+    for (int i = 0; i < number_of_nodes; i++)
+    {
+        adjacency_line.push_back(0);
+    }
+
+    for (int i=0; i < number_of_nodes; i++)
+    {
+        adjacency_matrix.push_back(adjacency_line);
+    }
+
+    // Remplissage de la matrice
+    for (int i=0; i < nodes_list.size(); i++)
+    {
+        if (nodes_list[i].size() > 3)
         {
-            if (nodes_list[i].size() > 3)
+            for (int j = 3; j < nodes_list[i].size(); j++)
             {
-                for (int j=3; j<nodes_list[i].size(); j++)
-                {
-                    int ind = nodes_list[i][j];
-                    adjacency_matrix[i][ind] = 1;
-                }
+                int ind = nodes_list[i][j];
+                adjacency_matrix[i][ind] = 1;
             }
         }
+    }
 
-    // Mise à jour des distances entre deux noeuds (en nombre de cases)
-    for (int i=0; i<number_of_nodes; i++) {
+    for (int i=0; i<number_of_nodes; i++)
+    {
         for (int j=0; j<number_of_nodes; j++) {
             if (adjacency_matrix[i][j] == 1) {
                 adjacency_matrix[i][j] = abs(nodes_list[j][1] - nodes_list[i][1])  +  abs(nodes_list[j][2] - nodes_list[i][2]);
