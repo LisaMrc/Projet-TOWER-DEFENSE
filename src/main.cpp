@@ -64,19 +64,23 @@ int main()
     glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
         window_as_app(window).key_callback(key, scancode, action, mods);
     });
-    glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) {
+    glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) { //fonction pour convertir les coordonnées en cases
         window_as_app(window).mouse_button_callback(button, action, mods);
 
-        double xpos, ypos;
+        double xpos, ypos; //coordonnées en pixels
         glfwGetCursorPos(window, &xpos, &ypos);
         GLint windowWidth, windowHeight;
         glfwGetWindowSize(window, &windowWidth, &windowHeight);
-        int offset = (windowWidth-windowHeight)/2;	//decallage sur les côté	
+        int offset = (windowWidth-windowHeight)/2;	//decallage sur les côté
+
+        //std::cout << "x:" << (xpos / windowWidth); //coordonnées openGL
+        //std::cout << "y:" << (ypos / windowHeight);
+
         xpos = (xpos-offset)/windowHeight; 
         ypos = (ypos)/windowHeight;
        
-        std::cout << "x:" << (int)(xpos * 8);
-        std::cout << "y:" << (int)(ypos * 8);
+        std::cout << "xCase : " << (int)(xpos * 8) << "  ";
+        std::cout << "yCase : " << (int)(ypos * 8);
         std::cout << std::endl;
     });
     glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
