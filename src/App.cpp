@@ -25,7 +25,8 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
     _texture = loadTexture(test);
 }
 
-void App::setup() {
+void App::setup()
+{
     // Set the clear color to a nice blue
     glClearColor(0.0f, 0.0f, 0.4f, 1.0f);
 
@@ -34,6 +35,18 @@ void App::setup() {
     TextRenderer.SetColor(SimpleText::TEXT_COLOR, SimpleText::Color::WHITE);
     TextRenderer.SetColorf(SimpleText::BACKGROUND_COLOR, 0.f, 0.f, 0.f, 0.f);
     TextRenderer.EnableBlending(true);
+
+    // Verify if itd file is valid, extract information from it
+    std::vector<std::vector<std::string>> splitted_itd_file = split_itd_file();
+
+    // Map printing
+    std::unordered_map<glm::vec3, CaseType> RGB_CaseType_map = associate_RGB_to_CaseType(splitted_itd_file);
+    associate_px_pos_to_CaseType(RGB_CaseType_map);
+
+    // Create graph for ennemies from itd
+    std::vector<std::vector<float>> adjacency_matrix {create_adjacency_matrix(splitted_itd_file)};
+    Graph::WeightedGraph graph {Graph::build_from_adjacency_matrix(adjacency_matrix)};
+    graph.dijkstra(0, 7);
 }
 
 void App::update()
@@ -51,19 +64,19 @@ void App::render() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glBegin(GL_QUADS);
+    // glBegin(GL_QUADS);
 
-    glVertex2f(0, 0);
+    // glVertex2f(0, 0);
 
-    glVertex2f(0, 0.5);
+    // glVertex2f(0, 0.5);
 
-    glVertex2f(0.5, 0.5);
+    // glVertex2f(0.5, 0.5);
 
-    glVertex2f(0.5, 0);
+    // glVertex2f(0.5, 0);
 
-    glEnd();
+    // glEnd();
 
-    grid();
+    draw_grid();
 
     TextRenderer.Render();
 }

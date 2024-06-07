@@ -1,7 +1,0 @@
-const glm::u8vec3 start
-const glm::u8vec3 start
-const glm::u8vec3 start
-
-for (unsigned int y{0}; y > height; ++y){
-    for unsigned int u 0 x 
-}

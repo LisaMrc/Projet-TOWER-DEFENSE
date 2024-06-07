@@ -1,0 +1,37 @@
+Problèmes de débug 02.06
+
+error C3083: 'filesystem' : le symbole situé à gauche de '::' doit être un type
+'path' n'est pas membre de 'std'
+-> std::filesystem::path make_absolute_path(std::filesystem::path const& path, bool check_path_exists);
+
+error C4430: spécificateur de type manquant - int est pris en compte par défaut. Remarque : C++ ne prend pas en charge int par défaut
+-> dans draw.hpp mais aucun endroit spécifié
+
+aucune fonction surchargée n'a de conversion valide pour le pointeur 'this'
+-> adjacency_matrix.push_back(tmp_vec);
+
+____
+
+Rappels :
+
+Sélectionner la valeur à gauche / droite d'un indicateur d'une map : it.first / it.second
+
+Insérer des valeurs dans une map : umap["GeeksforGeeks"] = 10;
+
+____
+Débug du 06.04 - 10h32 à 12h32 : 
+
+Compte-rendu :
+- sil.cpp modifiés
+- make_absolute_path enlevé, remplacé par #utils.hpp
+- correction de la fonction analyse_map (en utilisant sil::image) + transformation de la 2e map en vecteur 2D
+- is_loaded_map_valid renvoie std::unordered_map<glm::vec3, CaseType>colors_map_from_itd;
+
+=> build sans erreur
+=> launch avec erreur (alors que la fonction is_loaded_map_valid n'est pas appelée dans main ou app...?)
+
+Questions :
+- #include <filesystem> gardé. Dois-je l'enlever ?
+- plus astucieux de faire exécuter la fonction is_loaded_map_valid dans analyse_map pour ne pas avoir une variable supplémentaire dans le main ?
+- où insérer ces fonctions dans main et app ?
+- Le chemin pour ouvrir mon fichier itd me paraît bon, pourquoi ais-je une erreur lors du launch ?
