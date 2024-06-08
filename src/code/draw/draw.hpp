@@ -1,9 +1,11 @@
 #pragma once
+#include <iostream>
 #include <vector>
 #include <unordered_map>
 #include <utility>
 #include <filesystem>
 #include "utils.hpp"
+#include <img/img.hpp>
 
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -59,3 +61,7 @@ void draw_map(std::vector<CaseType> RGB_CaseType_map);
 std::vector<std::vector<float>> create_adjacency_matrix(const std::vector<std::vector<std::string>> splitted_itd_file);
 
 void draw_map();
+
+// GLuint loadTexture(const img::Image& image);
+
+void draw_quad_with_texture(GLuint textureId);

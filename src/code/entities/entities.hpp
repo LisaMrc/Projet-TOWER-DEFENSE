@@ -7,6 +7,10 @@ struct ennemi
     int speed {};
     int damage {};
     int gold {};
+
+    // bool is_hitting();
+    // void damage();
+    bool is_dead();
 };
 
 

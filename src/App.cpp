@@ -1,3 +1,4 @@
+#include <iostream>
 #include "App.hpp"
 #include "code/draw/draw.hpp"
 
@@ -8,7 +9,7 @@
 #include "simpletext.h"
 #include "utils.hpp"
 #include "GLHelpers.hpp"
-
+/*
 App::App() : _previousTime(0.0), _viewSize(2.0) {
    // load what needs to be loaded here (for example textures)
     img::Image test {img::load(make_absolute_path("images/level.png", true), 3, true)};
@@ -24,6 +25,26 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
 
     _texture = loadTexture(test);
 }
+*/
+
+
+
+App::App() : _previousTime(0.0), _viewSize(2.0) {
+    // load what needs to be loaded here (for example textures)
+    img::Image test {img::load(make_absolute_path("images/level.png", true), 3, true)};
+    
+    // LAND TEXTURES
+    img::Image grass {img::load(make_absolute_path("images/textures/land/grass.bmp", true), 3, true)};
+    img::Image path {img::load(make_absolute_path("images/textures/land/path.bmp", true), 3, true)};
+    
+    // ENTITIES TEXTURES
+    img::Image king {img::load(make_absolute_path("images/textures/entities/king.png", true), 3, true)};
+    img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 3, true)};
+    img::Image tower {img::load(make_absolute_path("images/textures/entities/tower.png", true), 3, true)};
+
+    _texture = loadTexture(test);
+}
+
 
 void App::setup()
 {
@@ -47,6 +68,10 @@ void App::setup()
     std::vector<std::vector<float>> adjacency_matrix {create_adjacency_matrix(splitted_itd_file)};
     Graph::WeightedGraph graph {Graph::build_from_adjacency_matrix(adjacency_matrix)};
     std::unordered_map<int, std::pair<float, int>> d_g = graph.dijkstra(0, 7);
+
+    
+
+    
 }
 
 void App::update()
@@ -58,6 +83,7 @@ void App::update()
     render();
 }
 
+/*
 void App::render() {
     // Clear the color and depth buffers of the frame buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -79,6 +105,28 @@ void App::render() {
     draw_grid();
 
     TextRenderer.Render();
+}
+*/
+
+void App::render() {
+    // Clear the color and depth buffers of the frame buffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    // Draw the grid
+    draw_grid();
+
+    // Draw the quad with texture
+    // draw_quad_with_texture(_texture);
+
+    // Utiliser la fonction pour dessiner le quadrilatère avec texture
+    draw_quad_with_texture(_texture);
+
+    // Render the text
+    TextRenderer.Render();
+
+    
 }
 
 void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {

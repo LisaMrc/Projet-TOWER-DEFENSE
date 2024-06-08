@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <stack>
 #include <queue>
+#include <img/img.hpp>
 
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -336,3 +337,39 @@ std::vector<std::vector<float>> create_adjacency_matrix(const std::vector<std::v
 
     return adjacency_matrix;
 }
+
+/*
+GLuint loadTexture(const img::Image& image) {
+    GLuint textureId;
+    
+    glGenTextures(1, &textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width(), image.height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image.data());
+    glGenerateMipmap(GL_TEXTURE_2D);
+    
+    glBindTexture(GL_TEXTURE_2D, 0); // Unbind the texture
+    
+    return textureId;
+}
+*/
+
+void draw_quad_with_texture(GLuint textureId) {
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glColor3ub(255, 255, 255);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f, -1.0f);
+        glTexCoord2f(1.0f, 0.0f); glVertex2f( 1.0f, -1.0f);
+        glTexCoord2f(1.0f, 1.0f); glVertex2f( 1.0f,  1.0f);
+        glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f,  1.0f);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+}
+

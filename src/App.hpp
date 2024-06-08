@@ -1,5 +1,5 @@
 #pragma once
-
+#include <iostream>
 #include <glad/glad.h>
 #include <simpletext.h>
 #include "code/screens/screens.hpp"

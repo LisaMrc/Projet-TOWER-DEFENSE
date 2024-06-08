@@ -7,7 +7,7 @@
 
 #include "App.hpp"
 
-#include "code/draw/draw.hpp"
+// #include "code/draw/draw.hpp"
 namespace {
     App& window_as_app(GLFWwindow* window)
     {
@@ -18,8 +18,9 @@ namespace {
 // Optional: limit the frame rate
 constexpr double TARGET_TIME_FOR_FRAME { 1.0 / 60.0 };
 
-int main()
-{
+
+
+int main() {
     // Set an error callback to display glfw errors
     glfwSetErrorCallback([](int error, const char* description) {
         std::cerr << "Error " << error << ": " << description << std::endl;
@@ -101,17 +102,20 @@ int main()
 
     app.setup();
 
+    
+
     // Loop until the user closes the window
-    while (!glfwWindowShouldClose(window))
-    {
+    while (!glfwWindowShouldClose(window)) {
         // Enable transparency
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // Get time (in second) at loop beginning
-		double startTime { glfwGetTime() };
+        double startTime { glfwGetTime() };
 
         app.update();
+
+        
 
         // Swap front and back buffers
         glfwSwapBuffers(window);
@@ -120,14 +124,13 @@ int main()
         glfwPollEvents();
 
         // Optional: limit the frame rate
-		double elapsedTime { glfwGetTime() - startTime };
+        double elapsedTime { glfwGetTime() - startTime };
         // wait the remaining time to match the target wanted frame rate
-		if(elapsedTime < TARGET_TIME_FOR_FRAME)
-		{
-			glfwWaitEventsTimeout(TARGET_TIME_FOR_FRAME-elapsedTime);
-		}
+        if(elapsedTime < TARGET_TIME_FOR_FRAME) {
+            glfwWaitEventsTimeout(TARGET_TIME_FOR_FRAME-elapsedTime);
+        }
     }
-
+    
     glfwTerminate();
     return 0;
 }

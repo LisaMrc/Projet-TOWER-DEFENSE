@@ -2,6 +2,7 @@
 
 #include "glad/glad.h"
 
+
 GLuint loadTexture(uint8_t const* data, int width, int height) {
     GLuint textureId {};
 
@@ -22,6 +23,7 @@ GLuint loadTexture(uint8_t const* data, int width, int height) {
     return textureId;
 }
 
+/*
 void draw_quad_with_texture(GLuint textureId) {
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, textureId);
@@ -42,3 +44,4 @@ void draw_quad_with_texture(GLuint textureId) {
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_TEXTURE_2D);
 }
+*/
