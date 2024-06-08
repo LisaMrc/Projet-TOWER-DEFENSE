@@ -64,6 +64,18 @@ void App::render() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    // glBegin(GL_QUADS);
+
+    // glVertex2f(0, 0);
+
+    // glVertex2f(0, 0.5);
+
+    // glVertex2f(0.5, 0.5);
+
+    // glVertex2f(0.5, 0);
+
+    // glEnd();
+
     draw_grid();
 
     TextRenderer.Render();
