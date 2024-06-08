@@ -187,7 +187,8 @@ std::unordered_map<int, std::pair<float, int>> Graph::WeightedGraph::dijkstra(in
             }
             visited.push_back(current_node);
         }
-        return distances;
+
+    return distances;
 }
 
 const char * filepath {"../../data/map.itd"};

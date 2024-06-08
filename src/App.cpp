@@ -46,7 +46,7 @@ void App::setup()
     // Create graph for ennemies from itd
     std::vector<std::vector<float>> adjacency_matrix {create_adjacency_matrix(splitted_itd_file)};
     Graph::WeightedGraph graph {Graph::build_from_adjacency_matrix(adjacency_matrix)};
-    graph.dijkstra(0, 7);
+    std::unordered_map<int, std::pair<float, int>> d_g = graph.dijkstra(0, 7);
 }
 
 void App::update()
