@@ -1,27 +1,21 @@
 #include <iostream>
 #pragma once
 
-struct knight
+struct ennemi
 {
-    int health {200};
-    int speed {8};
-    int damage {50};
-    int gold {30};
+    int health {};
+    int speed {};
+    int damage {};
+    int gold {};
 };
 
-struct wizard
-{
-    int health {80};
-    int speed {4};
-    int damage {100};
-    int gold {60};
-};
+
 
 struct tower
 {
-    int power {20};
-    int range {10};
-    int rate {1}; // GDN : tir par seconde
+    int power {};
+    int range {};
+    int rate {}; // GDN : tir par seconde
 };
 
 extern int gold_earned; // extern int = idem "méthode" mais pour une variable
