@@ -11,9 +11,9 @@ bool ennemi::is_dead() {
     }
 }
 
-void damage(projectile projectile) {
-    (if projectile.x == x && projectile.y == y) {
-        health -= projectile.dammages;
+void damage(ennemi ennemi, projectile projectile) {
+    if (projectile.x == ennemi.x && projectile.y == ennemi.y) {
+        ennemi.health -= projectile.dammages;
     }
 }
 
