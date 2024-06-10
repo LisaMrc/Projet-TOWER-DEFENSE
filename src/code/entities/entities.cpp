@@ -16,3 +16,53 @@ void damage(projectile projectile) {
         health -= projectile.dammages;
     }
 }
+
+// std::vector<node> create_vect_nodes(std::vector<std::vector<std::string>> splitted_itd_file)
+// {
+//     std::vector<node> vect_nodes{};
+
+//     for (std::vector<std::string> splitted_line : splitted_itd_file)
+//     {
+//         if (splitted_line[0] == "node")
+//         {
+//             node current_node = {stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])};
+//             vect_nodes.push_back(current_node);
+//         }
+//     }
+//     return vect_nodes;
+// }
+
+// std::vector<node> enemy_map(std::vector<node> vect_nodes, std::unordered_map<int, std::pair<float, int>> dij_map)
+// {
+//     std::vector<node> enemy_path{};
+
+//     for (std::vector<std::string> splitted_line : splitted_itd_file)
+//     {
+//         Lire Dijkstra...
+//     }
+
+//     return enemy_path;
+// }
+
+// std::vector<node> create_vect_nodes(std::vector<std::vector<std::string>> splitted_itd_file)
+// {
+//     std::vector<node> vect_nodes{};
+
+//     for (std::vector<std::string> splitted_line : splitted_itd_file)
+//     {
+//         if (splitted_line[0] == "node")
+//         {
+//             node current_node = {stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])};
+//             vect_nodes.push_back(current_node);
+//         }
+//     }
+//     return vect_nodes;
+// }
+
+// std::vector<node> enemy_move(std::vector<node> enemy_path)
+// {
+//     translate enemy from path to path
+// }#include "entities.hpp"
+
+
+

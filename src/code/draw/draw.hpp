@@ -40,14 +40,20 @@ namespace Graph {
         bool operator==(WeightedGraph const& other) const = default;
         bool operator!=(WeightedGraph const& other) const = default;
 
-        void print_DFS(int const start) const;
-        void print_BFS(int const start) const;
-
         std::unordered_map<int, std::pair<float, int>> dijkstra(int const &start, int const end);
     };
 
     WeightedGraph build_from_adjacency_matrix(std::vector<std::vector<float>> const& adjacency_matrix);
 }
+
+struct Map
+{
+    size_t NUMBER_OF_PIXELS_IN_LINE{8};
+
+    float MAP_SIZE{2.f};
+    float SEMI_MAP_SIZE{MAP_SIZE / 2.0f};
+    float PIXEL_SIZE{MAP_SIZE / NUMBER_OF_PIXELS_IN_LINE};
+};
 
 void draw_grid();
 
@@ -60,8 +66,7 @@ void draw_map(std::vector<CaseType> RGB_CaseType_map);
 
 std::vector<std::vector<float>> create_adjacency_matrix(const std::vector<std::vector<std::string>> splitted_itd_file);
 
-void draw_map();
-
 // GLuint loadTexture(const img::Image& image);
 
-void draw_quad_with_texture(GLuint textureId);
+void draw_quad_with_texture(GLuint const &texture, float &x, float &y, Map &map);
+void draw_map(std::vector<CaseType> px_pos_CaseType_vec, Map &map);

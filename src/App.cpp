@@ -9,25 +9,6 @@
 #include "simpletext.h"
 #include "utils.hpp"
 #include "GLHelpers.hpp"
-/*
-App::App() : _previousTime(0.0), _viewSize(2.0) {
-   // load what needs to be loaded here (for example textures)
-    img::Image test {img::load(make_absolute_path("images/level.png", true), 3, true)};
-    
-    // LAND TEXTURES
-    img::Image grass {img::load(make_absolute_path("images/textures/land/grass.bmp", true), 3, true)};
-    img::Image path {img::load(make_absolute_path("images/textures/land/path.bmp", true), 3, true)};
-    
-    // ENTITIES TEXTURES
-    img::Image king {img::load(make_absolute_path("images/textures/entities/king.png", true), 3, true)};
-    img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 3, true)};
-    img::Image tower {img::load(make_absolute_path("images/textures/entities/tower.png", true), 3, true)};
-
-    _texture = loadTexture(test);
-}
-*/
-
-
 
 App::App() : _previousTime(0.0), _viewSize(2.0) {
     // load what needs to be loaded here (for example textures)
@@ -43,8 +24,14 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
     img::Image tower {img::load(make_absolute_path("images/textures/entities/tower.png", true), 3, true)};
 
     _texture = loadTexture(test);
-}
 
+    // _grass = loadTexture(grass);
+    // _path = loadTexture(path);
+
+    // _king = loadTexture(king);
+    // _knight = loadTexture(knight);
+    // _tower = loadTexture(tower);
+}
 
 void App::setup()
 {
@@ -67,11 +54,7 @@ void App::setup()
     // Create graph for ennemies from itd
     std::vector<std::vector<float>> adjacency_matrix {create_adjacency_matrix(splitted_itd_file)};
     Graph::WeightedGraph graph {Graph::build_from_adjacency_matrix(adjacency_matrix)};
-    std::unordered_map<int, std::pair<float, int>> d_g = graph.dijkstra(0, 7);
-
-    
-
-    
+    std::unordered_map<int, std::pair<float, int>> d_g = graph.dijkstra(0, 7); 
 }
 
 void App::update()
@@ -108,7 +91,12 @@ void App::render() {
 }
 */
 
-void App::render() {
+float x = 1;
+float y = 1;
+Map map;
+
+void App::render()
+{
     // Clear the color and depth buffers of the frame buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
@@ -118,15 +106,11 @@ void App::render() {
     draw_grid();
 
     // Draw the quad with texture
-    // draw_quad_with_texture(_texture);
-
-    // Utiliser la fonction pour dessiner le quadrilatère avec texture
-    draw_quad_with_texture(_texture);
+    draw_quad_with_texture(_texture, x, y, map);
+    // draw_map();
 
     // Render the text
     TextRenderer.Render();
-
-    
 }
 
 void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {
