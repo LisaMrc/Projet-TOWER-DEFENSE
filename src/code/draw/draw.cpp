@@ -79,83 +79,6 @@ Graph::WeightedGraph Graph::build_from_adjacency_matrix(const std::vector<std::v
     return output_graph;
 }
 
-void Graph::WeightedGraph::print_DFS(int const start) const
-{
-    // TODO : translate comments
-
-    std::stack<int> stack;
-    int current_node{};
-    std::vector<int>visited_edges{};
-    stack.push(start);
-
-    while (!(stack.empty()))
-    {
-        // add nodes to visited edges list
-        visited_edges.push_back(stack.top());
-
-        // Garder en mémoire la node
-        current_node = stack.top();
-
-        // retirer le dernier élt de la pile
-        stack.pop();
-
-        // trouver la node dans la adjacency_list
-        auto it = adjacency_list.find (current_node);
-
-        // trouver les nodes liées
-        auto adjacencies = (*it).second;
-
-        // Ajouter les nodes liées dans la pile
-        for (int i = 0; i < adjacencies.size(); i++)
-        {
-            stack.push(adjacencies[i].to);
-        }
-    }
-
-    for (int visited_edge : visited_edges)
-    {
-        std::cout << visited_edge << std::endl;
-    }
-}
-
-void Graph::WeightedGraph::print_BFS(int const start) const
-{
-    std::queue<int> queue;
-    queue.push(start);
-
-    int current_node{};
-    std::vector<int>visited_edges{};
-
-    while (!(queue.empty()))
-    {
-        // Garder en mémoire la node
-        current_node = queue.front();
-
-        // ajouter la node à la liste des sommets visités
-        visited_edges.push_back(current_node);
-
-        // retirer le premier élt de la file
-        queue.pop();
-
-        // trouver la node dans la adjacency_list
-        auto it = adjacency_list.find (current_node);
-
-        // trouver les nodes liées
-        auto adjacencies = (*it).second;
-
-        // Ajouter les nodes liées dans la pile
-        for (int i = 0; i < adjacencies.size(); i++)
-        {
-            queue.push(adjacencies[i].to);
-        }
-    }
-
-    for (int visited_edge : visited_edges)
-    {
-        std::cout << visited_edge << std::endl;
-    }
-}
-
 std::unordered_map<int, std::pair<float, int>> Graph::WeightedGraph::dijkstra(int const &start, int const end)
     {
         std::unordered_map<int, std::pair<float, int>> distances{};
@@ -253,9 +176,9 @@ std::vector<CaseType> associate_px_pos_to_CaseType(const std::unordered_map<glm:
     std::vector<CaseType> px_pos_CaseType_vec;
     px_pos_CaseType_vec.resize(map.width() * map.height());
 
-    for (int x = 0; x < map.width()-8; x++)
+    for (int x = 0; x < map.width(); x++)
     {
-        for (int y = 0; y < map.height()-8; y++)
+        for (int y = 0; y < map.height(); y++)
         {
             const auto it {RGB_CaseType_map.find(map.pixel(x,y))};
 
@@ -359,17 +282,86 @@ GLuint loadTexture(const img::Image& image) {
 }
 */
 
-void draw_quad_with_texture(GLuint textureId) {
+// Dessine une case texturisée à la position (x,y)
+void draw_quad_with_texture(GLuint const &texture, float &x, float &y, Map &map)
+{
+    float X0 = -1 + map.PIXEL_SIZE*x;
+    float X1 = X0 + map.PIXEL_SIZE;
+    float Y0 = 1 - y*map.PIXEL_SIZE - map.PIXEL_SIZE;
+    float Y1 = Y0 + map.PIXEL_SIZE;
+
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, textureId);
+    glBindTexture(GL_TEXTURE_2D, texture);
     glColor3ub(255, 255, 255);
+
     glBegin(GL_QUADS);
-        glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f, -1.0f);
-        glTexCoord2f(1.0f, 0.0f); glVertex2f( 1.0f, -1.0f);
-        glTexCoord2f(1.0f, 1.0f); glVertex2f( 1.0f,  1.0f);
-        glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f,  1.0f);
+        glTexCoord2d(0, 0);
+        glVertex2f(X0, Y0);
+
+        glTexCoord2d(1, 0);
+        glVertex2f(X1, Y0);
+
+        glTexCoord2d(1, 1);
+        glVertex2f(X1, Y1);
+
+        glTexCoord2d(0, 1);
+        glVertex2f(X0, Y1);
     glEnd();
+
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_TEXTURE_2D);
 }
 
+// void draw_map(std::vector<CaseType> px_pos_CaseType_vec)
+// {
+//     sil::Image map {sil::Image("data/map.png")};
+//     for (float x = 0; x < 7; x++)
+//     {
+//         for (float y = 0; y < 7; y++)
+//         {
+//             if (px_pos_CaseType_vec[x + map.width()* y] == CaseType::PATH)
+//             {
+//                 draw_quad_with_texture(_path, x, y, map);
+//             }
+//             else if (px_pos_CaseType_vec[x + map.width()* y] == CaseType::GRASS)
+//             {
+//                 draw_quad_with_texture(_grass, x, y, map);
+//             }
+//             else if (px_pos_CaseType_vec[x + map.width()* y] == CaseType::IN)
+//             {
+//                 draw_quad_with_texture(_path, x, y, map);
+//             }
+//             else if (px_pos_CaseType_vec[x + map.width()* y] == CaseType::OUT)
+//             {
+//                 draw_quad_with_texture(_king, x, y, map);
+//             }
+//         }
+//     }
+// }
+
+// void draw_map(std::vector<CaseType> px_pos_CaseType_vec, Map &map)
+// {
+//     sil::Image imagemap {sil::Image("data/map.png")};
+//     for (float x = 0; x < 7; x++)
+//     {
+//         for (float y = 0; y < 7; y++)
+//         {
+//             if (px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::PATH)
+//             {
+//                 draw_quad_with_texture(_texture, x, y, map);
+//             }
+//             else if (px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::GRASS)
+//             {
+//                 draw_quad_with_texture(_texture, x, y, map);
+//             }
+//             else if (px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::IN)
+//             {
+//                 draw_quad_with_texture(_texture, x, y, map);
+//             }
+//             else if (px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::OUT)
+//             {
+//                 draw_quad_with_texture(_texture, x, y, map);
+//             }
+//         }
+//     }
+// }

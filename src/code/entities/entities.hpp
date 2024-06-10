@@ -1,5 +1,8 @@
-#include <iostream>
 #pragma once
+#include <vector>
+#include <string>
+
+// #include "../draw/draw.hpp"
 
 struct ennemi
 {
@@ -13,8 +16,6 @@ struct ennemi
     bool is_dead();
 };
 
-
-
 struct tower
 {
     int power {};
@@ -23,3 +24,12 @@ struct tower
 };
 
 extern int gold_earned; // extern int = idem "méthode" mais pour une variable
+
+// struct node
+// {
+//     int node_id;
+//     int node_x;
+//     int node_y;
+// };
+
+// std::vector<node> create_vect_nodes(std::vector<std::vector<std::string>> splitted_itd_file);
