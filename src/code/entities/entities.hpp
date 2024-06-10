@@ -4,6 +4,12 @@
 
 // #include "../draw/draw.hpp"
 
+enum class ProjectileKind {
+    Arrow,
+    Fireball,
+    Magicball,
+};
+
 struct projectile
 {
     int dammages {};
@@ -26,14 +32,18 @@ struct ennemi
 
 struct tower
 {
-    int power {};
+    ProjectileKind projectile;
     int range {};
     int rate {}; // GDN : tir par seconde
+    float x {}; // position x
+    float y {}; // position y
 };
 
 extern int gold_earned; // extern int = idem "méthode" mais pour une variable
 
 void damage(ennemi ennemi, projectile projectile);
+bool in_range(ennemi ennemi, tower tour);
+void fire(ennemi ennemi, tower tour);
 
 // struct node
 // {

@@ -17,6 +17,22 @@ void damage(ennemi ennemi, projectile projectile) {
     }
 }
 
+bool in_range(ennemi ennemi, tower tour) {
+    if (ennemi.x - tour.x <= tour.range || ennemi.y - tour.y <= tour.range) {
+        return true;
+    }
+}
+
+void fire(ennemi ennemi, tower tour) {
+    bool range {in_range(ennemi, tour)};
+    bool death {ennemi.is_dead()};
+    while (range == true || death == false) {
+        range = in_range(ennemi, tour);
+        death = ennemi.is_dead();
+        // envoyer un projectile (== projectileKind) toutes les XX secondes (== tower.rate) sur l'ennemi
+    }
+}
+
 // std::vector<node> create_vect_nodes(std::vector<std::vector<std::string>> splitted_itd_file)
 // {
 //     std::vector<node> vect_nodes{};
