@@ -11,26 +11,26 @@
 #include "GLHelpers.hpp"
 
 App::App() : _previousTime(0.0), _viewSize(2.0) {
-    // load what needs to be loaded here (for example textures)
     img::Image test {img::load(make_absolute_path("images/level.png", true), 3, true)};
+    map._texture = loadTexture(test);
     
     // LAND TEXTURES
     img::Image grass {img::load(make_absolute_path("images/textures/land/grass.bmp", true), 3, true)};
     img::Image path {img::load(make_absolute_path("images/textures/land/path.bmp", true), 3, true)};
+    img::Image in {img::load(make_absolute_path("images/textures/land/in.png", true), 3, true)};
+    img::Image out {img::load(make_absolute_path("images/textures/land/out.png", true), 3, true)};
     
     // ENTITIES TEXTURES
     img::Image king {img::load(make_absolute_path("images/textures/entities/king.png", true), 3, true)};
     img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 3, true)};
     img::Image tower {img::load(make_absolute_path("images/textures/entities/tower.png", true), 3, true)};
 
-    _texture = loadTexture(test);
+    map._grass = loadTexture(grass);
+    map._path = loadTexture(path);
+    map._in = loadTexture(in);
+    map._out = loadTexture(out);
 
-    // _grass = loadTexture(grass);
-    // _path = loadTexture(path);
-
-    // _king = loadTexture(king);
-    // _knight = loadTexture(knight);
-    // _tower = loadTexture(tower);
+    map._king = loadTexture(king);
 }
 
 void App::setup()
@@ -47,9 +47,9 @@ void App::setup()
     // Verify if itd file is valid, extract information from it
     std::vector<std::vector<std::string>> splitted_itd_file = split_itd_file();
 
-    // Map printing
-    std::unordered_map<glm::vec3, CaseType> RGB_CaseType_map = associate_RGB_to_CaseType(splitted_itd_file);
-    associate_px_pos_to_CaseType(RGB_CaseType_map);
+    // Tools to print map
+    map.associate_RGB_to_CaseType(splitted_itd_file);
+    map.associate_px_pos_to_CaseType();
 
     // Create graph for ennemies from itd
     std::vector<std::vector<float>> adjacency_matrix {create_adjacency_matrix(splitted_itd_file)};
@@ -66,35 +66,6 @@ void App::update()
     render();
 }
 
-/*
-void App::render() {
-    // Clear the color and depth buffers of the frame buffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    // glBegin(GL_QUADS);
-
-    // glVertex2f(0, 0);
-
-    // glVertex2f(0, 0.5);
-
-    // glVertex2f(0.5, 0.5);
-
-    // glVertex2f(0.5, 0);
-
-    // glEnd();
-
-    draw_grid();
-
-    TextRenderer.Render();
-}
-*/
-
-float x = 1;
-float y = 1;
-Map map;
-
 void App::render()
 {
     // Clear the color and depth buffers of the frame buffer
@@ -105,9 +76,8 @@ void App::render()
     // Draw the grid
     draw_grid();
 
-    // Draw the quad with texture
-    draw_quad_with_texture(_texture, x, y, map);
-    // draw_map();
+    // Draw the map
+    map.draw_map(map);
 
     // Render the text
     TextRenderer.Render();

@@ -4,6 +4,7 @@
 #include <simpletext.h>
 #include "code/screens/screens.hpp"
 #include "code/entities/entities.hpp"
+#include "code/draw/draw.hpp"
 
 class App {
 public:
@@ -28,8 +29,8 @@ private:
     float _viewSize {};
 
     // Add your variables here
-    GLuint _texture {};
     float _angle {};
-
     SimpleText TextRenderer {};
+
+    Map map;
 };

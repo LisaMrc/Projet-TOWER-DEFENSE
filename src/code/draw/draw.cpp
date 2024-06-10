@@ -13,6 +13,7 @@
 #include <queue>
 #include <img/img.hpp>
 
+#include <GLHelpers.hpp>
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/hash.hpp"
@@ -23,9 +24,9 @@ std::vector<std::string> split_string(std::string const& s)
     return std::vector<std::string>(std::istream_iterator<std::string>(in), std::istream_iterator<std::string>()); 
 }
 
+// Grille de 8*8 carrés servant de repère
 void draw_grid()
 {
-    // GDN : we have decided to grid the square screen by a 8x8 grid
     float const u = 4;
 
     glColor3f(1, 0, 0);
@@ -117,6 +118,7 @@ std::unordered_map<int, std::pair<float, int>> Graph::WeightedGraph::dijkstra(in
 
 const char * filepath {"../../data/map.itd"};
 
+// Lit et découpe le fichier itd
 std::vector<std::vector<std::string>>split_itd_file()
 {
     std::ifstream map_itd (filepath);
@@ -143,48 +145,46 @@ std::vector<std::vector<std::string>>split_itd_file()
     return splitted_itd_file;
 }
 
-std::unordered_map<glm::vec3, CaseType> associate_RGB_to_CaseType(std::vector<std::vector<std::string>> splitted_itd_file)
+// Vérification : les triplets après les mots "path", "in" ou "out" sont-ils valides ? + remplissage de la map où seront associées les couleurs à un type de case (RGB_CaseType_map), selon le fichier itd
+std::unordered_map<glm::vec3, CaseType> Map::associate_RGB_to_CaseType(std::vector<std::vector<std::string>> splitted_itd_file)
 {
-    std::unordered_map<glm::vec3, CaseType> RGB_CaseType_map;
-
-    // Vérification : les triplets après les mots "path", "in" ou "out" sont-ils valides ? + remplissage de la map où seront associées les couleurs à un type de case (RGB_CaseType_map), selon le fichier itd
     for (std::vector<std::string> splitted_line : splitted_itd_file)
     {
         if (splitted_line[0] == "path")
         {
-            RGB_CaseType_map[glm::vec3{stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])}] = CaseType::PATH; 
+            this->RGB_CaseType_map[glm::vec3{stof(splitted_line[1])/255, stof(splitted_line[2])/255, stof(splitted_line[3])/255}] = CaseType::PATH; 
         }
         else if (splitted_line[0] == "in")
         {
-            RGB_CaseType_map[glm::vec3{stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])}] = CaseType::IN;
+            this->RGB_CaseType_map[glm::vec3{stof(splitted_line[1])/255, stof(splitted_line[2])/255, stof(splitted_line[3])/255}] = CaseType::IN;
         }
         else if (splitted_line[0] == "out")
         {
-            RGB_CaseType_map[glm::vec3{stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])}] = CaseType::OUT;
+            this->RGB_CaseType_map[glm::vec3{stof(splitted_line[1])/255, stof(splitted_line[2])/255, stof(splitted_line[3])/255}] = CaseType::OUT;
         }
     }
 
     // Ajout de la couleur qui définit "l'herbe"
     RGB_CaseType_map[glm::vec3{0, 0, 0}] = CaseType::GRASS;
 
-    return RGB_CaseType_map;
+    return this->RGB_CaseType_map;
 }
 
-std::vector<CaseType> associate_px_pos_to_CaseType(const std::unordered_map<glm::vec3, CaseType> RGB_CaseType_map)
+// Associe une position de pixel (x, y) à un type de Case
+std::vector<CaseType> Map::associate_px_pos_to_CaseType()
 {
     sil::Image map {sil::Image("data/map.png")};
-    std::vector<CaseType> px_pos_CaseType_vec;
-    px_pos_CaseType_vec.resize(map.width() * map.height());
+    this->px_pos_CaseType_vec.resize(map.width() * map.height());
 
     for (int x = 0; x < map.width(); x++)
     {
         for (int y = 0; y < map.height(); y++)
         {
-            const auto it {RGB_CaseType_map.find(map.pixel(x,y))};
+            const auto it {this->RGB_CaseType_map.find(map.pixel(x,y))};
 
-            if (it != RGB_CaseType_map.end())
+            if (it != this->RGB_CaseType_map.end())
             {
-                px_pos_CaseType_vec[x + map.width()*y] = (*it).second;
+                this->px_pos_CaseType_vec[x + map.width()*y] = (*it).second;
             } 
             else
             {
@@ -192,7 +192,7 @@ std::vector<CaseType> associate_px_pos_to_CaseType(const std::unordered_map<glm:
             }
         }
     }
-    return px_pos_CaseType_vec;
+    return this->px_pos_CaseType_vec;
 }
 
 std::vector<std::vector<float>> create_adjacency_matrix(const std::vector<std::vector<std::string>> splitted_itd_file)
@@ -261,27 +261,6 @@ std::vector<std::vector<float>> create_adjacency_matrix(const std::vector<std::v
     return adjacency_matrix;
 }
 
-/*
-GLuint loadTexture(const img::Image& image) {
-    GLuint textureId;
-    
-    glGenTextures(1, &textureId);
-    glBindTexture(GL_TEXTURE_2D, textureId);
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width(), image.height(), 0, GL_RGB, GL_UNSIGNED_BYTE, image.data());
-    glGenerateMipmap(GL_TEXTURE_2D);
-    
-    glBindTexture(GL_TEXTURE_2D, 0); // Unbind the texture
-    
-    return textureId;
-}
-*/
-
 // Dessine une case texturisée à la position (x,y)
 void draw_quad_with_texture(GLuint const &texture, float &x, float &y, Map &map)
 {
@@ -312,56 +291,31 @@ void draw_quad_with_texture(GLuint const &texture, float &x, float &y, Map &map)
     glDisable(GL_TEXTURE_2D);
 }
 
-// void draw_map(std::vector<CaseType> px_pos_CaseType_vec)
-// {
-//     sil::Image map {sil::Image("data/map.png")};
-//     for (float x = 0; x < 7; x++)
-//     {
-//         for (float y = 0; y < 7; y++)
-//         {
-//             if (px_pos_CaseType_vec[x + map.width()* y] == CaseType::PATH)
-//             {
-//                 draw_quad_with_texture(_path, x, y, map);
-//             }
-//             else if (px_pos_CaseType_vec[x + map.width()* y] == CaseType::GRASS)
-//             {
-//                 draw_quad_with_texture(_grass, x, y, map);
-//             }
-//             else if (px_pos_CaseType_vec[x + map.width()* y] == CaseType::IN)
-//             {
-//                 draw_quad_with_texture(_path, x, y, map);
-//             }
-//             else if (px_pos_CaseType_vec[x + map.width()* y] == CaseType::OUT)
-//             {
-//                 draw_quad_with_texture(_king, x, y, map);
-//             }
-//         }
-//     }
-// }
-
-// void draw_map(std::vector<CaseType> px_pos_CaseType_vec, Map &map)
-// {
-//     sil::Image imagemap {sil::Image("data/map.png")};
-//     for (float x = 0; x < 7; x++)
-//     {
-//         for (float y = 0; y < 7; y++)
-//         {
-//             if (px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::PATH)
-//             {
-//                 draw_quad_with_texture(_texture, x, y, map);
-//             }
-//             else if (px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::GRASS)
-//             {
-//                 draw_quad_with_texture(_texture, x, y, map);
-//             }
-//             else if (px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::IN)
-//             {
-//                 draw_quad_with_texture(_texture, x, y, map);
-//             }
-//             else if (px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::OUT)
-//             {
-//                 draw_quad_with_texture(_texture, x, y, map);
-//             }
-//         }
-//     }
-// }
+// Dessine la map
+void Map::draw_map (Map &map)
+{
+    sil::Image imagemap {sil::Image("data/map.png")};
+ 
+    for (float x = 0; x < 8; x++)
+    {
+        for (float y = 0; y < 8; y++)
+        {
+            if (this->px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::PATH)
+            {
+                draw_quad_with_texture(this->_path, x, y, map);
+            }
+            else if (this->px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::GRASS)
+            {
+                draw_quad_with_texture(this->_grass, x, y, map);
+            }
+            else if (this->px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::IN)
+            {
+                draw_quad_with_texture(this->_in, x, y, map);
+            }
+            else if (this->px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::OUT)
+            {
+                draw_quad_with_texture(this->_out, x, y, map);
+            }
+        }
+    }
+}
