@@ -22,14 +22,16 @@ struct projectile
     float y {}; // position y
 };
 
-struct enemy
+struct Enemy
 {
     int health {};
     int speed {};
     int damage {};
     int gold {};
-    int x {}; // position en x sur la grille
-    int y {}; // position en y sur la grille
+
+    float x {}; // position en x sur la grille
+    float y {}; // position en y sur la grille
+    
     bool is_dead();
 
     GLuint _knight {};
@@ -47,9 +49,9 @@ struct tower
 
 extern int gold_earned; // extern int = idem "méthode" mais pour une variable
 
-void damage(enemy enemy, projectile projectile);
-bool in_range(enemy enemy, tower tour);
-void fire(enemy enemy, tower tour);
+void damage(Enemy Enemy, projectile projectile);
+bool in_range(Enemy Enemy, tower tour);
+void fire(Enemy Enemy, tower tour);
 
 struct node
 {
@@ -65,11 +67,9 @@ std::vector<node> get_enemy_path (std::vector<node> vector_of_nodes, std::vector
 struct King
 {
     int health{};
-    int x {}; // position en x sur la grille
-    int y {}; // position en y sur la grille
+    float x {}; // position en x sur la grille
+    float y {}; // position en y sur la grille
     bool is_dead{0};
 
     GLuint _king{};
-
-    void draw_king();
 };

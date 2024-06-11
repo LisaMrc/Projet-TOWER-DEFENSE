@@ -32,6 +32,8 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
     map._out = loadTexture(out);
 
     kinger._king = loadTexture(king);
+
+    Purrsival._knight = loadTexture(knight);
 }
 
 void App::setup()
@@ -60,10 +62,13 @@ void App::setup()
     std::vector<int> shortest_path = get_shortest_path (dij_map, vec_nodes);
     std::vector<node> enemy_path = get_enemy_path (vec_nodes, shortest_path);
 
-    for (node node : enemy_path)
-    {
-        std::cout << node.node_id << std::endl;
-    }
+    // Initialise la position du roi (il ne bougera pas)
+    kinger.x = enemy_path.back().node_x;
+    kinger.y = enemy_path.back().node_y;
+
+    // Initialise la position de l'ennemi 1 (Purrsival)
+    Purrsival.x = enemy_path.front().node_x;
+    Purrsival.y = enemy_path.front().node_y;
     
 }
 
@@ -76,9 +81,6 @@ void App::update()
     render();
 }
 
-float x = 6;
-float y = 6;
-
 void App::render()
 {
     // Clear the color and depth buffers of the frame buffer
@@ -86,16 +88,22 @@ void App::render()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    // Render the text
+    TextRenderer.Render();
+
     // Draw the grid
     draw_grid();
 
     // Draw the map
     map.draw_map(map);
 
-    // Render the text
-    TextRenderer.Render();
+    // Draw the King
+    draw_quad_with_texture(kinger._king, kinger.x, kinger.y, map);
 
-    draw_quad_with_texture(kinger._king, x, y, map);
+    glPushMatrix();
+        // glTranslatef(0.5f, 0.5f, 0.0f); // Déplacer le carré de 0.5 unités à droite et 0.5 unités vers le haut
+        draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map);
+    glPopMatrix();
 }
 
 void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {
