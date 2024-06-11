@@ -1,6 +1,7 @@
 #include <iostream>
 #include "App.hpp"
 #include "code/draw/draw.hpp"
+#include "code/entities/entities.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -30,7 +31,7 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
     map._in = loadTexture(in);
     map._out = loadTexture(out);
 
-    map._king = loadTexture(king);
+    kinger._king = loadTexture(king);
 }
 
 void App::setup()
@@ -44,7 +45,7 @@ void App::setup()
     TextRenderer.SetColorf(SimpleText::BACKGROUND_COLOR, 0.f, 0.f, 0.f, 0.f);
     TextRenderer.EnableBlending(true);
 
-    // Verify if itd file is valid, extract information from it
+    // Extract information from itd file
     std::vector<std::vector<std::string>> splitted_itd_file = split_itd_file();
 
     // Tools to print map
@@ -54,7 +55,16 @@ void App::setup()
     // Create graph for ennemies from itd
     std::vector<std::vector<float>> adjacency_matrix {create_adjacency_matrix(splitted_itd_file)};
     Graph::WeightedGraph graph {Graph::build_from_adjacency_matrix(adjacency_matrix)};
-    std::unordered_map<int, std::pair<float, int>> d_g = graph.dijkstra(0, 7); 
+    std::unordered_map<int, std::pair<float, int>> dij_map = graph.dijkstra(0, 7); 
+    std::vector<node> vec_nodes = create_vect_nodes(splitted_itd_file);
+    std::vector<int> shortest_path = get_shortest_path (dij_map, vec_nodes);
+    std::vector<node> enemy_path = get_enemy_path (vec_nodes, shortest_path);
+
+    for (node node : enemy_path)
+    {
+        std::cout << node.node_id << std::endl;
+    }
+    
 }
 
 void App::update()
@@ -65,6 +75,9 @@ void App::update()
     
     render();
 }
+
+float x = 6;
+float y = 6;
 
 void App::render()
 {
@@ -81,6 +94,8 @@ void App::render()
 
     // Render the text
     TextRenderer.Render();
+
+    draw_quad_with_texture(kinger._king, x, y, map);
 }
 
 void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {

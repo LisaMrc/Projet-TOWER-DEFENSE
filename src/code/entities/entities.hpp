@@ -1,33 +1,39 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <unordered_map>
+
+#include <GLHelpers.hpp>
 
 // #include "../draw/draw.hpp"
 
-enum class ProjectileKind {
+enum class ProjectileKind
+{
     Arrow,
     Fireball,
-    Magicball,
+    lightning_arrow,
 };
 
 struct projectile
 {
-    int dammages {};
+    int damages {};
     float speed {};
     float x {}; // position x
     float y {}; // position y
 };
 
-struct ennemi
+struct enemy
 {
     int health {};
     int speed {};
     int damage {};
     int gold {};
-    float x {}; // position x
-    float y {}; // position y
+    int x {}; // position en x sur la grille
+    int y {}; // position en y sur la grille
     bool is_dead();
-    
+
+    GLuint _knight {};
+    GLuint _sorcerer {};
 };
 
 struct tower
@@ -41,15 +47,29 @@ struct tower
 
 extern int gold_earned; // extern int = idem "méthode" mais pour une variable
 
-void damage(ennemi ennemi, projectile projectile);
-bool in_range(ennemi ennemi, tower tour);
-void fire(ennemi ennemi, tower tour);
+void damage(enemy enemy, projectile projectile);
+bool in_range(enemy enemy, tower tour);
+void fire(enemy enemy, tower tour);
 
-// struct node
-// {
-//     int node_id;
-//     int node_x;
-//     int node_y;
-// };
+struct node
+{
+    int node_id;
+    int node_x;
+    int node_y;
+};
 
-// std::vector<node> create_vect_nodes(std::vector<std::vector<std::string>> splitted_itd_file);
+std::vector<node> create_vect_nodes(std::vector<std::vector<std::string>> splitted_itd_file);
+std::vector<int> get_shortest_path (std::unordered_map <int, std::pair<float, int>> dij_map, std::vector<node> vector_of_nodes);
+std::vector<node> get_enemy_path (std::vector<node> vector_of_nodes, std::vector<int> shortest_path);
+
+struct King
+{
+    int health{};
+    int x {}; // position en x sur la grille
+    int y {}; // position en y sur la grille
+    bool is_dead{0};
+
+    GLuint _king{};
+
+    void draw_king();
+};

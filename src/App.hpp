@@ -5,6 +5,7 @@
 #include "code/screens/screens.hpp"
 #include "code/entities/entities.hpp"
 #include "code/draw/draw.hpp"
+#include "code/entities/entities.hpp"
 
 class App {
 public:
@@ -33,4 +34,5 @@ private:
     SimpleText TextRenderer {};
 
     Map map;
+    King kinger;
 };
