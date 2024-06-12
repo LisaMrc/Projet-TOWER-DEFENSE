@@ -95,23 +95,19 @@ std::vector<node> get_enemy_path (std::vector<node> vector_of_nodes, std::vector
 void Enemy::enemy_move()
 {
     node start_of_path = this->enemy_path[0];
-    // node end_of_path = this->enemy_path.back();
-    node end_of_path = this->enemy_path[1];
+    node end_of_path = this->enemy_path.back();
 
     node current_node{start_of_path};
     node target_node{this->enemy_path[1]};
 
-    if (this->x < 6)
+    if (this->x != target_node.node_x)
     {
-        this->x += .01*this->speed;
+        this->x += (.25)*(1.f/16)*this->speed;
     }
-    else
+    else if (this->x == target_node.node_x)
     {
-        this->x += 0;
+        std::cout << "YIPEE";
+        current_node = target_node;
+        target_node = enemy_path[2];
     }
-
-    // while ((this->x != end_of_path.node_x) && (this->y != end_of_path.node_y))
-    // {
-    //     this->x += .01*this->speed;
-    // }
 }
