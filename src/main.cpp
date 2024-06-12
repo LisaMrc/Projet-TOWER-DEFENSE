@@ -104,10 +104,6 @@ int main() {
 
     app.setup();
 
-    
-
-
-
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(window)) {
         // Enable transparency
@@ -133,7 +129,6 @@ int main() {
 
         app.mouseXpos = xpos;
         app.mouseYpos = ypos;
-        double startTime { glfwGetTime() };
 
         app.update();
 
@@ -153,7 +148,6 @@ int main() {
 		}
         if (app.window_close){
             glfwSetWindowShouldClose(window, true);
-            std::cout << "fermer";
         }
         if(elapsedTime < TARGET_TIME_FOR_FRAME) {
             glfwWaitEventsTimeout(TARGET_TIME_FOR_FRAME-elapsedTime);

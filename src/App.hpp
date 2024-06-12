@@ -36,6 +36,7 @@ public:
 
     int mouseXpos;
     int mouseYpos;
+    GLuint _texture; 
 
     bool window_close = false;
 

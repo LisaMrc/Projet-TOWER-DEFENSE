@@ -54,7 +54,6 @@ struct Map
     float SEMI_MAP_SIZE{MAP_SIZE / 2.0f};
     float PIXEL_SIZE{MAP_SIZE / NUMBER_OF_PIXELS_IN_LINE};
 
-    GLuint _texture {};
     GLuint _grass {};
     GLuint _path {};
     GLuint _in {};
@@ -75,3 +74,4 @@ std::vector<std::vector<std::string>>split_itd_file();
 std::vector<std::vector<float>> create_adjacency_matrix(const std::vector<std::vector<std::string>> splitted_itd_file);
 
 void draw_quad_with_texture(GLuint const &texture, float &x, float &y, Map &map);
+void draw_quad_with_texture_v2(GLuint const &texture);
