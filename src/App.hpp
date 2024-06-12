@@ -6,6 +6,7 @@
 #include "code/entities/entities.hpp"
 #include "code/draw/draw.hpp"
 #include "code/entities/entities.hpp"
+#include "code/ui/button.hpp"
 
 class App {
 public:
@@ -36,4 +37,12 @@ private:
     Map map;
     King kinger{250, 0, 0, 0};
     Enemy Purrsival{50, 1, 20, 10, 0, 0, 0};
+
+    tower arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
+
+    // screen_button start{state::start_button, 20};
+    // screen_button stop{state::quit_button, 20};
+    // screen_button pause{state::pause_button, 20};
 };
+
+

@@ -26,6 +26,11 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
     img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 3, true)};
     img::Image tower {img::load(make_absolute_path("images/textures/entities/tower.png", true), 3, true)};
 
+    // BUTTON TEXTURE
+    img::Image start {img::load(make_absolute_path("images/button/start_button.png", true), 3, true)};
+    img::Image stop {img::load(make_absolute_path("images/button/stop_button.png", true), 3, true)};
+    img::Image pause {img::load(make_absolute_path("images/button/pause_button.png", true), 3, true)};
+
     map._grass = loadTexture(grass);
     map._path = loadTexture(path);
     map._in = loadTexture(in);
@@ -34,6 +39,12 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
     kinger._king = loadTexture(king);
 
     Purrsival._knight = loadTexture(knight);
+
+    // start._start = loadTexture(start);
+    // stop._stop = loadTexture(stop);
+    // pause._pause = loadTexture(pause);
+
+    arrow._arrow = loadTexture(tower);
 }
 
 void App::setup()
