@@ -1,5 +1,6 @@
 #include "entities.hpp"
 #include "../draw/draw.hpp"
+#include "../../App.hpp"
 
 #include <iostream>
 #include <unordered_map>
@@ -92,6 +93,11 @@ std::vector<node> get_enemy_path (std::vector<node> vector_of_nodes, std::vector
     return enemy_path;
 }
 
+void Enemy::get_elapsedTime(const double & elapsedTime)
+{
+    this->enemy_clock = elapsedTime;
+}
+
 void Enemy::enemy_move()
 {
     node start_of_path = this->enemy_path[0];
@@ -99,49 +105,30 @@ void Enemy::enemy_move()
 
     node current_node{start_of_path};
 
-    // for (int i = 1; i < enemy_path.size() - 1; i++)
-    // {
-    //     node target_node{this->enemy_path[i]};
+    node target_node{this->enemy_path[this->node_nbr]};
 
-    //     if ((this->x != target_node.node_x))
-    //     {
-    //         this->x += (target_node.node_x - current_node.node_x)*(.25)*(1.f/16)*this->speed;
-    //     }
-        
-    //     if (this->y != target_node.node_y)
-    //     {
-    //         this->y += (target_node.node_y - current_node.node_y)*(.25)*(1.f/16)*this->speed;
-    //     }
+    int coeff_x{1};
+    int coeff_y{1};
 
-    //     else if ((this->x == target_node.node_x) && (this->y == target_node.node_y))
-    //     {
-    //         current_node = target_node;
-    //         target_node = enemy_path[i+1];
-    //         std::cout << "YIPEE";
-    //     }
-    // }
+    if (target_node.node_x < current_node.node_x)
+        coeff_x = -1;
 
-    node target_node{this->enemy_path[1]};
+    if (target_node.node_y < current_node.node_y)
+        coeff_y = -1;
 
-    if ((this->x != target_node.node_x))
+    if (abs(target_node.node_x - current_node.node_x) > abs(target_node.node_y - current_node.node_y))
     {
-        this->x += (.25)*(1.f/16)*this->speed;
+
+        if (std::round(this->x * 10) / 10 == target_node.node_x)
+            this->node_nbr++;
+        else
+            this->x += coeff_x * this->enemy_clock * this->speed;
     }
-    else if (this->x == target_node.node_x)
+    else
     {
-        // std::cout << "YIPEE";
-        current_node = target_node;
-        target_node = enemy_path[2];
-    }
-
-    if (this->y != target_node.node_y)
-    {
-        this->y += (.25)*(1.f/16)*this->speed;
-    }
-    else if (this->y == target_node.node_y)
-    {
-        // std::cout << "HOURRA 2";
-        current_node = target_node;
-        target_node = enemy_path[3];
+        if (std::round(this->y * 10) / 10 == target_node.node_y)
+            this->node_nbr++;
+        else
+            this->y += coeff_y * this->enemy_clock * this->speed;
     }
 }

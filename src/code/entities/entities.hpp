@@ -31,7 +31,9 @@ struct Enemy
     GLuint _sorcerer {};
 
     std::vector<node> enemy_path;
-
+    double enemy_clock;
+    void get_elapsedTime(double const & elapsedTime);
+    int node_nbr = 1;
     void enemy_move();
 };
 

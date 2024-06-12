@@ -77,7 +77,9 @@ void App::update()
     const double currentTime { glfwGetTime() };
     const double elapsedTime { currentTime - _previousTime};
     _previousTime = currentTime;
-    
+
+    Purrsival.get_elapsedTime(elapsedTime);
+
     render();
 }
 
