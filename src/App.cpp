@@ -2,6 +2,7 @@
 #include "App.hpp"
 #include "code/draw/draw.hpp"
 #include "code/entities/entities.hpp"
+#include "code/ui/button.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -11,9 +12,12 @@
 #include "utils.hpp"
 #include "GLHelpers.hpp"
 
+
+
+
 App::App() : _previousTime(0.0), _viewSize(2.0) {
     img::Image test {img::load(make_absolute_path("images/level.png", true), 4, true)};
-    map._texture = loadTexture(test);
+    //listeDeButton[0].texture = loadTexture(test);
     
     // LAND TEXTURES
     img::Image grass {img::load(make_absolute_path("images/textures/land/grass.bmp", true), 4, true)};
@@ -34,6 +38,9 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
     kinger._king = loadTexture(king);
 
     Purrsival._knight = loadTexture(knight);
+
+    //TEXTURES BOUTONS
+    _texture = loadTexture(test);
 }
 
 void App::setup()
@@ -57,6 +64,13 @@ void App::setup()
     // Create graph for ennemies from itd
     std::vector<std::vector<float>> adjacency_matrix {create_adjacency_matrix(splitted_itd_file)};
     Graph::WeightedGraph graph {Graph::build_from_adjacency_matrix(adjacency_matrix)};
+
+    listeDeButton.push_back(Button{"Boutton_Start", false, 3, 4, 2, 1, _texture});
+    listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, _texture});
+    listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 1, 1, _texture});
+    listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, _texture});
+    
+
     std::unordered_map<int, std::pair<float, int>> dij_map = graph.dijkstra(0, 7); 
     std::vector<node> vec_nodes = create_vect_nodes(splitted_itd_file);
     std::vector<int> shortest_path = get_shortest_path (dij_map, vec_nodes);
@@ -80,6 +94,23 @@ void App::update()
 
     Purrsival.get_elapsedTime(elapsedTime);
 
+
+    // std::vector<int> posCaseMouse = passage_pixel_to_case(mouseXpos, mouseYpos);
+    // mouseXpos, mouseYpos = posCaseMouse[0], posCaseMouse[1];
+
+    if(listeDeButton[0].isPressed){
+        _state = state_screen::screen_LEVEL;
+    }
+
+    if(listeDeButton[1].isPressed){
+      window_close = true; //femer la fenetre 
+    }
+    
+    if(listeDeButton[2].isPressed){
+        _state = state_screen::MENU;
+    }
+
+
     render();
 }
 
@@ -94,15 +125,22 @@ void App::render()
 
     // Render the text
     TextRenderer.Render();
+    if(_state == state_screen::screen_LEVEL){
+        listeDeButton[0].isPressed = false;
+        draw_grid();
+        // Draw the grid
+        draw_grid();
 
-    // Draw the grid
-    // draw_grid();
+        // Draw the map
+        map.draw_map(map);
 
-    // Draw the map
-    map.draw_map(map);
+        // Draw the King
+        draw_quad_with_texture(kinger._king, kinger.x, kinger.y, map);
 
-    // Draw the King
-    draw_quad_with_texture(kinger._king, kinger.x, kinger.y, map);
+        Purrsival.enemy_move();
+        draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map);
+        listeDeButton[2].draw_me();
+    }
 
     // Draw the first knight
     if (Purrsival.target_node_id < Purrsival.enemy_path.size())
@@ -111,12 +149,36 @@ void App::render()
         // draw quad ici si ennemi doit disparaître
     }
     draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map); 
+    
+    if(_state == state_screen::MENU){
+        listeDeButton[0].isPressed = false;
+        listeDeButton[1].isPressed = false;
+        listeDeButton[2].isPressed = false;
+        listeDeButton[0].draw_me();
+        listeDeButton[1].draw_me();
+        listeDeButton[3].draw_me();
+    }
+    
+
 }
 
 void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {
 }
 
 void App::mouse_button_callback(int /*button*/, int /*action*/, int /*mods*/) {
+    if(mouseXpos >= listeDeButton[0].posX && mouseXpos < listeDeButton[0].posX+listeDeButton[0].width && 
+    mouseYpos >= listeDeButton[0].posY && mouseYpos < listeDeButton[0].posY + listeDeButton[0].height){
+        listeDeButton[0].isPressed = true;
+    }
+    if(mouseXpos >= listeDeButton[1].posX && mouseXpos < listeDeButton[1].posX+listeDeButton[1].width && 
+    mouseYpos >= listeDeButton[1].posY && mouseYpos < listeDeButton[1].posY + listeDeButton[1].height){
+        listeDeButton[1].isPressed = true;
+    }
+    if(mouseXpos >= listeDeButton[2].posX && mouseXpos < listeDeButton[2].posX+listeDeButton[2].width && 
+    mouseYpos >= listeDeButton[2].posY && mouseYpos < listeDeButton[2].posY + listeDeButton[2].height){
+        listeDeButton[2].isPressed = true;
+    }
+    
 
 }
 

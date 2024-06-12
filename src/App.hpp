@@ -6,6 +6,13 @@
 #include "code/entities/entities.hpp"
 #include "code/draw/draw.hpp"
 #include "code/entities/entities.hpp"
+#include "code/draw/draw.hpp"
+#include "code/entities/entities.hpp"
+#include "code/ui/button.hpp"
+#include <vector>
+#include <unordered_map>
+
+enum state_screen {MENU, screen_LEVEL};
 
 class App {
 public:
@@ -21,8 +28,22 @@ public:
     void cursor_position_callback(double xpos, double ypos);
     void size_callback(int width, int height);
 
+    state_screen _state = state_screen::MENU;
+    int windowWidth;
+    int windowHeight;
+
+    bool mouse_is_pressed = false;
+
+    int mouseXpos;
+    int mouseYpos;
+    GLuint _texture; 
+
+    bool window_close = false;
+
 private:
     void render();
+
+
 
     int _width {};
     int _height {};
@@ -31,6 +52,9 @@ private:
 
     // Add your variables here
     float _angle {};
+
+    std::vector<Button> listeDeButton;
+
     SimpleText TextRenderer {};
 
     Map map;
