@@ -95,46 +95,41 @@ std::vector<node> get_enemy_path (std::vector<node> vector_of_nodes, std::vector
 
 void Enemy::get_elapsedTime (const double & elapsedTime)
 {
-    this->enemy_clock = this->enemy_clock;
+    this->enemy_clock = elapsedTime;
 }
 
 void Enemy::enemy_move()
 {
-node start_of_path = this->enemy_path[0];
-node end_of_path = this->enemy_path.back();
+    node current_node{this->enemy_path[this->current_node_id]};
+    node target_node{this->enemy_path[this->target_node_id]};
 
-node current_node{start_of_path};
+        int coeff_x{1};
+        int coeff_y{1};
 
-node target_node{this->enemy_path[this->node_nbr]};
+        if (target_node.node_x < current_node.node_x)
+            coeff_x = -1;
 
-int coeff_x{1};
-int coeff_y{1};
+        if (target_node.node_y < current_node.node_y)
+            coeff_y = -1;
 
-if (target_node.node_x < current_node.node_x)
-    coeff_x = -1;
-
-if (target_node.node_y < current_node.node_y)
-    coeff_y = -1;
-
-if (abs(target_node.node_x - current_node.node_x) > abs(target_node.node_y - current_node.node_y))
-{
-
-    if (std::round(this->x * 10) / 10 == target_node.node_x)
-    {
-        current_node = target_node;
-        this->node_nbr++;
-    }
-    else
-        this->x += coeff_x * this->enemy_clock * this->speed;
-}
-else
-{
-    if (std::round(this->y * 10) / 10 == target_node.node_y)
-    {
-        current_node = target_node;
-        this->node_nbr++;
-    }
-    else
-        this->y += coeff_y * this->enemy_clock * this->speed;
-}
+        if (abs(target_node.node_x - current_node.node_x) > abs(target_node.node_y - current_node.node_y))
+        {
+            if (std::round(this->x * 10) / 10 == target_node.node_x)
+            {
+                this->target_node_id++;
+                this->current_node_id++;
+            }
+            else
+                this->x += coeff_x * this->enemy_clock * this->speed;
+        }
+        else
+        {
+            if (std::round(this->y * 10) / 10 == target_node.node_y)
+            {
+                this->target_node_id++;
+                this->current_node_id++;
+            }
+            else
+                this->y += coeff_y * this->enemy_clock * this->speed;
+        }
 }

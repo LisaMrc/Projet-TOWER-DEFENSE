@@ -88,6 +88,8 @@ void App::render()
     // Clear the color and depth buffers of the frame buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
+    // glEnable(GL_BLEND);
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glLoadIdentity();
 
     // Render the text
@@ -102,8 +104,13 @@ void App::render()
     // Draw the King
     draw_quad_with_texture(kinger._king, kinger.x, kinger.y, map);
 
-    Purrsival.enemy_move();
-    draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map);
+    // Draw the first knight
+    if (Purrsival.target_node_id < Purrsival.enemy_path.size())
+    {
+        Purrsival.enemy_move();
+        // draw quad ici si ennemi doit disparaître
+    }
+    draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map); 
 }
 
 void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {
