@@ -12,19 +12,19 @@
 #include "GLHelpers.hpp"
 
 App::App() : _previousTime(0.0), _viewSize(2.0) {
-    img::Image test {img::load(make_absolute_path("images/level.png", true), 3, true)};
+    img::Image test {img::load(make_absolute_path("images/level.png", true), 4, true)};
     map._texture = loadTexture(test);
     
     // LAND TEXTURES
-    img::Image grass {img::load(make_absolute_path("images/textures/land/grass.bmp", true), 3, true)};
-    img::Image path {img::load(make_absolute_path("images/textures/land/path.bmp", true), 3, true)};
-    img::Image in {img::load(make_absolute_path("images/textures/land/in.png", true), 3, true)};
-    img::Image out {img::load(make_absolute_path("images/textures/land/out.png", true), 3, true)};
+    img::Image grass {img::load(make_absolute_path("images/textures/land/grass.bmp", true), 4, true)};
+    img::Image path {img::load(make_absolute_path("images/textures/land/path.bmp", true), 4, true)};
+    img::Image in {img::load(make_absolute_path("images/textures/land/in.png", true), 4, true)};
+    img::Image out {img::load(make_absolute_path("images/textures/land/out.png", true), 4, true)};
     
     // ENTITIES TEXTURES
-    img::Image king {img::load(make_absolute_path("images/textures/entities/king.png", true), 3, true)};
-    img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 3, true)};
-    img::Image tower {img::load(make_absolute_path("images/textures/entities/tower.png", true), 3, true)};
+    img::Image king {img::load(make_absolute_path("images/textures/entities/king.png", true), 4, true)};
+    img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 4, true)};
+    img::Image tower {img::load(make_absolute_path("images/textures/entities/tower.png", true), 4, true)};
 
     map._grass = loadTexture(grass);
     map._path = loadTexture(path);
@@ -88,8 +88,8 @@ void App::render()
     // Clear the color and depth buffers of the frame buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
-    // glEnable(GL_BLEND);
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glLoadIdentity();
 
     // Render the text
