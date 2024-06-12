@@ -9,7 +9,7 @@
 
 int gold_earned {0};
 
-bool enemy::is_dead() {
+bool Enemy::is_dead() {
     if (health <= 0) {
         gold_earned += gold;
         return true;
@@ -18,28 +18,28 @@ bool enemy::is_dead() {
     }
 }
 
-void damage(enemy enemy, projectile projectile)
+void damage(Enemy Enemy, projectile projectile)
 {
-    if (projectile.x == enemy.x && projectile.y == enemy.y) {
-        enemy.health -= projectile.damages;
+    if (projectile.x == Enemy.x && projectile.y == Enemy.y) {
+        Enemy.health -= projectile.damages;
     }
 }
 
-bool in_range(enemy enemy, tower tour)
+bool in_range(Enemy Enemy, tower tour)
 {
-    if (enemy.x - tour.x <= tour.range || enemy.y - tour.y <= tour.range) {
+    if (Enemy.x - tour.x <= tour.range || Enemy.y - tour.y <= tour.range) {
         return true;
     }
 }
 
-void fire(enemy enemy, tower tour)
+void fire(Enemy Enemy, tower tour)
 {
-    bool range {in_range(enemy, tour)};
-    bool death {enemy.is_dead()};
+    bool range {in_range(Enemy, tour)};
+    bool death {Enemy.is_dead()};
     while (range == true || death == false) {
-        range = in_range(enemy, tour);
-        death = enemy.is_dead();
-        // envoyer un projectile (== projectileKind) toutes les XX secondes (== tower.rate) sur l'enemy
+        range = in_range(Enemy, tour);
+        death = Enemy.is_dead();
+        // envoyer un projectile (== projectileKind) toutes les XX secondes (== tower.rate) sur l'Enemy
     }
 }
 
@@ -57,16 +57,6 @@ std::vector<node> create_vect_nodes(std::vector<std::vector<std::string>> splitt
     }
     return vect_nodes;
 }
-
-// std::vector<node> enemy_move(std::vector<node> enemy_path)
-// {
-//     translate enemy from path to path
-// }
-
-// void King::draw_king()
-// {
-    
-// }
 
 std::vector<int> get_shortest_path (const std::unordered_map<int, std::pair<float, int>> dij_map, std::vector<node> vector_of_nodes)
 {
@@ -103,7 +93,33 @@ std::vector<node> get_enemy_path (std::vector<node> vector_of_nodes, std::vector
     return enemy_path;
 }
 
+<<<<<<< HEAD
 void create_tower(Map &map, tower &tour) {
     gold_earned -= tour.price;
 }
 
+=======
+void Enemy::enemy_move()
+{
+    node start_of_path = this->enemy_path[0];
+    // node end_of_path = this->enemy_path.back();
+    node end_of_path = this->enemy_path[1];
+
+    node current_node{start_of_path};
+    node target_node{this->enemy_path[1]};
+
+    if (this->x < 6)
+    {
+        this->x += .01*this->speed;
+    }
+    else
+    {
+        this->x += 0;
+    }
+
+    // while ((this->x != end_of_path.node_x) && (this->y != end_of_path.node_y))
+    // {
+    //     this->x += .01*this->speed;
+    // }
+}
+>>>>>>> 5337bc00536db0382ff2eecbac0d1e5f8e280b84

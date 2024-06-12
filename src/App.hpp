@@ -34,5 +34,6 @@ private:
     SimpleText TextRenderer {};
 
     Map map;
-    King kinger;
+    King kinger{250, 0, 0, 0};
+    Enemy Purrsival{50, 1, 20, 10, 0, 0, 0};
 };
