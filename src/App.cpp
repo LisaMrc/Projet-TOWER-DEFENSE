@@ -12,9 +12,6 @@
 #include "utils.hpp"
 #include "GLHelpers.hpp"
 
-
-
-
 App::App() : _previousTime(0.0), _viewSize(2.0) {
     img::Image test {img::load(make_absolute_path("images/level.png", true), 4, true)};
     //listeDeButton[0].texture = loadTexture(test);
@@ -94,7 +91,6 @@ void App::update()
 
     Purrsival.get_elapsedTime(elapsedTime);
 
-
     // std::vector<int> posCaseMouse = passage_pixel_to_case(mouseXpos, mouseYpos);
     // mouseXpos, mouseYpos = posCaseMouse[0], posCaseMouse[1];
 
@@ -109,7 +105,6 @@ void App::update()
     if(listeDeButton[2].isPressed){
         _state = state_screen::MENU;
     }
-
 
     render();
 }
@@ -137,19 +132,17 @@ void App::render()
         // Draw the King
         draw_quad_with_texture(kinger._king, kinger.x, kinger.y, map);
 
-        Purrsival.enemy_move();
-        draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map);
+        // Draw the first knight
+        if (Purrsival.target_node_id < Purrsival.enemy_path.size())
+        {
+            Purrsival.enemy_move();
+            // draw quad ici si ennemi doit disparaître
+        }
+        draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map); 
+        
         listeDeButton[2].draw_me();
     }
 
-    // Draw the first knight
-    if (Purrsival.target_node_id < Purrsival.enemy_path.size())
-    {
-        Purrsival.enemy_move();
-        // draw quad ici si ennemi doit disparaître
-    }
-    draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map); 
-    
     if(_state == state_screen::MENU){
         listeDeButton[0].isPressed = false;
         listeDeButton[1].isPressed = false;
@@ -158,8 +151,6 @@ void App::render()
         listeDeButton[1].draw_me();
         listeDeButton[3].draw_me();
     }
-    
-
 }
 
 void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {
@@ -178,8 +169,6 @@ void App::mouse_button_callback(int /*button*/, int /*action*/, int /*mods*/) {
     mouseYpos >= listeDeButton[2].posY && mouseYpos < listeDeButton[2].posY + listeDeButton[2].height){
         listeDeButton[2].isPressed = true;
     }
-    
-
 }
 
 void App::scroll_callback(double /*xoffset*/, double /*yoffset*/) {
