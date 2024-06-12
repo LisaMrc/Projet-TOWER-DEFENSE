@@ -98,16 +98,50 @@ void Enemy::enemy_move()
     node end_of_path = this->enemy_path.back();
 
     node current_node{start_of_path};
+
+    // for (int i = 1; i < enemy_path.size() - 1; i++)
+    // {
+    //     node target_node{this->enemy_path[i]};
+
+    //     if ((this->x != target_node.node_x))
+    //     {
+    //         this->x += (target_node.node_x - current_node.node_x)*(.25)*(1.f/16)*this->speed;
+    //     }
+        
+    //     if (this->y != target_node.node_y)
+    //     {
+    //         this->y += (target_node.node_y - current_node.node_y)*(.25)*(1.f/16)*this->speed;
+    //     }
+
+    //     else if ((this->x == target_node.node_x) && (this->y == target_node.node_y))
+    //     {
+    //         current_node = target_node;
+    //         target_node = enemy_path[i+1];
+    //         std::cout << "YIPEE";
+    //     }
+    // }
+
     node target_node{this->enemy_path[1]};
 
-    if (this->x != target_node.node_x)
+    if ((this->x != target_node.node_x))
     {
         this->x += (.25)*(1.f/16)*this->speed;
     }
     else if (this->x == target_node.node_x)
     {
-        std::cout << "YIPEE";
+        // std::cout << "YIPEE";
         current_node = target_node;
         target_node = enemy_path[2];
+    }
+
+    if (this->y != target_node.node_y)
+    {
+        this->y += (.25)*(1.f/16)*this->speed;
+    }
+    else if (this->y == target_node.node_y)
+    {
+        // std::cout << "HOURRA 2";
+        current_node = target_node;
+        target_node = enemy_path[3];
     }
 }
