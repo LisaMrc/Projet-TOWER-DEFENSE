@@ -11,7 +11,9 @@
 #include <unordered_map>
 #include <stack>
 #include <queue>
+#include <img/img.hpp>
 
+#include <GLHelpers.hpp>
 #include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/hash.hpp"
@@ -22,10 +24,10 @@ std::vector<std::string> split_string(std::string const& s)
     return std::vector<std::string>(std::istream_iterator<std::string>(in), std::istream_iterator<std::string>()); 
 }
 
+// Grille de 8*8 carrés servant de repère
 void draw_grid()
 {
-    // GDN : we have decided to grid the square screen by a 8x8 grid
-    float const u = 4; 
+    float const u = 4;
 
     glColor3f(1, 0, 0);
     glBegin(GL_LINES);
@@ -78,83 +80,6 @@ Graph::WeightedGraph Graph::build_from_adjacency_matrix(const std::vector<std::v
     return output_graph;
 }
 
-void Graph::WeightedGraph::print_DFS(int const start) const
-{
-    // TODO : translate comments
-
-    std::stack<int> stack;
-    int current_node{};
-    std::vector<int>visited_edges{};
-    stack.push(start);
-
-    while (!(stack.empty()))
-    {
-        // add nodes to visited edges list
-        visited_edges.push_back(stack.top());
-
-        // Garder en mémoire la node
-        current_node = stack.top();
-
-        // retirer le dernier élt de la pile
-        stack.pop();
-
-        // trouver la node dans la adjacency_list
-        auto it = adjacency_list.find (current_node);
-
-        // trouver les nodes liées
-        auto adjacencies = (*it).second;
-
-        // Ajouter les nodes liées dans la pile
-        for (int i = 0; i < adjacencies.size(); i++)
-        {
-            stack.push(adjacencies[i].to);
-        }
-    }
-
-    for (int visited_edge : visited_edges)
-    {
-        std::cout << visited_edge << std::endl;
-    }
-}
-
-void Graph::WeightedGraph::print_BFS(int const start) const
-{
-    std::queue<int> queue;
-    queue.push(start);
-
-    int current_node{};
-    std::vector<int>visited_edges{};
-
-    while (!(queue.empty()))
-    {
-        // Garder en mémoire la node
-        current_node = queue.front();
-
-        // ajouter la node à la liste des sommets visités
-        visited_edges.push_back(current_node);
-
-        // retirer le premier élt de la file
-        queue.pop();
-
-        // trouver la node dans la adjacency_list
-        auto it = adjacency_list.find (current_node);
-
-        // trouver les nodes liées
-        auto adjacencies = (*it).second;
-
-        // Ajouter les nodes liées dans la pile
-        for (int i = 0; i < adjacencies.size(); i++)
-        {
-            queue.push(adjacencies[i].to);
-        }
-    }
-
-    for (int visited_edge : visited_edges)
-    {
-        std::cout << visited_edge << std::endl;
-    }
-}
-
 std::unordered_map<int, std::pair<float, int>> Graph::WeightedGraph::dijkstra(int const &start, int const end)
     {
         std::unordered_map<int, std::pair<float, int>> distances{};
@@ -187,11 +112,13 @@ std::unordered_map<int, std::pair<float, int>> Graph::WeightedGraph::dijkstra(in
             }
             visited.push_back(current_node);
         }
-        return distances;
+
+    return distances;
 }
 
 const char * filepath {"../../data/map.itd"};
 
+// Lit et découpe le fichier itd
 std::vector<std::vector<std::string>>split_itd_file()
 {
     std::ifstream map_itd (filepath);
@@ -218,48 +145,46 @@ std::vector<std::vector<std::string>>split_itd_file()
     return splitted_itd_file;
 }
 
-std::unordered_map<glm::vec3, CaseType> associate_RGB_to_CaseType(std::vector<std::vector<std::string>> splitted_itd_file)
+// Vérification : les triplets après les mots "path", "in" ou "out" sont-ils valides ? + remplissage de la map où seront associées les couleurs à un type de case (RGB_CaseType_map), selon le fichier itd
+std::unordered_map<glm::vec3, CaseType> Map::associate_RGB_to_CaseType(std::vector<std::vector<std::string>> splitted_itd_file)
 {
-    std::unordered_map<glm::vec3, CaseType> RGB_CaseType_map;
-
-    // Vérification : les triplets après les mots "path", "in" ou "out" sont-ils valides ? + remplissage de la map où seront associées les couleurs à un type de case (RGB_CaseType_map), selon le fichier itd
     for (std::vector<std::string> splitted_line : splitted_itd_file)
     {
         if (splitted_line[0] == "path")
         {
-            RGB_CaseType_map[glm::vec3{stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])}] = CaseType::PATH; 
+            this->RGB_CaseType_map[glm::vec3{stof(splitted_line[1])/255, stof(splitted_line[2])/255, stof(splitted_line[3])/255}] = CaseType::PATH; 
         }
         else if (splitted_line[0] == "in")
         {
-            RGB_CaseType_map[glm::vec3{stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])}] = CaseType::IN;
+            this->RGB_CaseType_map[glm::vec3{stof(splitted_line[1])/255, stof(splitted_line[2])/255, stof(splitted_line[3])/255}] = CaseType::IN;
         }
         else if (splitted_line[0] == "out")
         {
-            RGB_CaseType_map[glm::vec3{stoi(splitted_line[1]), stoi(splitted_line[2]), stoi(splitted_line[3])}] = CaseType::OUT;
+            this->RGB_CaseType_map[glm::vec3{stof(splitted_line[1])/255, stof(splitted_line[2])/255, stof(splitted_line[3])/255}] = CaseType::OUT;
         }
     }
 
     // Ajout de la couleur qui définit "l'herbe"
     RGB_CaseType_map[glm::vec3{0, 0, 0}] = CaseType::GRASS;
 
-    return RGB_CaseType_map;
+    return this->RGB_CaseType_map;
 }
 
-std::vector<CaseType> associate_px_pos_to_CaseType(const std::unordered_map<glm::vec3, CaseType> RGB_CaseType_map)
+// Associe une position de pixel (x, y) à un type de Case
+std::vector<CaseType> Map::associate_px_pos_to_CaseType()
 {
     sil::Image map {sil::Image("data/map.png")};
-    std::vector<CaseType> px_pos_CaseType_vec;
-    px_pos_CaseType_vec.resize(map.width() * map.height());
+    this->px_pos_CaseType_vec.resize(map.width() * map.height());
 
-    for (int x = 0; x < map.width()-8; x++)
+    for (int x = 0; x < map.width(); x++)
     {
-        for (int y = 0; y < map.height()-8; y++)
+        for (int y = 0; y < map.height(); y++)
         {
-            const auto it {RGB_CaseType_map.find(map.pixel(x,y))};
+            const auto it {this->RGB_CaseType_map.find(map.pixel(x,y))};
 
-            if (it != RGB_CaseType_map.end())
+            if (it != this->RGB_CaseType_map.end())
             {
-                px_pos_CaseType_vec[x + map.width()*y] = (*it).second;
+                this->px_pos_CaseType_vec[x + map.width()*y] = (*it).second;
             } 
             else
             {
@@ -267,7 +192,7 @@ std::vector<CaseType> associate_px_pos_to_CaseType(const std::unordered_map<glm:
             }
         }
     }
-    return px_pos_CaseType_vec;
+    return this->px_pos_CaseType_vec;
 }
 
 std::vector<std::vector<float>> create_adjacency_matrix(const std::vector<std::vector<std::string>> splitted_itd_file)
@@ -334,4 +259,63 @@ std::vector<std::vector<float>> create_adjacency_matrix(const std::vector<std::v
     }
 
     return adjacency_matrix;
+}
+
+// Dessine une case texturisée à la position (x,y)
+void draw_quad_with_texture(GLuint const &texture, float &x, float &y, Map &map)
+{
+    float X0 = -1 + map.PIXEL_SIZE*x;
+    float X1 = X0 + map.PIXEL_SIZE;
+    float Y0 = 1 - y*map.PIXEL_SIZE - map.PIXEL_SIZE;
+    float Y1 = Y0 + map.PIXEL_SIZE;
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glColor3ub(255, 255, 255);
+
+    glBegin(GL_QUADS);
+        glTexCoord2d(0, 0);
+        glVertex2f(X0, Y0);
+
+        glTexCoord2d(1, 0);
+        glVertex2f(X1, Y0);
+
+        glTexCoord2d(1, 1);
+        glVertex2f(X1, Y1);
+
+        glTexCoord2d(0, 1);
+        glVertex2f(X0, Y1);
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+}
+
+// Dessine la map
+void Map::draw_map (Map &map)
+{
+    sil::Image imagemap {sil::Image("data/map.png")};
+ 
+    for (float x = 0; x < 8; x++)
+    {
+        for (float y = 0; y < 8; y++)
+        {
+            if (this->px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::PATH)
+            {
+                draw_quad_with_texture(this->_path, x, y, map);
+            }
+            else if (this->px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::GRASS)
+            {
+                draw_quad_with_texture(this->_grass, x, y, map);
+            }
+            else if (this->px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::IN)
+            {
+                draw_quad_with_texture(this->_in, x, y, map);
+            }
+            else if (this->px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::OUT)
+            {
+                draw_quad_with_texture(this->_out, x, y, map);
+            }
+        }
+    }
 }

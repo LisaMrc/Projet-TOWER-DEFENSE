@@ -7,6 +7,7 @@
 
 #include "App.hpp"
 
+// #include "code/draw/draw.hpp"
 #include "code/draw/draw.hpp"
 #include "code/ui/button.hpp"
 
@@ -20,8 +21,7 @@ namespace {
 // Optional: limit the frame rate
 constexpr double TARGET_TIME_FOR_FRAME { 1.0 / 60.0 };
 
-int main()
-{
+int main() {
     // Set an error callback to display glfw errors
     glfwSetErrorCallback([](int error, const char* description) {
         std::cerr << "Error " << error << ": " << description << std::endl;
@@ -109,8 +109,7 @@ int main()
 
 
     // Loop until the user closes the window
-    while (!glfwWindowShouldClose(window))
-    {
+    while (!glfwWindowShouldClose(window)) {
         // Enable transparency
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -134,6 +133,7 @@ int main()
 
         app.mouseXpos = xpos;
         app.mouseYpos = ypos;
+        double startTime { glfwGetTime() };
 
         app.update();
 
@@ -144,7 +144,8 @@ int main()
         glfwPollEvents();
 
         // Optional: limit the frame rate
-		double elapsedTime { glfwGetTime() - startTime };
+        double elapsedTime { glfwGetTime() - startTime };
+    
         // wait the remaining time to match the target wanted frame rate
 		if(elapsedTime < TARGET_TIME_FOR_FRAME)
 		{
@@ -153,6 +154,9 @@ int main()
         if (app.window_close){
             glfwSetWindowShouldClose(window, true);
             std::cout << "fermer";
+        }
+        if(elapsedTime < TARGET_TIME_FOR_FRAME) {
+            glfwWaitEventsTimeout(TARGET_TIME_FOR_FRAME-elapsedTime);
         }
     }
     

@@ -1,5 +1,7 @@
+#include <iostream>
 #include "App.hpp"
 #include "code/draw/draw.hpp"
+#include "code/entities/entities.hpp"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -13,19 +15,28 @@
 
 
 App::App() : _previousTime(0.0), _viewSize(2.0) {
-   // load what needs to be loaded here (for example textures)
     img::Image test {img::load(make_absolute_path("images/level.png", true), 3, true)};
+    map._texture = loadTexture(test);
     
     // LAND TEXTURES
     img::Image grass {img::load(make_absolute_path("images/textures/land/grass.bmp", true), 3, true)};
     img::Image path {img::load(make_absolute_path("images/textures/land/path.bmp", true), 3, true)};
+    img::Image in {img::load(make_absolute_path("images/textures/land/in.png", true), 3, true)};
+    img::Image out {img::load(make_absolute_path("images/textures/land/out.png", true), 3, true)};
     
     // ENTITIES TEXTURES
     img::Image king {img::load(make_absolute_path("images/textures/entities/king.png", true), 3, true)};
     img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 3, true)};
     img::Image tower {img::load(make_absolute_path("images/textures/entities/tower.png", true), 3, true)};
 
-    _texture = loadTexture(test);
+    map._grass = loadTexture(grass);
+    map._path = loadTexture(path);
+    map._in = loadTexture(in);
+    map._out = loadTexture(out);
+
+    kinger._king = loadTexture(king);
+
+    Purrsival._knight = loadTexture(knight);
 }
 
 void App::setup()
@@ -39,12 +50,12 @@ void App::setup()
     TextRenderer.SetColorf(SimpleText::BACKGROUND_COLOR, 0.f, 0.f, 0.f, 0.f);
     TextRenderer.EnableBlending(true);
 
-    // Verify if itd file is valid, extract information from it
+    // Extract information from itd file
     std::vector<std::vector<std::string>> splitted_itd_file = split_itd_file();
 
-    // Map printing
-    std::unordered_map<glm::vec3, CaseType> RGB_CaseType_map = associate_RGB_to_CaseType(splitted_itd_file);
-    associate_px_pos_to_CaseType(RGB_CaseType_map);
+    // Tools to print map
+    map.associate_RGB_to_CaseType(splitted_itd_file);
+    map.associate_px_pos_to_CaseType();
 
     // Create graph for ennemies from itd
     std::vector<std::vector<float>> adjacency_matrix {create_adjacency_matrix(splitted_itd_file)};
@@ -56,6 +67,19 @@ void App::setup()
     listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, _texture});
     listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 1, 1, _texture});
     listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, _texture});
+    std::unordered_map<int, std::pair<float, int>> dij_map = graph.dijkstra(0, 7); 
+    std::vector<node> vec_nodes = create_vect_nodes(splitted_itd_file);
+    std::vector<int> shortest_path = get_shortest_path (dij_map, vec_nodes);
+    std::vector<node> enemy_path = get_enemy_path (vec_nodes, shortest_path);
+
+    // Initialise la position du roi (il ne bougera pas)
+    kinger.x = enemy_path.back().node_x;
+    kinger.y = enemy_path.back().node_y;
+
+    // Initialise la position de l'ennemi 1 (Purrsival) et on lui donne le chemin à suivre
+    Purrsival.x = enemy_path.front().node_x;
+    Purrsival.y = enemy_path.front().node_y;
+    Purrsival.enemy_path = enemy_path;
 }
 
 void App::update()
@@ -63,6 +87,9 @@ void App::update()
     const double currentTime { glfwGetTime() };
     const double elapsedTime { currentTime - _previousTime};
     _previousTime = currentTime;
+
+    Purrsival.get_elapsedTime(elapsedTime);
+
 
     // std::vector<int> posCaseMouse = passage_pixel_to_case(mouseXpos, mouseYpos);
     // mouseXpos, mouseYpos = posCaseMouse[0], posCaseMouse[1];
@@ -83,12 +110,15 @@ void App::update()
     render();
 }
 
-void App::render() {
+void App::render()
+{
     // Clear the color and depth buffers of the frame buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    // Render the text
+    TextRenderer.Render();
     if(_state == state_screen::screen_LEVEL){
         listeDeButton[0].isPressed = false;
         draw_grid();
@@ -105,8 +135,17 @@ void App::render() {
         listeDeButton[3].draw_me();
     }
     
+    // Draw the grid
+    draw_grid();
 
-    TextRenderer.Render();
+    // Draw the map
+    map.draw_map(map);
+
+    // Draw the King
+    draw_quad_with_texture(kinger._king, kinger.x, kinger.y, map);
+
+    Purrsival.enemy_move();
+    draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map);
 }
 
 void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {

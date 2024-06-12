@@ -1,8 +1,12 @@
 #pragma once
-
+#include <iostream>
 #include <glad/glad.h>
 #include <simpletext.h>
 #include "code/screens/screens.hpp"
+#include "code/entities/entities.hpp"
+#include "code/draw/draw.hpp"
+#include "code/entities/entities.hpp"
+#include "code/draw/draw.hpp"
 #include "code/entities/entities.hpp"
 #include "code/ui/button.hpp"
 #include <vector>
@@ -46,10 +50,13 @@ private:
     float _viewSize {};
 
     // Add your variables here
-    GLuint _texture {};
     float _angle {};
 
     std::vector<Button> listeDeButton;
 
     SimpleText TextRenderer {};
+
+    Map map;
+    King kinger{250, 0, 0, 0};
+    Enemy Purrsival{50, 1, 20, 10, 0, 0, 0};
 };
