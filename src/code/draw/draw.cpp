@@ -319,3 +319,32 @@ void Map::draw_map (Map &map)
         }
     }
 }
+
+bool Map::can_create_tower(Map &map) {
+    
+    sil::Image imagemap {sil::Image("data/map.png")};
+ 
+    for (float x = 0; x < 8; x++)
+    {
+        for (float y = 0; y < 8; y++)
+        {
+            
+            if (this->px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::PATH)
+            {
+                return false;
+            }
+            else if (this->px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::GRASS)
+            {
+                return true;
+            }
+            else if (this->px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::IN)
+            {
+                return false;
+            }
+            else if (this->px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::OUT)
+            {
+                return false;
+            }
+        }
+    }
+}

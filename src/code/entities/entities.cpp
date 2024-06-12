@@ -1,5 +1,6 @@
 #include "entities.hpp"
 #include "../draw/draw.hpp"
+#include "../draw/sil.hpp"
 
 #include <iostream>
 #include <unordered_map>
@@ -101,3 +102,8 @@ std::vector<node> get_enemy_path (std::vector<node> vector_of_nodes, std::vector
 
     return enemy_path;
 }
+
+void create_tower(Map &map, tower &tour) {
+    gold_earned -= tour.price;
+}
+

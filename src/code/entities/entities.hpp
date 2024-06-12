@@ -2,8 +2,9 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
-
+#include "../draw/sil.hpp"
 #include <GLHelpers.hpp>
+#include "../draw/draw.hpp"
 
 // #include "../draw/draw.hpp"
 
@@ -43,6 +44,7 @@ struct tower
     int rate {}; // GDN : tir par seconde
     float x {}; // position x
     float y {}; // position y
+    int price{};
 };
 
 extern int gold_earned; // extern int = idem "méthode" mais pour une variable
@@ -50,6 +52,8 @@ extern int gold_earned; // extern int = idem "méthode" mais pour une variable
 void damage(enemy enemy, projectile projectile);
 bool in_range(enemy enemy, tower tour);
 void fire(enemy enemy, tower tour);
+void can_create_tower(Map &map, tower & tour);
+void create_tower(Map &map, tower & tour);
 
 struct node
 {

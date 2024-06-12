@@ -66,6 +66,7 @@ struct Map
     std::unordered_map<glm::vec3, CaseType> associate_RGB_to_CaseType(const std::vector<std::vector<std::string>> splitted_itd_file);
     std::vector<CaseType> associate_px_pos_to_CaseType();
     void draw_map(Map &map);
+    bool can_create_tower(Map &map);
 };
 
 void draw_grid();
