@@ -94,7 +94,7 @@ void App::render()
     TextRenderer.Render();
 
     // Draw the grid
-    draw_grid();
+    // draw_grid();
 
     // Draw the map
     map.draw_map(map);
