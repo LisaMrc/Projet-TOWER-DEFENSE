@@ -66,10 +66,10 @@ void App::setup()
     kinger.x = enemy_path.back().node_x;
     kinger.y = enemy_path.back().node_y;
 
-    // Initialise la position de l'ennemi 1 (Purrsival)
+    // Initialise la position de l'ennemi 1 (Purrsival) et on lui donne le chemin à suivre
     Purrsival.x = enemy_path.front().node_x;
     Purrsival.y = enemy_path.front().node_y;
-    
+    Purrsival.enemy_path = enemy_path;
 }
 
 void App::update()
@@ -100,10 +100,8 @@ void App::render()
     // Draw the King
     draw_quad_with_texture(kinger._king, kinger.x, kinger.y, map);
 
-    glPushMatrix();
-        // glTranslatef(0.5f, 0.5f, 0.0f); // Déplacer le carré de 0.5 unités à droite et 0.5 unités vers le haut
-        draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map);
-    glPopMatrix();
+    Purrsival.enemy_move();
+    draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map);
 }
 
 void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {

@@ -6,20 +6,13 @@
 #include <GLHelpers.hpp>
 
 // #include "../draw/draw.hpp"
+extern int gold_earned; // extern int = idem "méthode" mais pour une variable
 
-enum class ProjectileKind
+struct node
 {
-    Arrow,
-    Fireball,
-    lightning_arrow,
-};
-
-struct projectile
-{
-    int damages {};
-    float speed {};
-    float x {}; // position x
-    float y {}; // position y
+    int node_id;
+    int node_x;
+    int node_y;
 };
 
 struct Enemy
@@ -36,28 +29,10 @@ struct Enemy
 
     GLuint _knight {};
     GLuint _sorcerer {};
-};
 
-struct tower
-{
-    ProjectileKind projectile;
-    int range {};
-    int rate {}; // GDN : tir par seconde
-    float x {}; // position x
-    float y {}; // position y
-};
+    std::vector<node> enemy_path;
 
-extern int gold_earned; // extern int = idem "méthode" mais pour une variable
-
-void damage(Enemy Enemy, projectile projectile);
-bool in_range(Enemy Enemy, tower tour);
-void fire(Enemy Enemy, tower tour);
-
-struct node
-{
-    int node_id;
-    int node_x;
-    int node_y;
+    void enemy_move();
 };
 
 std::vector<node> create_vect_nodes(std::vector<std::vector<std::string>> splitted_itd_file);
@@ -73,3 +48,31 @@ struct King
 
     GLuint _king{};
 };
+
+struct projectile
+{
+    int damages {};
+    float speed {};
+    float x {}; // position x
+    float y {}; // position y
+};
+
+enum class ProjectileKind
+{
+    Arrow,
+    Fireball,
+    lightning_arrow,
+};
+
+struct tower
+{
+    ProjectileKind projectile;
+    int range {};
+    int rate {}; // tir par seconde
+    float x {}; // position x
+    float y {}; // position y
+};
+
+void damage(Enemy Enemy, projectile projectile);
+bool in_range(Enemy Enemy, tower tour);
+void fire(Enemy Enemy, tower tour);

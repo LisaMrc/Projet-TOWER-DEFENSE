@@ -18,8 +18,6 @@ namespace {
 // Optional: limit the frame rate
 constexpr double TARGET_TIME_FOR_FRAME { 1.0 / 60.0 };
 
-
-
 int main() {
     // Set an error callback to display glfw errors
     glfwSetErrorCallback([](int error, const char* description) {
@@ -102,8 +100,6 @@ int main() {
 
     app.setup();
 
-    
-
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(window)) {
         // Enable transparency
@@ -115,8 +111,6 @@ int main() {
 
         app.update();
 
-        
-
         // Swap front and back buffers
         glfwSwapBuffers(window);
 
@@ -125,6 +119,7 @@ int main() {
 
         // Optional: limit the frame rate
         double elapsedTime { glfwGetTime() - startTime };
+    
         // wait the remaining time to match the target wanted frame rate
         if(elapsedTime < TARGET_TIME_FOR_FRAME) {
             glfwWaitEventsTimeout(TARGET_TIME_FOR_FRAME-elapsedTime);
