@@ -8,6 +8,8 @@
 #include "App.hpp"
 
 #include "code/draw/draw.hpp"
+#include "code/ui/button.hpp"
+
 namespace {
     App& window_as_app(GLFWwindow* window)
     {
@@ -77,10 +79,11 @@ int main()
 
         xpos = (xpos-offset)/windowHeight; 
         ypos = (ypos)/windowHeight;
-       
+
         std::cout << "xCase : " << (int)(xpos * 8) << "  ";
         std::cout << "yCase : " << (int)(ypos * 8);
         std::cout << std::endl;
+
     });
     glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
         window_as_app(window).scroll_callback(xoffset, yoffset);
@@ -101,6 +104,10 @@ int main()
 
     app.setup();
 
+    
+
+
+
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(window))
     {
@@ -110,6 +117,23 @@ int main()
 
         // Get time (in second) at loop beginning
 		double startTime { glfwGetTime() };
+
+        double xpos, ypos; //coordonnées en pixels
+        glfwGetCursorPos(window, &xpos, &ypos);
+
+        GLint windowWidth, windowHeight;
+        glfwGetWindowSize(window, &windowWidth, &windowHeight);
+        int offset = (windowWidth-windowHeight)/2;	//decallage sur les côté
+
+        //std::cout << "x:" << (xpos / windowWidth); //coordonnées openGL
+        //std::cout << "y:" << (ypos / windowHeight);
+
+        xpos = ((xpos-offset)/windowHeight)*8; 
+        ypos = ((ypos)/windowHeight)*8;
+        //std::cout << "xpos = "<< xpos<< std::endl;
+
+        app.mouseXpos = xpos;
+        app.mouseYpos = ypos;
 
         app.update();
 
@@ -126,8 +150,12 @@ int main()
 		{
 			glfwWaitEventsTimeout(TARGET_TIME_FOR_FRAME-elapsedTime);
 		}
+        if (app.window_close){
+            glfwSetWindowShouldClose(window, true);
+            std::cout << "fermer";
+        }
     }
-
+    
     glfwTerminate();
     return 0;
 }

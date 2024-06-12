@@ -25,7 +25,7 @@ std::vector<std::string> split_string(std::string const& s)
 void draw_grid()
 {
     // GDN : we have decided to grid the square screen by a 8x8 grid
-    float const u = 4;
+    float const u = 4; 
 
     glColor3f(1, 0, 0);
     glBegin(GL_LINES);

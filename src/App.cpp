@@ -9,6 +9,9 @@
 #include "utils.hpp"
 #include "GLHelpers.hpp"
 
+
+
+
 App::App() : _previousTime(0.0), _viewSize(2.0) {
    // load what needs to be loaded here (for example textures)
     img::Image test {img::load(make_absolute_path("images/level.png", true), 3, true)};
@@ -47,6 +50,12 @@ void App::setup()
     std::vector<std::vector<float>> adjacency_matrix {create_adjacency_matrix(splitted_itd_file)};
     Graph::WeightedGraph graph {Graph::build_from_adjacency_matrix(adjacency_matrix)};
     graph.dijkstra(0, 7);
+
+
+    listeDeButton.push_back(Button{"Boutton_Start", false, 3, 4, 2, 1, _texture});
+    listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, _texture});
+    listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 1, 1, _texture});
+    listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, _texture});
 }
 
 void App::update()
@@ -54,7 +63,23 @@ void App::update()
     const double currentTime { glfwGetTime() };
     const double elapsedTime { currentTime - _previousTime};
     _previousTime = currentTime;
+
+    // std::vector<int> posCaseMouse = passage_pixel_to_case(mouseXpos, mouseYpos);
+    // mouseXpos, mouseYpos = posCaseMouse[0], posCaseMouse[1];
+
+    if(listeDeButton[0].isPressed){
+        _state = state_screen::screen_LEVEL;
+    }
+
+    if(listeDeButton[1].isPressed){
+      window_close = true; //femer la fenetre 
+    }
     
+    if(listeDeButton[2].isPressed){
+        _state = state_screen::MENU;
+    }
+
+
     render();
 }
 
@@ -64,19 +89,22 @@ void App::render() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    // glBegin(GL_QUADS);
+    if(_state == state_screen::screen_LEVEL){
+        listeDeButton[0].isPressed = false;
+        draw_grid();
+        listeDeButton[2].draw_me();
+    }
 
-    // glVertex2f(0, 0);
-
-    // glVertex2f(0, 0.5);
-
-    // glVertex2f(0.5, 0.5);
-
-    // glVertex2f(0.5, 0);
-
-    // glEnd();
-
-    draw_grid();
+    
+    if(_state == state_screen::MENU){
+        listeDeButton[0].isPressed = false;
+        listeDeButton[1].isPressed = false;
+        listeDeButton[2].isPressed = false;
+        listeDeButton[0].draw_me();
+        listeDeButton[1].draw_me();
+        listeDeButton[3].draw_me();
+    }
+    
 
     TextRenderer.Render();
 }
@@ -85,6 +113,19 @@ void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods
 }
 
 void App::mouse_button_callback(int /*button*/, int /*action*/, int /*mods*/) {
+    if(mouseXpos >= listeDeButton[0].posX && mouseXpos < listeDeButton[0].posX+listeDeButton[0].width && 
+    mouseYpos >= listeDeButton[0].posY && mouseYpos < listeDeButton[0].posY + listeDeButton[0].height){
+        listeDeButton[0].isPressed = true;
+    }
+    if(mouseXpos >= listeDeButton[1].posX && mouseXpos < listeDeButton[1].posX+listeDeButton[1].width && 
+    mouseYpos >= listeDeButton[1].posY && mouseYpos < listeDeButton[1].posY + listeDeButton[1].height){
+        listeDeButton[1].isPressed = true;
+    }
+    if(mouseXpos >= listeDeButton[2].posX && mouseXpos < listeDeButton[2].posX+listeDeButton[2].width && 
+    mouseYpos >= listeDeButton[2].posY && mouseYpos < listeDeButton[2].posY + listeDeButton[2].height){
+        listeDeButton[2].isPressed = true;
+    }
+    
 
 }
 
