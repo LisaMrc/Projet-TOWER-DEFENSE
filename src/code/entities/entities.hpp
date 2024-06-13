@@ -12,8 +12,8 @@ extern int gold_earned; // extern int = idem "méthode" mais pour une variable
 struct node
 {
     int node_id;
-    int node_x;
-    int node_y;
+    float node_x;
+    float node_y;
 };
 
 struct Enemy
@@ -32,7 +32,10 @@ struct Enemy
     GLuint _sorcerer {};
 
     std::vector<node> enemy_path;
-
+    int current_node_id = 0;
+    int target_node_id = 1;
+    double enemy_clock;
+    void get_elapsedTime(double const & elapsedTime);
     void enemy_move();
 };
 
@@ -80,3 +83,4 @@ struct tower
 void damage(Enemy Enemy, projectile projectile);
 bool in_range(Enemy Enemy, tower tour);
 void fire(Enemy Enemy, tower tour);
+void create_tower(Map &map, tower &tour, float x, float y);

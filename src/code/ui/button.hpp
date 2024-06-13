@@ -2,26 +2,23 @@
 #pragma once
 
 
-struct start_button {
+// enum state { start_button, quit_button, pause_button };
 
-};
 
-struct quit_button{
-    
-};
+// void clic_button_callback(GLFWwindow* window, int button, int action, int mods);
 
-struct pause_button{
-    
-};
+struct Button{
 
-enum class state_button { start_button, quit_button, pause_button };
+    std::string name;
+    bool isPressed {false};
+    // en coordonées de case 
+    int posX; 
+    int posY;
+    int width;
+    int height;
 
-struct screen_button{
-    state_button _state {};
-    int nbrTileSide {};
+    GLuint texture;
 
-    GLuint _start {};
-    GLuint _pause {};
-    GLuint _stop {};
+    void draw_me();
 };
 

@@ -291,6 +291,31 @@ void draw_quad_with_texture(GLuint const &texture, float &x, float &y, Map &map)
     glDisable(GL_TEXTURE_2D);
 }
 
+void draw_quad_with_texture_v2(GLuint const &texture)
+{
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glColor3ub(255, 255, 255);
+
+    glBegin(GL_QUADS);
+        glTexCoord2d(0, 0);
+        glVertex2f(-0.5, -0.5);
+
+        glTexCoord2d(1, 0);
+        glVertex2f(0.5, -0.5);
+
+        glTexCoord2d(1, 1);
+        glVertex2f(0.5, 0.5);
+
+        glTexCoord2d(0, 1);
+        glVertex2f(-0.5, 0.5);
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+}
+
 // Dessine la map
 void Map::draw_map (Map &map)
 {
@@ -320,14 +345,11 @@ void Map::draw_map (Map &map)
     }
 }
 
-bool Map::can_create_tower(Map &map) {
+bool Map::can_create_tower(Map &map, float x, float y) {
     
     sil::Image imagemap {sil::Image("data/map.png")};
  
-    for (float x = 0; x < 8; x++)
-    {
-        for (float y = 0; y < 8; y++)
-        {
+    
             
             if (this->px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::PATH)
             {
@@ -345,6 +367,5 @@ bool Map::can_create_tower(Map &map) {
             {
                 return false;
             }
-        }
-    }
+        
 }

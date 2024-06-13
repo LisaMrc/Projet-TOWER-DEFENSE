@@ -9,6 +9,11 @@
 #include "code/ui/button.hpp"
 #include <GLFW/glfw3.h>
 
+#include <vector>
+#include <unordered_map>
+
+enum state_screen {MENU, screen_LEVEL};
+
 class App {
 public:
     App();
@@ -23,8 +28,22 @@ public:
     void cursor_position_callback(double xpos, double ypos);
     void size_callback(int width, int height);
 
+    state_screen _state = state_screen::MENU;
+    int windowWidth;
+    int windowHeight;
+
+    bool mouse_is_pressed = false;
+
+    int mouseXpos;
+    int mouseYpos;
+    GLuint _texture; 
+
+    bool window_close = false;
+
 private:
     void render();
+
+
 
     int _width {};
     int _height {};
@@ -33,6 +52,9 @@ private:
 
     // Add your variables here
     float _angle {};
+
+    std::vector<Button> listeDeButton;
+
     SimpleText TextRenderer {};
 
     Map map;
@@ -41,9 +63,7 @@ private:
 
     tower arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
 
-    screen_button start{state_button::start_button, 20};
-    screen_button stop{state_button::quit_button, 20};
-    screen_button pause{state_button::pause_button, 20};
+    
 };
 
 

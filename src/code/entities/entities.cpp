@@ -1,6 +1,7 @@
 #include "entities.hpp"
 #include "../draw/draw.hpp"
 #include "../draw/sil.hpp"
+#include "../../App.hpp"
 
 #include <iostream>
 #include <unordered_map>
@@ -93,8 +94,14 @@ std::vector<node> get_enemy_path (std::vector<node> vector_of_nodes, std::vector
     return enemy_path;
 }
 
-void create_tower(Map &map, tower &tour) {
+void create_tower(Map &map, tower &tour, float x, float y) {
     gold_earned -= tour.price;
+    draw_quad_with_texture(tour._arrow, x, y, map);
+}
+
+void Enemy::get_elapsedTime (const double & elapsedTime)
+{
+    this->enemy_clock = elapsedTime;
 }
 
 void Enemy::enemy_move()
@@ -106,17 +113,33 @@ void Enemy::enemy_move()
     node current_node{start_of_path};
     node target_node{this->enemy_path[1]};
 
-    if (this->x < 6)
-    {
-        this->x += .01*this->speed;
-    }
-    else
-    {
-        this->x += 0;
-    }
+        int coeff_x{1};
+        int coeff_y{1};
 
-    // while ((this->x != end_of_path.node_x) && (this->y != end_of_path.node_y))
-    // {
-    //     this->x += .01*this->speed;
-    // }
+        if (target_node.node_x < current_node.node_x)
+            coeff_x = -1;
+
+        if (target_node.node_y < current_node.node_y)
+            coeff_y = -1;
+
+        if (abs(target_node.node_x - current_node.node_x) > abs(target_node.node_y - current_node.node_y))
+        {
+            if (std::round(this->x * 10) / 10 == target_node.node_x)
+            {
+                this->target_node_id++;
+                this->current_node_id++;
+            }
+            else
+                this->x += coeff_x * this->enemy_clock * this->speed;
+        }
+        else
+        {
+            if (std::round(this->y * 10) / 10 == target_node.node_y)
+            {
+                this->target_node_id++;
+                this->current_node_id++;
+            }
+            else
+                this->y += coeff_y * this->enemy_clock * this->speed;
+        }
 }
