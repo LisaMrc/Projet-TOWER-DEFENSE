@@ -48,6 +48,9 @@ int main() {
     // Make the window's context current
     glfwMakeContextCurrent(window);
 
+    // Set the mouse button callback
+    // glfwSetMouseButtonCallback(window, mouse_button_callback);
+
     // Intialize glad (loads the OpenGL functions)
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Failed to initialize OpenGL context" << std::endl;
@@ -55,14 +58,22 @@ int main() {
         return -1;
     }
 
+    
+    // glfwSetMouseButtonCallback(window, mouse_button_callback);
+    
     App app {};
+
+    
 
     glfwSetWindowUserPointer(window, &app);
 
+    
     glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
         window_as_app(window).key_callback(key, scancode, action, mods);
     });
+
     glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) { //fonction pour convertir les coordonnées en cases
+        
         window_as_app(window).mouse_button_callback(button, action, mods);
 
         double xpos, ypos; //coordonnées en pixels
@@ -102,6 +113,7 @@ int main() {
 
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(window)) {
+        glClear(GL_COLOR_BUFFER_BIT);
         // Enable transparency
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -126,6 +138,7 @@ int main() {
         }
     }
     
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }

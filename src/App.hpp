@@ -7,6 +7,7 @@
 #include "code/draw/draw.hpp"
 #include "code/entities/entities.hpp"
 #include "code/ui/button.hpp"
+#include <GLFW/glfw3.h>
 
 class App {
 public:
@@ -17,7 +18,7 @@ public:
     
     // GLFW callbacks binding
     void key_callback(int key, int scancode, int action, int mods);
-    void mouse_button_callback(int button, int action, int mods);
+    void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
     void scroll_callback(double xoffset, double yoffset);
     void cursor_position_callback(double xpos, double ypos);
     void size_callback(int width, int height);
@@ -40,9 +41,9 @@ private:
 
     tower arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
 
-    // screen_button start{state::start_button, 20};
-    // screen_button stop{state::quit_button, 20};
-    // screen_button pause{state::pause_button, 20};
+    screen_button start{state_button::start_button, 20};
+    screen_button stop{state_button::quit_button, 20};
+    screen_button pause{state_button::pause_button, 20};
 };
 
 
