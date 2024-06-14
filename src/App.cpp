@@ -45,7 +45,7 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
     arrow._arrow = loadTexture(tower);
 
     //TEXTURES BOUTONS
-    _texture = loadTexture(test);
+    _texture = loadTexture(tower);
 }
 
 void App::setup()
@@ -164,7 +164,7 @@ void App::render()
 void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {
 }
 
-
+/*
 void App::mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
      if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         double xpos, ypos; // Coordonnées en pixels
@@ -186,9 +186,11 @@ void App::mouse_button_callback(GLFWwindow* window, int button, int action, int 
         std::cout << "yCase : " << yCase << std::endl;
      }
 }
+*/
 
-/*
+
 void App::mouse_button_callback(int button, int action, int mods) {
+    
     if(mouseXpos >= listeDeButton[0].posX && mouseXpos < listeDeButton[0].posX+listeDeButton[0].width && 
     mouseYpos >= listeDeButton[0].posY && mouseYpos < listeDeButton[0].posY + listeDeButton[0].height){
         listeDeButton[0].isPressed = true;
@@ -201,8 +203,8 @@ void App::mouse_button_callback(int button, int action, int mods) {
     mouseYpos >= listeDeButton[2].posY && mouseYpos < listeDeButton[2].posY + listeDeButton[2].height){
         listeDeButton[2].isPressed = true;
     }
+
 }
-*/
 
 void App::scroll_callback(double /*xoffset*/, double /*yoffset*/) {
 }
