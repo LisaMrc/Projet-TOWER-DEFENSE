@@ -57,8 +57,8 @@ struct projectile
 {
     int damages {};
     float speed {};
-    float x {}; // position x
-    float y {}; // position y
+    float x {};
+    float y {};
 };
 
 enum class ProjectileKind
@@ -73,8 +73,8 @@ struct tower
     ProjectileKind projectile;
     int range {};
     int rate {}; // tir par seconde
-    float x {}; // position x
-    float y {}; // position y
+    float x {};
+    float y {};
     int price{};
 
     GLuint _arrow{};

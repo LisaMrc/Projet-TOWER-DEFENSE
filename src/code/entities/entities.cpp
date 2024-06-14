@@ -8,7 +8,8 @@
 #include <vector>
 #include <stack>
 
-int gold_earned {0};
+// Initialise la somme d'argent en début de partie
+int gold_earned {10};
 
 bool Enemy::is_dead() {
     if (health <= 0) {

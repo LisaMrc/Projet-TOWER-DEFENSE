@@ -1,16 +1,13 @@
 #pragma once
-#include <iostream>
 #include <glad/glad.h>
 #include <simpletext.h>
+
 #include "code/screens/screens.hpp"
 #include "code/entities/entities.hpp"
 #include "code/draw/draw.hpp"
 #include "code/entities/entities.hpp"
 #include "code/ui/button.hpp"
 #include <GLFW/glfw3.h>
-
-#include <vector>
-#include <unordered_map>
 
 enum state_screen {MENU, screen_LEVEL};
 
@@ -42,28 +39,25 @@ public:
 
 private:
     void render();
-
-
-
+    
     int _width {};
     int _height {};
     double _previousTime {};
     float _viewSize {};
-
-    // Add your variables here
-    float _angle {};
-
-    std::vector<Button> listeDeButton;
-
     SimpleText TextRenderer {};
 
-    Map map;
-    King kinger{250, 0, 0, 0};
-    Enemy Purrsival{50, 1, 20, 10, 0, 0, 0};
+    // Buttons
+        std::vector<Button> listeDeButton;
 
-    tower arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
+    // Map
+        Map map;
 
-    
+    // Entities
+        King kinger{250, 0, 0, 0};
+        Enemy Purrsival{50, 1, 20, 10, 0, 0, 0};
+        tower arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
+
+    // Gold
+    unsigned int player_gold;
+    SimpleText player_gold_text;
 };
-
-

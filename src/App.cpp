@@ -38,11 +38,11 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
     map._out = loadTexture(out);
 
     kinger._king = loadTexture(king);
-
     Purrsival._knight = loadTexture(knight);
 
-
     arrow._arrow = loadTexture(tower);
+
+    this->player_gold = 100;
 
     //TEXTURES BOUTONS
     _texture = loadTexture(test);
@@ -50,14 +50,26 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
 
 void App::setup()
 {
-    // Set the clear color to a nice blue
-    glClearColor(0.0f, 0.0f, 0.4f, 1.0f);
+    // Set the clear color to black
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     // Setup the text renderer with blending enabled and white text color
     TextRenderer.ResetFont();
     TextRenderer.SetColor(SimpleText::TEXT_COLOR, SimpleText::Color::WHITE);
     TextRenderer.SetColorf(SimpleText::BACKGROUND_COLOR, 0.f, 0.f, 0.f, 0.f);
     TextRenderer.EnableBlending(true);
+
+    // Initializes player_gold_text
+    this->player_gold_text.SetColor(SimpleText::TEXT_COLOR, SimpleText::Color::WHITE);
+    this->player_gold_text.SetTextSize(SimpleText::FontSize::SIZE_32);
+    this->player_gold_text.SetColorf(SimpleText::BACKGROUND_COLOR, 0.f, 0.f, 0.f, 0.f);
+    this->player_gold_text.EnableBlending(true);
+
+    // Initialises the buttons
+    listeDeButton.push_back(Button{"Boutton_Start", false, 3, 4, 2, 1, _texture});
+    listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, _texture});
+    listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 1, 1, _texture});
+    listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, _texture});
 
     // Extract information from itd file
     std::vector<std::vector<std::string>> splitted_itd_file = split_itd_file();
@@ -69,13 +81,8 @@ void App::setup()
     // Create graph for ennemies from itd
     std::vector<std::vector<float>> adjacency_matrix {create_adjacency_matrix(splitted_itd_file)};
     Graph::WeightedGraph graph {Graph::build_from_adjacency_matrix(adjacency_matrix)};
-
-    listeDeButton.push_back(Button{"Boutton_Start", false, 3, 4, 2, 1, _texture});
-    listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, _texture});
-    listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 1, 1, _texture});
-    listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, _texture});
     
-
+    // Create graph for ennemies
     std::unordered_map<int, std::pair<float, int>> dij_map = graph.dijkstra(0, 7); 
     std::vector<node> vec_nodes = create_vect_nodes(splitted_itd_file);
     std::vector<int> shortest_path = get_shortest_path (dij_map, vec_nodes);
@@ -107,12 +114,17 @@ void App::update()
     }
 
     if(listeDeButton[1].isPressed){
-      window_close = true; //femer la fenetre 
+      window_close = true; //fermer la fenêtre 
     }
     
     if(listeDeButton[2].isPressed){
         _state = state_screen::MENU;
     }
+
+    // if (arrow.range <= (Purrsival.x or Purrsival.y))
+    // {
+    //     Purrsival.health-=arrow.
+    // }
 
     render();
 }
@@ -130,9 +142,9 @@ void App::render()
     TextRenderer.Render();
     if(_state == state_screen::screen_LEVEL){
         listeDeButton[0].isPressed = false;
-        draw_grid();
-        // Draw the grid
-        draw_grid();
+
+        // Draw a helpful grid
+        // draw_grid();
 
         // Draw the map
         map.draw_map(map);
@@ -149,6 +161,10 @@ void App::render()
         draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map); 
         
         listeDeButton[2].draw_me();
+
+        std::string GOLD_Label{" GOLD : " + std::to_string(this->player_gold) + " "};
+        this->player_gold_text.Label(GOLD_Label.c_str() , _width / 80, 100, SimpleText::LEFT);
+        this->player_gold_text.Render();
     }
 
     if(_state == state_screen::MENU){
@@ -163,7 +179,6 @@ void App::render()
 
 void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {
 }
-
 
 // void App::mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
 //      if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
