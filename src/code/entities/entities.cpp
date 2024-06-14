@@ -106,12 +106,8 @@ void Enemy::get_elapsedTime (const double & elapsedTime)
 
 void Enemy::enemy_move()
 {
-    node start_of_path = this->enemy_path[0];
-    // node end_of_path = this->enemy_path.back();
-    node end_of_path = this->enemy_path[1];
-
-    node current_node{start_of_path};
-    node target_node{this->enemy_path[1]};
+    node current_node{this->enemy_path[this->current_node_id]};
+    node target_node{this->enemy_path[this->target_node_id]};
 
         int coeff_x{1};
         int coeff_y{1};

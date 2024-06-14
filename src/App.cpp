@@ -165,29 +165,29 @@ void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods
 }
 
 
-void App::mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
-     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        double xpos, ypos; // Coordonnées en pixels
-        glfwGetCursorPos(window, &xpos, &ypos);
-        int windowWidth, windowHeight;
-        glfwGetWindowSize(window, &windowWidth, &windowHeight);
+// void App::mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+//      if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+//         double xpos, ypos; // Coordonnées en pixels
+//         glfwGetCursorPos(window, &xpos, &ypos);
+//         int windowWidth, windowHeight;
+//         glfwGetWindowSize(window, &windowWidth, &windowHeight);
         
-        int offset = (windowWidth - windowHeight) / 2; // Décalage sur les côtés
+//         int offset = (windowWidth - windowHeight) / 2; // Décalage sur les côtés
 
-        // Normaliser les coordonnées (0 à 1)
-        xpos = (xpos - offset) / windowHeight; 
-        ypos = ypos / windowHeight;
+//         // Normaliser les coordonnées (0 à 1)
+//         xpos = (xpos - offset) / windowHeight; 
+//         ypos = ypos / windowHeight;
 
-        // Calculer les coordonnées des cases (0 à 7)
-        int xCase = static_cast<int>(xpos * 8);
-        int yCase = static_cast<int>(ypos * 8);
+//         // Calculer les coordonnées des cases (0 à 7)
+//         int xCase = static_cast<int>(xpos * 8);
+//         int yCase = static_cast<int>(ypos * 8);
 
-        std::cout << "xCase : " << xCase << "  ";
-        std::cout << "yCase : " << yCase << std::endl;
-     }
-}
+//         std::cout << "xCase : " << xCase << "  ";
+//         std::cout << "yCase : " << yCase << std::endl;
+//      }
+// }
 
-/*
+
 void App::mouse_button_callback(int button, int action, int mods) {
     if(mouseXpos >= listeDeButton[0].posX && mouseXpos < listeDeButton[0].posX+listeDeButton[0].width && 
     mouseYpos >= listeDeButton[0].posY && mouseYpos < listeDeButton[0].posY + listeDeButton[0].height){
@@ -202,7 +202,6 @@ void App::mouse_button_callback(int button, int action, int mods) {
         listeDeButton[2].isPressed = true;
     }
 }
-*/
 
 void App::scroll_callback(double /*xoffset*/, double /*yoffset*/) {
 }
