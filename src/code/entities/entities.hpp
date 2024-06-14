@@ -50,6 +50,8 @@ struct King
     float y {}; // position en y sur la grille
     bool is_dead{0};
 
+    int player_gold;
+
     GLuint _king{};
 };
 

@@ -44,7 +44,6 @@ private:
     int _height {};
     double _previousTime {};
     float _viewSize {};
-    SimpleText TextRenderer {};
 
     // Buttons
         std::vector<Button> listeDeButton;
@@ -53,11 +52,11 @@ private:
         Map map;
 
     // Entities
-        King kinger{250, 0, 0, 0};
+        King kinger{250, 0, 0, 0, 100};
         Enemy Purrsival{50, 1, 20, 10, 0, 0, 0};
         tower arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
 
-    // Gold
-    unsigned int player_gold;
-    SimpleText player_gold_text;
+    // Text
+        SimpleText TextRenderer {};
+        SimpleText player_gold_text;
 };

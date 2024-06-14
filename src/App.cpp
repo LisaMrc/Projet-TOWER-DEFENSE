@@ -42,8 +42,6 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
 
     arrow._arrow = loadTexture(tower);
 
-    this->player_gold = 100;
-
     //TEXTURES BOUTONS
     _texture = loadTexture(test);
 }
@@ -162,7 +160,8 @@ void App::render()
         
         listeDeButton[2].draw_me();
 
-        std::string GOLD_Label{" GOLD : " + std::to_string(this->player_gold) + " "};
+        // Renders player_gold_text
+        std::string GOLD_Label{" GOLD : " + std::to_string(kinger.player_gold) + " "};
         this->player_gold_text.Label(GOLD_Label.c_str() , _width / 80, 100, SimpleText::LEFT);
         this->player_gold_text.Render();
     }

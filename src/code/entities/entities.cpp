@@ -11,9 +11,10 @@
 // Initialise la somme d'argent en début de partie
 int gold_earned {10};
 
-bool Enemy::is_dead() {
+bool Enemy::is_dead()
+{
     if (health <= 0) {
-        gold_earned += gold;
+        gold += gold;
         return true;
     } else {
         return false;
