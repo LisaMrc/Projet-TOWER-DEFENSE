@@ -91,11 +91,19 @@ int main() {
         xpos = (xpos-offset)/windowHeight; 
         ypos = (ypos)/windowHeight;
 
-        std::cout << "xCase : " << (int)(xpos * 8) << "  ";
-        std::cout << "yCase : " << (int)(ypos * 8);
-        std::cout << std::endl;
+        
+        // Calculer les coordonnées des cases (0 à 7)
+        int xCase = static_cast<int>(xpos * 8);
+        int yCase = static_cast<int>(ypos * 8);
+
+
+        std::cout << "xCase : " << xCase << "  ";
+        std::cout << "yCase : " << yCase << std::endl;
+
+        
 
     });
+
     glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
         window_as_app(window).scroll_callback(xoffset, yoffset);
     });
@@ -152,6 +160,9 @@ int main() {
 
         // Optional: limit the frame rate
         double elapsedTime { glfwGetTime() - startTime };
+
+        
+        
     
         // wait the remaining time to match the target wanted frame rate
 		if(elapsedTime < TARGET_TIME_FOR_FRAME)
