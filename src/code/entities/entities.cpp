@@ -11,15 +11,13 @@
 // Initialise la somme d'argent en début de partie
 int gold_earned {10};
 
-// bool Enemy::is_dead()
-// {
-//     if (health <= 0) {
-//         kinger.player_gold += gold;
-//         return true;
-//     } else {
-//         return false;
-//     }
-// }
+void Enemy::oof()
+{
+    if (health <= 0)
+    {
+        is_dead == true;
+    }
+}
 
 void damage(Enemy Enemy, projectile projectile)
 {
@@ -148,4 +146,15 @@ void Enemy::enemy_move()
             else
                 this->y += coeff_y * this->enemy_clock * this->speed;
         }
+}
+
+void Player::analyses_ennemies(std::vector<Enemy> ennemies_in_wave)
+{
+    for (Enemy enemy : ennemies_in_wave)
+    {
+        if (enemy.is_dead = 1)
+        {
+            gold+= enemy.gold;
+        }
+    }  
 }
