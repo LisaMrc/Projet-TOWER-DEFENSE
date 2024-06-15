@@ -63,10 +63,13 @@ void App::setup()
     this->player_gold_text.EnableBlending(true);
 
     // Initialises the buttons
-    listeDeButton.push_back(Button{"Boutton_Start", false, 3, 4, 2, 1, _texture});
-    listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, _texture});
-    listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 1, 1, _texture});
-    listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, _texture});
+    listeDeButton.push_back(Button{"Boutton_Start", false, 3, 4, 2, 1, _texture}); //0
+    listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, _texture}); //1
+    listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 1, 1, _texture}); //2
+    listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, _texture}); //3
+    listeDeButton.push_back(Button{"Boutton_Loose", false, 3, 2, 6, 2, _texture}); //4
+    listeDeButton.push_back(Button{"Boutton_Win", false, 3, 2, 6, 2, _texture}); //5
+    listeDeButton.push_back(Button{"Boutton_Play_again", false, 3, 5, 2, 1, _texture}); //6
 
     // Extract information from itd file
     std::vector<std::vector<std::string>> splitted_itd_file = split_itd_file();
@@ -78,15 +81,6 @@ void App::setup()
     // Create graph for ennemies from itd
     std::vector<std::vector<float>> adjacency_matrix {create_adjacency_matrix(splitted_itd_file)};
     Graph::WeightedGraph graph {Graph::build_from_adjacency_matrix(adjacency_matrix)};
-
-    listeDeButton.push_back(Button{"Boutton_Start", false, 3, 4, 2, 1, _texture}); //0
-    listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, _texture}); //1
-    listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 1, 1, _texture}); //2
-    listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, _texture}); //3
-    listeDeButton.push_back(Button{"Boutton_Loose", false, 3, 2, 6, 2, _texture}); //4
-    listeDeButton.push_back(Button{"Boutton_Win", false, 3, 2, 6, 2, _texture}); //5
-    listeDeButton.push_back(Button{"Boutton_Play_again", false, 3, 5, 2, 1, _texture}); //6
-    
 
     
     // Create graph for ennemies
@@ -124,7 +118,7 @@ void App::update()
 
     if(listeDeButton[1].isPressed)
     {
-      window_close = true;
+        window_close = true;
     }
     
     if(listeDeButton[2].isPressed)
@@ -156,14 +150,6 @@ void App::update()
         _state = state_screen::MENU;        
     }
 
-    // if (kinger.health == 0){
-    //     _state = state_screen::screen_LOOSE;
-    // }
-
-    // if (time > 60 && kinger.health != 0){
-    //     _state = state_screen::screen_WIN;
-    // }
-
     render();
 }
 
@@ -175,9 +161,6 @@ void App::render()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glLoadIdentity();
-
-    
-    
 
     // Render the text
     TextRenderer.Render();
@@ -211,7 +194,7 @@ void App::render()
         listeDeButton[2].draw_me();
 
         if (kinger.health == 0){
-        _state = state_screen::screen_LOOSE;
+            _state = state_screen::screen_LOOSE;
         }
 
         else if (time_play > 60+time_open_window && kinger.health != 0){
