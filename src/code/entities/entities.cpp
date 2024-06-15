@@ -8,17 +8,18 @@
 #include <vector>
 #include <stack>
 
-int gold_earned {0};
+// Initialise la somme d'argent en début de partie
+int gold_earned {10};
 
-
-bool Enemy::is_dead() {
-    if (health <= 0) {
-        gold_earned += gold;
-        return true;
-    } else {
-        return false;
-    }
-}
+// bool Enemy::is_dead()
+// {
+//     if (health <= 0) {
+//         kinger.player_gold += gold;
+//         return true;
+//     } else {
+//         return false;
+//     }
+// }
 
 void damage(Enemy Enemy, projectile projectile)
 {
@@ -34,16 +35,18 @@ bool in_range(Enemy Enemy, tower tour)
     }
 }
 
-void fire(Enemy Enemy, tower tour)
-{
-    bool range {in_range(Enemy, tour)};
-    bool death {Enemy.is_dead()};
-    while (range == true || death == false) {
-        range = in_range(Enemy, tour);
-        death = Enemy.is_dead();
-        // envoyer un projectile (== projectileKind) toutes les XX secondes (== tower.rate) sur l'Enemy
-    }
-}
+// void fire(Enemy Enemy, tower tour)
+// {
+//     bool range {in_range(Enemy, tour)};
+//     bool death {Enemy.is_dead()};
+
+//     while (range == true || death == false)
+//     {
+//         range = in_range(Enemy, tour);
+//         death = Enemy.is_dead();
+//         // envoyer un projectile (== projectileKind) toutes les XX secondes (== tower.rate) sur l'Enemy
+//     }
+// }
 
 std::vector<node> create_vect_nodes(std::vector<std::vector<std::string>> splitted_itd_file)
 {

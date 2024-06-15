@@ -34,7 +34,7 @@ struct Enemy
     float x {}; // position en x sur la grille
     float y {}; // position en y sur la grille
     
-    bool is_dead();
+    bool is_dead{};
 
     GLuint _knight {};
     GLuint _sorcerer {};
@@ -58,6 +58,8 @@ struct King
     float y {}; // position en y sur la grille
     bool is_dead{0};
 
+    int player_gold;
+
     GLuint _king{};
 };
 
@@ -65,8 +67,8 @@ struct projectile
 {
     int damages {};
     float speed {};
-    float x {}; // position x
-    float y {}; // position y
+    float x {};
+    float y {};
 };
 
 enum class ProjectileKind
@@ -81,8 +83,8 @@ struct tower
     ProjectileKind projectile;
     int range {};
     int rate {}; // tir par seconde
-    float x {}; // position x
-    float y {}; // position y
+    float x {};
+    float y {};
     int price{};
 
     GLuint _arrow{};
