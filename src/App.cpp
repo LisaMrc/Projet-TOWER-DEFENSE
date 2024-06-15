@@ -257,19 +257,19 @@ void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods
 
 void App::mouse_button_callback(int button, int action, int mods) {
     if(mouseXpos >= listeDeButton[0].posX && mouseXpos < listeDeButton[0].posX+listeDeButton[0].width && 
-    mouseYpos >= listeDeButton[0].posY && mouseYpos < listeDeButton[0].posY + listeDeButton[0].height){
+    mouseYpos >= listeDeButton[0].posY && mouseYpos < listeDeButton[0].posY + listeDeButton[0].height && _state == state_screen::MENU){
         listeDeButton[0].isPressed = true;
     }
     if(mouseXpos >= listeDeButton[1].posX && mouseXpos < listeDeButton[1].posX+listeDeButton[1].width && 
-    mouseYpos >= listeDeButton[1].posY && mouseYpos < listeDeButton[1].posY + listeDeButton[1].height){
+    mouseYpos >= listeDeButton[1].posY && mouseYpos < listeDeButton[1].posY + listeDeButton[1].height && _state == state_screen::MENU){
         listeDeButton[1].isPressed = true;
     }
     if(mouseXpos >= listeDeButton[2].posX && mouseXpos < listeDeButton[2].posX+listeDeButton[2].width && 
-    mouseYpos >= listeDeButton[2].posY && mouseYpos < listeDeButton[2].posY + listeDeButton[2].height){
+    mouseYpos >= listeDeButton[2].posY && mouseYpos < listeDeButton[2].posY + listeDeButton[2].height && _state == state_screen::screen_LEVEL){
         listeDeButton[2].isPressed = true;
     }
     if(mouseXpos >= listeDeButton[6].posX && mouseXpos < listeDeButton[6].posX+listeDeButton[6].width && 
-    mouseYpos >= listeDeButton[6].posY && mouseYpos < listeDeButton[6].posY + listeDeButton[6].height){
+    mouseYpos >= listeDeButton[6].posY && mouseYpos < listeDeButton[6].posY + listeDeButton[6].height && (_state == state_screen::screen_LOOSE||_state == state_screen::screen_WIN)){
         listeDeButton[6].isPressed = true;
     }
     
