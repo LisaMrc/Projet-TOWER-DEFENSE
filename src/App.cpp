@@ -65,10 +65,13 @@ void App::setup()
     std::vector<std::vector<float>> adjacency_matrix {create_adjacency_matrix(splitted_itd_file)};
     Graph::WeightedGraph graph {Graph::build_from_adjacency_matrix(adjacency_matrix)};
 
-    listeDeButton.push_back(Button{"Boutton_Start", false, 3, 4, 2, 1, _texture});
-    listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, _texture});
-    listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 1, 1, _texture});
-    listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, _texture});
+    listeDeButton.push_back(Button{"Boutton_Start", false, 3, 4, 2, 1, _texture}); //0
+    listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, _texture}); //1
+    listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 1, 1, _texture}); //2
+    listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, _texture}); //3
+    listeDeButton.push_back(Button{"Boutton_Loose", false, 3, 2, 6, 2, _texture}); //4
+    listeDeButton.push_back(Button{"Boutton_Win", false, 3, 2, 6, 2, _texture}); //5
+    listeDeButton.push_back(Button{"Boutton_Play_again", false, 3, 5, 2, 1, _texture}); //6
     
 
     std::unordered_map<int, std::pair<float, int>> dij_map = graph.dijkstra(0, 7); 
@@ -100,6 +103,7 @@ void App::update()
 
     if(listeDeButton[0].isPressed){
         _state = state_screen::screen_LEVEL;
+        time_open_window = {glfwGetTime()};
     }
 
     if(listeDeButton[1].isPressed){
@@ -110,6 +114,17 @@ void App::update()
         _state = state_screen::MENU;
     }
 
+    if(listeDeButton[6].isPressed){
+        _state = state_screen::MENU;        
+    }
+
+    // if (kinger.health == 0){
+    //     _state = state_screen::screen_LOOSE;
+    // }
+
+    // if (time > 60 && kinger.health != 0){
+    //     _state = state_screen::screen_WIN;
+    // }
 
     render();
 }
@@ -123,7 +138,9 @@ void App::render()
 
     // Render the text
     TextRenderer.Render();
+
     if(_state == state_screen::screen_LEVEL){
+        time_play = glfwGetTime();
         listeDeButton[0].isPressed = false;
         draw_grid();
         // Draw the grid
@@ -138,6 +155,14 @@ void App::render()
         Purrsival.enemy_move();
         draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map);
         listeDeButton[2].draw_me();
+
+        if (kinger.health == 0){
+        _state = state_screen::screen_LOOSE;
+        }
+
+        else if (time_play > 60+time_open_window && kinger.health != 0){
+            _state = state_screen::screen_WIN;
+        }
     }
 
     
@@ -145,9 +170,22 @@ void App::render()
         listeDeButton[0].isPressed = false;
         listeDeButton[1].isPressed = false;
         listeDeButton[2].isPressed = false;
+        listeDeButton[6].isPressed = false;
         listeDeButton[0].draw_me();
         listeDeButton[1].draw_me();
         listeDeButton[3].draw_me();
+    }
+
+    if (_state == state_screen::screen_LOOSE){
+        listeDeButton[4].draw_me();
+        listeDeButton[6].draw_me();
+        std::cout<< "vous avez perdue";
+    }
+
+    if (_state == state_screen::screen_WIN){
+        listeDeButton[5].draw_me();
+        listeDeButton[6].draw_me();
+        std::cout<< "vous avez gagner";
     }
     
 
@@ -168,6 +206,10 @@ void App::mouse_button_callback(int /*button*/, int /*action*/, int /*mods*/) {
     if(mouseXpos >= listeDeButton[2].posX && mouseXpos < listeDeButton[2].posX+listeDeButton[2].width && 
     mouseYpos >= listeDeButton[2].posY && mouseYpos < listeDeButton[2].posY + listeDeButton[2].height){
         listeDeButton[2].isPressed = true;
+    }
+    if(mouseXpos >= listeDeButton[6].posX && mouseXpos < listeDeButton[6].posX+listeDeButton[6].width && 
+    mouseYpos >= listeDeButton[6].posY && mouseYpos < listeDeButton[6].posY + listeDeButton[6].height){
+        listeDeButton[6].isPressed = true;
     }
     
 

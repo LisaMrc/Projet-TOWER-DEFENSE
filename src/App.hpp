@@ -12,7 +12,7 @@
 #include <vector>
 #include <unordered_map>
 
-enum state_screen {MENU, screen_LEVEL};
+enum state_screen {MENU, screen_LEVEL, screen_LOOSE, screen_WIN};
 
 class App {
 public:
@@ -37,6 +37,8 @@ public:
     int mouseXpos;
     int mouseYpos;
     GLuint _texture; 
+    double time_open_window = {};
+    double time_play = {};
 
     bool window_close = false;
 
