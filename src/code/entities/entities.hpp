@@ -9,6 +9,14 @@
 // #include "../draw/draw.hpp"
 extern int gold_earned; // extern int = idem "méthode" mais pour une variable
 
+
+struct clickPos {
+    float x{};
+    float y{};
+};
+
+
+
 struct node
 {
     int node_id;

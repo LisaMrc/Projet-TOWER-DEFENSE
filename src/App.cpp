@@ -45,7 +45,7 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
     arrow._arrow = loadTexture(tower);
 
     //TEXTURES BOUTONS
-    _texture = loadTexture(test);
+    _texture = loadTexture(stop);
 }
 
 void App::setup()
@@ -126,6 +126,9 @@ void App::render()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glLoadIdentity();
 
+    
+    
+
     // Render the text
     TextRenderer.Render();
     if(_state == state_screen::screen_LEVEL){
@@ -146,7 +149,12 @@ void App::render()
             Purrsival.enemy_move();
             // draw quad ici si ennemi doit disparaître
         }
-        draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map); 
+        draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map);
+
+        
+        for (const auto& tower : towers) {
+            create_tower(map, arrow, tower.x, tower.y);
+        }
         
         listeDeButton[2].draw_me();
     }
@@ -159,6 +167,8 @@ void App::render()
         listeDeButton[1].draw_me();
         listeDeButton[3].draw_me();
     }
+
+    
 }
 
 void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {

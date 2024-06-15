@@ -10,6 +10,7 @@
 
 int gold_earned {0};
 
+
 bool Enemy::is_dead() {
     if (health <= 0) {
         gold_earned += gold;
@@ -95,8 +96,14 @@ std::vector<node> get_enemy_path (std::vector<node> vector_of_nodes, std::vector
 }
 
 void create_tower(Map &map, tower &tour, float x, float y) {
-    gold_earned -= tour.price;
-    draw_quad_with_texture(tour._arrow, x, y, map);
+    bool constructible{map.can_create_tower(map, x, y)};
+    if (constructible == true) {
+        gold_earned -= tour.price;
+        draw_quad_with_texture(tour._arrow, x, y, map);
+    } else {
+        std::cout << "Il n'est pas possible de construire cette tour" << std::endl;
+    }
+    
 }
 
 void Enemy::get_elapsedTime (const double & elapsedTime)

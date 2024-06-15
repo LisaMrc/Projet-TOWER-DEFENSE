@@ -40,6 +40,11 @@ public:
 
     bool window_close = false;
 
+    float xTower{};
+    float yTower{};
+
+    std::vector<tower> towers;
+
 private:
     void render();
 
@@ -62,6 +67,8 @@ private:
     Enemy Purrsival{50, 1, 20, 10, 0, 0, 0};
 
     tower arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
+
+    
 
     
 };
