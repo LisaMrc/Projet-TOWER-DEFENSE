@@ -27,7 +27,7 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
     img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 4, true)};
     img::Image tower {img::load(make_absolute_path("images/textures/entities/tower.png", true), 4, true)};
 
-    // BUTTON TEXTURE
+    // BUTTONS TEXTURE
     img::Image start {img::load(make_absolute_path("images/button/start_button.png", true), 3, true)};
     img::Image stop {img::load(make_absolute_path("images/button/stop_button.png", true), 3, true)};
     img::Image pause {img::load(make_absolute_path("images/button/pause_button.png", true), 3, true)};
@@ -42,13 +42,12 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
 
     arrow._arrow = loadTexture(tower);
 
-    //TEXTURES BOUTONS
     _texture = loadTexture(test);
 }
 
 void App::setup()
 {
-    // Set the clear color to black
+    // Set the background color to black
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     // Setup the text renderer with blending enabled and white text color
@@ -98,31 +97,50 @@ void App::setup()
 
 void App::update()
 {
+    
+    // std::vector<int> posCaseMouse = passage_pixel_to_case(mouseXpos, mouseYpos);
+    // mouseXpos, mouseYpos = posCaseMouse[0], posCaseMouse[1];
+
     const double currentTime { glfwGetTime() };
     const double elapsedTime { currentTime - _previousTime};
     _previousTime = currentTime;
 
-    Purrsival.get_elapsedTime(elapsedTime);
-
-    // std::vector<int> posCaseMouse = passage_pixel_to_case(mouseXpos, mouseYpos);
-    // mouseXpos, mouseYpos = posCaseMouse[0], posCaseMouse[1];
-
-    if(listeDeButton[0].isPressed){
+    // BUTTON TRIGGERS
+    if(listeDeButton[0].isPressed)
+    {
         _state = state_screen::screen_LEVEL;
     }
 
-    if(listeDeButton[1].isPressed){
-      window_close = true; //fermer la fenêtre 
+    if(listeDeButton[1].isPressed)
+    {
+      window_close = true;
     }
     
-    if(listeDeButton[2].isPressed){
+    if(listeDeButton[2].isPressed)
+    {
         _state = state_screen::MENU;
     }
 
-    // if (arrow.range <= (Purrsival.x or Purrsival.y))
-    // {
-    //     Purrsival.health-=arrow.
-    // }
+    // KING
+
+    if (kinger.health == 0)
+    {
+        kinger.is_dead = 1;
+    }
+
+    if (Purrsival.current_node_id == Purrsival.enemy_path.back().node_id)
+    {
+        kinger.health -= Purrsival.damage;
+    }
+
+    // ENEMY
+    Purrsival.get_elapsedTime(elapsedTime);
+    
+    if (Purrsival.health == 0)
+    {
+        Purrsival.is_dead = 1;
+        kinger.player_gold += Purrsival.gold;
+    }
 
     render();
 }
