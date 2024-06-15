@@ -140,12 +140,7 @@ void App::update()
 
     // ENEMY
     Purrsival.get_elapsedTime(elapsedTime);
-    
-    if (Purrsival.health == 0)
-    {
-        Purrsival.is_dead = 1;
-        kinger.player_gold += Purrsival.gold;
-    }
+    Purrsival.oof();
     if(listeDeButton[6].isPressed){
         _state = state_screen::MENU;        
     }
