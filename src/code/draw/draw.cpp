@@ -2,6 +2,7 @@
 #include "draw.hpp"
 #include "sil.hpp"
 #include "utils.hpp"
+#include "code/entities/entities.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -343,4 +344,32 @@ void Map::draw_map (Map &map)
             }
         }
     }
+}
+
+bool Map::can_create_tower(Map &map, float x, float y) {
+    
+    sil::Image imagemap {sil::Image("data/map.png")};
+ 
+    
+            
+    if (x < 0 || y < 0 || x >= imagemap.width() || y >= imagemap.height()) {
+        return false;
+    }
+
+    // Calculez l'index de la position
+    int index = static_cast<int>(x) + imagemap.width() * static_cast<int>(y);
+
+    // Vérifiez le type de case
+    switch (this->px_pos_CaseType_vec[index]) {
+        case CaseType::PATH:
+        case CaseType::IN:
+        case CaseType::OUT:
+            return false;
+        case CaseType::GRASS:
+            // this->px_pos_CaseType_vec[index] = CaseType::OCCUPIED;
+            return true;
+        default:
+            return false;
+    }
+        
 }

@@ -2,17 +2,26 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
-
+#include "../draw/sil.hpp"
 #include <GLHelpers.hpp>
+#include "../draw/draw.hpp"
 
 // #include "../draw/draw.hpp"
 extern int gold_earned; // extern int = idem "méthode" mais pour une variable
 
+
+struct clickPos {
+    float x{};
+    float y{};
+};
+
+
+
 struct node
 {
     int node_id;
-    int node_x;
-    int node_y;
+    float node_x;
+    float node_y;
 };
 
 struct Enemy
@@ -25,15 +34,16 @@ struct Enemy
     float x {}; // position en x sur la grille
     float y {}; // position en y sur la grille
     
-    bool is_dead();
+    bool is_dead{};
 
     GLuint _knight {};
     GLuint _sorcerer {};
 
     std::vector<node> enemy_path;
+    int current_node_id = 0;
+    int target_node_id = 1;
     double enemy_clock;
     void get_elapsedTime(double const & elapsedTime);
-    int node_nbr = 1;
     void enemy_move();
 };
 
@@ -48,6 +58,8 @@ struct King
     float y {}; // position en y sur la grille
     bool is_dead{0};
 
+    int player_gold;
+
     GLuint _king{};
 };
 
@@ -55,8 +67,8 @@ struct projectile
 {
     int damages {};
     float speed {};
-    float x {}; // position x
-    float y {}; // position y
+    float x {};
+    float y {};
 };
 
 enum class ProjectileKind
@@ -71,10 +83,14 @@ struct tower
     ProjectileKind projectile;
     int range {};
     int rate {}; // tir par seconde
-    float x {}; // position x
-    float y {}; // position y
+    float x {};
+    float y {};
+    int price{};
+
+    GLuint _arrow{};
 };
 
 void damage(Enemy Enemy, projectile projectile);
 bool in_range(Enemy Enemy, tower tour);
 void fire(Enemy Enemy, tower tour);
+void create_tower(Map &map, tower &tour, float x, float y);

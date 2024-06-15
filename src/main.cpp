@@ -6,10 +6,9 @@
 #include <iostream>
 
 #include "App.hpp"
-
-// #include "code/draw/draw.hpp"
 #include "code/draw/draw.hpp"
 #include "code/ui/button.hpp"
+#include "code/entities/entities.hpp"
 
 namespace {
     App& window_as_app(GLFWwindow* window)
@@ -51,7 +50,7 @@ int main() {
     // Make the window's context current
     glfwMakeContextCurrent(window);
 
-    // Intialize glad (loads the OpenGL functions)
+    // Initialize glad (loads the OpenGL functions)
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Failed to initialize OpenGL context" << std::endl;
         glfwTerminate();
@@ -59,32 +58,41 @@ int main() {
     }
 
     App app {};
-
     glfwSetWindowUserPointer(window, &app);
 
     glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
         window_as_app(window).key_callback(key, scancode, action, mods);
     });
-    glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) { //fonction pour convertir les coordonnées en cases
+
+    glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) { 
         window_as_app(window).mouse_button_callback(button, action, mods);
 
-        double xpos, ypos; //coordonnées en pixels
+        double xpos, ypos; // coordonnées en pixels
         glfwGetCursorPos(window, &xpos, &ypos);
         GLint windowWidth, windowHeight;
         glfwGetWindowSize(window, &windowWidth, &windowHeight);
-        int offset = (windowWidth-windowHeight)/2;	//decallage sur les côté
+        int offset = (windowWidth - windowHeight) / 2; // décalage sur les côtés
 
-        //std::cout << "x:" << (xpos / windowWidth); //coordonnées openGL
-        //std::cout << "y:" << (ypos / windowHeight);
+        xpos = (xpos - offset) / windowHeight; 
+        ypos = ypos / windowHeight;
 
-        xpos = (xpos-offset)/windowHeight; 
-        ypos = (ypos)/windowHeight;
+        // Calculer les coordonnées des cases (0 à 7)
+        int xCase = static_cast<int>(xpos * 8);
+        int yCase = static_cast<int>(ypos * 8);
 
-        std::cout << "xCase : " << (int)(xpos * 8) << "  ";
-        std::cout << "yCase : " << (int)(ypos * 8);
-        std::cout << std::endl;
+        std::cout << "xCase : " << xCase << "  ";
+        std::cout << "yCase : " << yCase << std::endl;
 
+        auto& app = window_as_app(window);
+        app.xTower = static_cast<float>(xCase);
+        app.yTower = static_cast<float>(yCase);
+
+        tower arrow{ProjectileKind::Arrow, 2, 4, app.xTower, app.yTower, 200};
+
+        app.towers.push_back(arrow);
+        app.mouse_button_callback(button, action, mods);
     });
+
     glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
         window_as_app(window).scroll_callback(xoffset, yoffset);
     });
@@ -94,7 +102,7 @@ int main() {
     glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height) {
         window_as_app(window).size_callback(width, height);
     });
-    
+
     // Force calling the size_callback of the game to set the right viewport and projection matrix
     {
         int width, height;
@@ -106,26 +114,23 @@ int main() {
 
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(window)) {
+        glClear(GL_COLOR_BUFFER_BIT);
         // Enable transparency
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // Get time (in second) at loop beginning
-		double startTime { glfwGetTime() };
+        double startTime { glfwGetTime() };
 
-        double xpos, ypos; //coordonnées en pixels
+        double xpos, ypos; // coordonnées en pixels
         glfwGetCursorPos(window, &xpos, &ypos);
 
         GLint windowWidth, windowHeight;
         glfwGetWindowSize(window, &windowWidth, &windowHeight);
-        int offset = (windowWidth-windowHeight)/2;	//decallage sur les côté
+        int offset = (windowWidth - windowHeight) / 2; // décalage sur les côtés
 
-        //std::cout << "x:" << (xpos / windowWidth); //coordonnées openGL
-        //std::cout << "y:" << (ypos / windowHeight);
-
-        xpos = ((xpos-offset)/windowHeight)*8; 
-        ypos = ((ypos)/windowHeight)*8;
-        //std::cout << "xpos = "<< xpos<< std::endl;
+        xpos = ((xpos - offset) / windowHeight) * 8; 
+        ypos = ((ypos) / windowHeight) * 8;
 
         app.mouseXpos = xpos;
         app.mouseYpos = ypos;
@@ -140,20 +145,17 @@ int main() {
 
         // Optional: limit the frame rate
         double elapsedTime { glfwGetTime() - startTime };
-    
-        // wait the remaining time to match the target wanted frame rate
-		if(elapsedTime < TARGET_TIME_FOR_FRAME)
-		{
-			glfwWaitEventsTimeout(TARGET_TIME_FOR_FRAME-elapsedTime);
-		}
-        if (app.window_close){
-            glfwSetWindowShouldClose(window, true);
+
+        if (elapsedTime < TARGET_TIME_FOR_FRAME) {
+            glfwWaitEventsTimeout(TARGET_TIME_FOR_FRAME - elapsedTime);
         }
-        if(elapsedTime < TARGET_TIME_FOR_FRAME) {
-            glfwWaitEventsTimeout(TARGET_TIME_FOR_FRAME-elapsedTime);
+
+        if (app.window_close) {
+            glfwSetWindowShouldClose(window, true);
         }
     }
     
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }

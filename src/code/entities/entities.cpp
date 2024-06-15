@@ -1,5 +1,6 @@
 #include "entities.hpp"
 #include "../draw/draw.hpp"
+#include "../draw/sil.hpp"
 #include "../../App.hpp"
 
 #include <iostream>
@@ -7,16 +8,18 @@
 #include <vector>
 #include <stack>
 
-int gold_earned {0};
+// Initialise la somme d'argent en début de partie
+int gold_earned {10};
 
-bool Enemy::is_dead() {
-    if (health <= 0) {
-        gold_earned += gold;
-        return true;
-    } else {
-        return false;
-    }
-}
+// bool Enemy::is_dead()
+// {
+//     if (health <= 0) {
+//         kinger.player_gold += gold;
+//         return true;
+//     } else {
+//         return false;
+//     }
+// }
 
 void damage(Enemy Enemy, projectile projectile)
 {
@@ -32,16 +35,18 @@ bool in_range(Enemy Enemy, tower tour)
     }
 }
 
-void fire(Enemy Enemy, tower tour)
-{
-    bool range {in_range(Enemy, tour)};
-    bool death {Enemy.is_dead()};
-    while (range == true || death == false) {
-        range = in_range(Enemy, tour);
-        death = Enemy.is_dead();
-        // envoyer un projectile (== projectileKind) toutes les XX secondes (== tower.rate) sur l'Enemy
-    }
-}
+// void fire(Enemy Enemy, tower tour)
+// {
+//     bool range {in_range(Enemy, tour)};
+//     bool death {Enemy.is_dead()};
+
+//     while (range == true || death == false)
+//     {
+//         range = in_range(Enemy, tour);
+//         death = Enemy.is_dead();
+//         // envoyer un projectile (== projectileKind) toutes les XX secondes (== tower.rate) sur l'Enemy
+//     }
+// }
 
 std::vector<node> create_vect_nodes(std::vector<std::vector<std::string>> splitted_itd_file)
 {
@@ -93,48 +98,54 @@ std::vector<node> get_enemy_path (std::vector<node> vector_of_nodes, std::vector
     return enemy_path;
 }
 
+void create_tower(Map &map, tower &tour, float x, float y) {
+    bool constructible{map.can_create_tower(map, x, y)};
+    if (constructible == true) {
+        gold_earned -= tour.price;
+        draw_quad_with_texture(tour._arrow, x, y, map);
+    } else {
+        std::cout << "Il n'est pas possible de construire cette tour" << std::endl;
+    }
+    
+}
+
 void Enemy::get_elapsedTime (const double & elapsedTime)
 {
-    this->enemy_clock = this->enemy_clock;
+    this->enemy_clock = elapsedTime;
 }
 
 void Enemy::enemy_move()
 {
-node start_of_path = this->enemy_path[0];
-node end_of_path = this->enemy_path.back();
+    node current_node{this->enemy_path[this->current_node_id]};
+    node target_node{this->enemy_path[this->target_node_id]};
 
-node current_node{start_of_path};
+        int coeff_x{1};
+        int coeff_y{1};
 
-node target_node{this->enemy_path[this->node_nbr]};
+        if (target_node.node_x < current_node.node_x)
+            coeff_x = -1;
 
-int coeff_x{1};
-int coeff_y{1};
+        if (target_node.node_y < current_node.node_y)
+            coeff_y = -1;
 
-if (target_node.node_x < current_node.node_x)
-    coeff_x = -1;
-
-if (target_node.node_y < current_node.node_y)
-    coeff_y = -1;
-
-if (abs(target_node.node_x - current_node.node_x) > abs(target_node.node_y - current_node.node_y))
-{
-
-    if (std::round(this->x * 10) / 10 == target_node.node_x)
-    {
-        current_node = target_node;
-        this->node_nbr++;
-    }
-    else
-        this->x += coeff_x * this->enemy_clock * this->speed;
-}
-else
-{
-    if (std::round(this->y * 10) / 10 == target_node.node_y)
-    {
-        current_node = target_node;
-        this->node_nbr++;
-    }
-    else
-        this->y += coeff_y * this->enemy_clock * this->speed;
-}
+        if (abs(target_node.node_x - current_node.node_x) > abs(target_node.node_y - current_node.node_y))
+        {
+            if (std::round(this->x * 10) / 10 == target_node.node_x)
+            {
+                this->target_node_id++;
+                this->current_node_id++;
+            }
+            else
+                this->x += coeff_x * this->enemy_clock * this->speed;
+        }
+        else
+        {
+            if (std::round(this->y * 10) / 10 == target_node.node_y)
+            {
+                this->target_node_id++;
+                this->current_node_id++;
+            }
+            else
+                this->y += coeff_y * this->enemy_clock * this->speed;
+        }
 }
