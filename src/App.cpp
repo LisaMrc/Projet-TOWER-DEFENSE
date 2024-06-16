@@ -28,9 +28,9 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
     img::Image tower {img::load(make_absolute_path("images/textures/entities/tower.png", true), 4, true)};
 
     // BUTTONS TEXTURE
-    img::Image start {img::load(make_absolute_path("images/button/start_button.png", true), 3, true)};
-    img::Image stop {img::load(make_absolute_path("images/button/stop_button.png", true), 3, true)};
-    img::Image pause {img::load(make_absolute_path("images/button/pause_button.png", true), 3, true)};
+    img::Image start {img::load(make_absolute_path("images/button/start_button.png", true), 4, true)};
+    img::Image stop {img::load(make_absolute_path("images/button/stop_button.png", true), 4, true)};
+    img::Image pause {img::load(make_absolute_path("images/button/pause_button.png", true), 4, true)};
 
     map._grass = loadTexture(grass);
     map._path = loadTexture(path);

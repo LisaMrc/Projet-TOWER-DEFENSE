@@ -8,6 +8,8 @@
 #include "code/entities/entities.hpp"
 #include "code/ui/button.hpp"
 #include <GLFW/glfw3.h>
+#include <unordered_map>
+#include <vector>
 
 enum state_screen {MENU, screen_LEVEL};
 
@@ -41,7 +43,9 @@ public:
     float yTower{};
 
     std::vector<tower> towers;
+    std::vector<std::pair<float, float>> towers_already_builds{};
 
+    Map map;
 private:
     void render();
     
@@ -54,7 +58,7 @@ private:
         std::vector<Button> listeDeButton;
 
     // Map
-        Map map;
+        // Map map;
 
     // Entities
         King kinger{250, 0, 0, 0, 100};

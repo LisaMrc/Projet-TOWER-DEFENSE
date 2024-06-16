@@ -9,6 +9,7 @@
 #include "code/draw/draw.hpp"
 #include "code/ui/button.hpp"
 #include "code/entities/entities.hpp"
+#include <unordered_map>
 
 namespace {
     App& window_as_app(GLFWwindow* window)
@@ -64,8 +65,9 @@ int main() {
         window_as_app(window).key_callback(key, scancode, action, mods);
     });
 
-    glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) { 
-        window_as_app(window).mouse_button_callback(button, action, mods);
+    glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) {
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        auto& app = window_as_app(window);
 
         double xpos, ypos; // coordonnées en pixels
         glfwGetCursorPos(window, &xpos, &ypos);
@@ -83,15 +85,38 @@ int main() {
         std::cout << "xCase : " << xCase << "  ";
         std::cout << "yCase : " << yCase << std::endl;
 
-        auto& app = window_as_app(window);
         app.xTower = static_cast<float>(xCase);
         app.yTower = static_cast<float>(yCase);
 
-        tower arrow{ProjectileKind::Arrow, 2, 4, app.xTower, app.yTower, 200};
+        // Vérifier si une tour existe déjà aux coordonnées spécifiées
+        bool free = true;
+        for (const auto& tower : app.towers_already_builds) {
+            if (tower.first == app.xTower && tower.second == app.yTower) {
+                free = false;
+                break;
+            }
+        }
 
-        app.towers.push_back(arrow);
+        // Vérifier si l'emplacement est constructible
+        bool constructible = app.map.can_create_tower(app.map, app.xTower, app.yTower);
+
+        if (free && constructible) {
+            // Créer une nouvelle tour
+            tower arrow{ProjectileKind::Arrow, 2, 4, app.xTower, app.yTower, 200};
+            app.towers.push_back(arrow);
+
+            // Ajouter les coordonnées de la nouvelle tour
+            app.towers_already_builds.push_back(std::make_pair(app.xTower, app.yTower));
+
+            
+        } else {
+            std::cout << "Il n'est pas possible de construire cette tour" << std::endl;
+        }
+
         app.mouse_button_callback(button, action, mods);
-    });
+    }
+});
+
 
     glfwSetScrollCallback(window, [](GLFWwindow* window, double xoffset, double yoffset) {
         window_as_app(window).scroll_callback(xoffset, yoffset);

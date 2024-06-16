@@ -334,6 +334,7 @@ void Map::draw_map (Map &map)
             {
                 draw_quad_with_texture(this->_grass, x, y, map);
             }
+            
             else if (this->px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::IN)
             {
                 draw_quad_with_texture(this->_in, x, y, map);
@@ -364,6 +365,7 @@ bool Map::can_create_tower(Map &map, float x, float y) {
         case CaseType::PATH:
         case CaseType::IN:
         case CaseType::OUT:
+        // case CaseType::OCCUPIED:
             return false;
         case CaseType::GRASS:
             // this->px_pos_CaseType_vec[index] = CaseType::OCCUPIED;

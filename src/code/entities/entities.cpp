@@ -98,16 +98,22 @@ std::vector<node> get_enemy_path (std::vector<node> vector_of_nodes, std::vector
     return enemy_path;
 }
 
+/*
+bool is_there_tower(float x, float y) {
+    auto is_tower { app.towers_already_builds.find(x, y) };
+    if (is_tower != app.towers_already_builds.end()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+*/
 void create_tower(Map &map, tower &tour, float x, float y) {
-    bool constructible{map.can_create_tower(map, x, y)};
-    if (constructible == true) {
         gold_earned -= tour.price;
         draw_quad_with_texture(tour._arrow, x, y, map);
-    } else {
-        std::cout << "Il n'est pas possible de construire cette tour" << std::endl;
-    }
     
 }
+
 
 void Enemy::get_elapsedTime (const double & elapsedTime)
 {
