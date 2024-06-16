@@ -43,6 +43,10 @@ App::App() : _previousTime(0.0), _viewSize(2.0) {
     arrow._arrow = loadTexture(tower);
 
     _texture = loadTexture(test);
+    start_button = loadTexture(start);
+    stop_button = loadTexture(stop);
+    pause_bouton = loadTexture(pause);
+    
 }
 
 void App::setup()
@@ -63,9 +67,9 @@ void App::setup()
     this->player_gold_text.EnableBlending(true);
 
     // Initialises the buttons
-    listeDeButton.push_back(Button{"Boutton_Start", false, 3, 4, 2, 1, _texture}); //0
-    listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, _texture}); //1
-    listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 1, 1, _texture}); //2
+    listeDeButton.push_back(Button{"Boutton_Start", false, 3, 4, 2, 1, start_button}); //0
+    listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, stop_button}); //1
+    listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 1, 1, pause_bouton}); //2
     listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, _texture}); //3
     listeDeButton.push_back(Button{"Boutton_Loose", false, 3, 2, 6, 2, _texture}); //4
     listeDeButton.push_back(Button{"Boutton_Win", false, 3, 2, 6, 2, _texture}); //5
@@ -88,15 +92,17 @@ void App::setup()
     std::vector<node> vec_nodes = create_vect_nodes(splitted_itd_file);
     std::vector<int> shortest_path = get_shortest_path (dij_map, vec_nodes);
     std::vector<node> enemy_path = get_enemy_path (vec_nodes, shortest_path);
-
-    // Initialise la position du roi (il ne bougera pas)
-    kinger.x = enemy_path.back().node_x;
-    kinger.y = enemy_path.back().node_y;
-
-    // Initialise la position de l'ennemi 1 (Purrsival) et on lui donne le chemin à suivre
-    Purrsival.x = enemy_path.front().node_x;
-    Purrsival.y = enemy_path.front().node_y;
     Purrsival.enemy_path = enemy_path;
+    Excalipurr.enemy_path = enemy_path;
+
+    // // Initialise la position du roi (il ne bougera pas)
+    // kinger.x = enemy_path.back().node_x;
+    // kinger.y = enemy_path.back().node_y;
+
+    // // Initialise la position de l'ennemi 1 (Purrsival) et on lui donne le chemin à suivre
+    // Purrsival.x = enemy_path.front().node_x;
+    // Purrsival.y = enemy_path.front().node_y;
+    // Purrsival.enemy_path = enemy_path;
 }
 
 void App::update()
@@ -114,6 +120,14 @@ void App::update()
     {
         _state = state_screen::screen_LEVEL;
         time_open_window = {glfwGetTime()};
+
+        // Initialise la position du roi (il ne bougera pas)
+        kinger.x = Purrsival.enemy_path.back().node_x;
+        kinger.y = Purrsival.enemy_path.back().node_y;
+
+        // Initialise la position de l'ennemi 1 (Purrsival) et on lui donne le chemin à suivre
+        Purrsival.x = Purrsival.enemy_path.front().node_x;
+        Purrsival.y = Purrsival.enemy_path.front().node_y;
     }
 
     if(listeDeButton[1].isPressed)
@@ -195,6 +209,7 @@ void App::render()
         else if (time_play > 60+time_open_window && kinger.health != 0){
             _state = state_screen::screen_WIN;
         }
+        
 
         // Renders player_gold_text
         std::string GOLD_Label{" GOLD : " + std::to_string(kinger.player_gold) + " "};
