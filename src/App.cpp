@@ -142,7 +142,7 @@ void App::update()
 
     // KING
 
-    if (kinger.health == 0)
+    if (kinger.health <= 0)
     {
         kinger.is_dead = 1;
     }
@@ -150,6 +150,7 @@ void App::update()
     if (Purrsival.current_node_id == Purrsival.enemy_path.back().node_id)
     {
         kinger.health -= Purrsival.damage;
+        std::cout << kinger.health << std::endl;
     }
 
     // ENEMY
@@ -202,7 +203,7 @@ void App::render()
         
         listeDeButton[2].draw_me();
 
-        if (kinger.health == 0){
+        if (kinger.is_dead == 1){
             _state = state_screen::screen_LOOSE;
         }
 
