@@ -61,6 +61,7 @@ struct King
     bool is_dead{0};
 
     int player_gold;
+    int const default_health = 250;
 
     GLuint _king{};
 };
