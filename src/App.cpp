@@ -155,7 +155,6 @@ void App::update()
         if (Purrsival.current_node_id == Purrsival.enemy_path.back().node_id)
         {
             kinger.health -= Purrsival.damage;
-            std::cout << kinger.health << std::endl;
         }
 
         // ENEMY
@@ -178,54 +177,55 @@ void App::render()
     // Render the text          
     TextRenderer.Render();
 
-    if(_state == state_screen::screen_LEVEL and kinger.is_dead != 0)
-    {
-        std::cout << "test";
-    }
-
     if(_state == state_screen::screen_LEVEL)
     {
+        // Gets variables
         time_play = glfwGetTime();
+
+        // Change buttons state
         listeDeButton[0].isPressed = false;
         listeDeButton[7].isPressed = false;
 
-        // Draw a helpful grid
-        // draw_grid();
+        // RENDERS
 
-        // Draw the map
-        map.draw_map(map);
+            // Render pause button
+            listeDeButton[2].draw_me();
 
-        // Draw the King
-        draw_quad_with_texture(kinger._king, kinger.x, kinger.y, map);
+            // Render the map
+            map.draw_map(map);
 
-        // Draw the first knight
-        if (Purrsival.target_node_id < Purrsival.enemy_path.size())
+            // Render the King
+            draw_quad_with_texture(kinger._king, kinger.x, kinger.y, map);
+
+            // Render the first knight
+            if (Purrsival.target_node_id < Purrsival.enemy_path.size())
+            {
+                Purrsival.enemy_move();
+            }
+            draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map);
+
+            // Render player's gold number
+            std::string GOLD_Label{" GOLD : " + std::to_string(kinger.player_gold) + " "};
+            this->player_gold_text.Label(GOLD_Label.c_str() , _width / 80, 100, SimpleText::LEFT);
+            this->player_gold_text.Render();
+        // 
+
+        // TRIGGERS (awaits for...)
+            
+            if (kinger.is_dead == 1)
+            {
+                _state = state_screen::screen_LOOSE;
+            }
+            else if (time_play > 60+time_open_window && kinger.health != 0)
+            {
+                _state = state_screen::screen_WIN;
+            }
+        // 
+
+        for (const auto& tower : towers)
         {
-            Purrsival.enemy_move();
-            // draw quad ici si ennemi doit disparaître
-        }
-        draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map);
-
-        
-        for (const auto& tower : towers) {
             create_tower(map, arrow, tower.x, tower.y);
         }
-        
-        listeDeButton[2].draw_me();
-
-        if (kinger.is_dead == 1)
-        {
-            _state = state_screen::screen_LOOSE;
-        }
-
-        else if (time_play > 60+time_open_window && kinger.health != 0){
-            _state = state_screen::screen_WIN;
-        }
-        
-        // Render player_gold_text
-        std::string GOLD_Label{" GOLD : " + std::to_string(kinger.player_gold) + " "};
-        this->player_gold_text.Label(GOLD_Label.c_str() , _width / 80, 100, SimpleText::LEFT);
-        this->player_gold_text.Render();
     }
 
     if(_state == state_screen::MENU)
@@ -256,7 +256,6 @@ void App::render()
     {
         listeDeButton[5].draw_me();
         listeDeButton[6].draw_me();
-        std::cout<< "Gagné";
     }
 }
 
