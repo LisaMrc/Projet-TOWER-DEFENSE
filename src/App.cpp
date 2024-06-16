@@ -172,7 +172,7 @@ void App::render()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glLoadIdentity();
 
-    // Render the text
+    // Render the text          
     TextRenderer.Render();
 
     if(_state == state_screen::screen_LEVEL)
@@ -180,6 +180,9 @@ void App::render()
         time_play = glfwGetTime();
         listeDeButton[0].isPressed = false;
         listeDeButton[7].isPressed = false;
+
+        // Draw a helpful grid
+        // draw_grid();
 
         // Draw the map
         map.draw_map(map);
