@@ -30,7 +30,7 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     // ENTITIES TEXTURES
     img::Image king {img::load(make_absolute_path("images/textures/entities/king.png", true), 4, true)};
     img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 4, true)};
-    img::Image tower {img::load(make_absolute_path("images/textures/entities/tower.png", true), 4, true)};
+    img::Image tower {img::load(make_absolute_path("images/textures/entities/tower_1.png", true), 4, true)};
 
     kinger._king = loadTexture(king);
 
