@@ -75,6 +75,7 @@ private:
         King kinger{kinger.default_health, 0, 0, 0, 100};
         Enemy Purrsival{50, 1, 20, 10, 0, 0, 0};
         Enemy Excalipurr{50, 1, 20, 10, 0, 0, 0};
+        Enemy Meowlin{40, 3, 40, 20, 0, 0, 0};
         tower arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
 
     // Text
@@ -82,6 +83,7 @@ private:
         SimpleText player_gold_text;
 
     // Waves
+        Wave current_wave{};
         Wave wave_one {1, {Purrsival, Excalipurr}, 5, 10};
         // Wave wave_two {2, {Purrsival}, 30, 5};
         // Wave wave_three {3, {Purrsival}, 45, 2};

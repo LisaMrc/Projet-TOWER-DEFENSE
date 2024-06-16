@@ -30,12 +30,14 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     // ENTITIES TEXTURES
     img::Image king {img::load(make_absolute_path("images/textures/entities/king.png", true), 4, true)};
     img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 4, true)};
+    img::Image wizard {img::load(make_absolute_path("images/textures/entities/wizard.png", true), 4, true)};
     img::Image tower {img::load(make_absolute_path("images/textures/entities/tower_1.png", true), 4, true)};
 
     kinger._king = loadTexture(king);
 
     Purrsival._knight = loadTexture(knight);
     Excalipurr._knight = loadTexture(knight);
+    Meowlin._wizard = loadTexture(wizard);
 
     arrow._arrow = loadTexture(tower);
 
@@ -57,7 +59,6 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     retry_button = loadTexture(retry);
     victory_button = loadTexture(victory);
     defeat_button = loadTexture(defeat);
-    
 }
 
 void App::setup()
@@ -103,8 +104,11 @@ void App::setup()
     std::vector<node> vec_nodes = create_vect_nodes(splitted_itd_file);
     std::vector<int> shortest_path = get_shortest_path (dij_map, vec_nodes);
     std::vector<node> enemy_path = get_enemy_path (vec_nodes, shortest_path);
+
+    // Initializes enemy_path in each enemy
     Purrsival.enemy_path = enemy_path;
     Excalipurr.enemy_path = enemy_path;
+    Meowlin.enemy_path = enemy_path;
 }
 
 void App::update()
@@ -129,6 +133,16 @@ void App::update()
         Purrsival.target_node_id = 1;
         Purrsival.speed = 1;
 
+        // Initialise l'ennemi 2 (Excalipurr)
+        Excalipurr.x = Excalipurr.enemy_path.front().node_x;
+        Excalipurr.y = Excalipurr.enemy_path.front().node_y;
+        Excalipurr.current_node_id = 0;
+        Excalipurr.target_node_id = 1;
+        Excalipurr.speed = 1;
+
+        // Initializes the wave
+        current_wave = wave_one;
+    
         _state = state_screen::screen_LEVEL;
         time_open_window = {glfwGetTime()};
     }
@@ -169,6 +183,9 @@ void App::update()
         // ENEMY
         Purrsival.get_elapsedTime(elapsedTime);
         Purrsival.oof();
+
+        Excalipurr.get_elapsedTime(elapsedTime);
+        Excalipurr.oof();
     }
 
     render();
@@ -195,7 +212,7 @@ void App::render()
         listeDeButton[0].isPressed = false;
         listeDeButton[7].isPressed = false;
 
-        // RENDERS
+        // RENDERS IMMEDIATELY
 
             // Render pause button
             listeDeButton[2].draw_me();
@@ -205,13 +222,6 @@ void App::render()
 
             // Render the King
             draw_quad_with_texture(kinger._king, kinger.x, kinger.y, map);
-
-            // Render the first knight
-            if (Purrsival.target_node_id < Purrsival.enemy_path.size())
-            {
-                Purrsival.enemy_move();
-            }
-            draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map);
 
             // Render player's gold number
             std::string GOLD_Label{" GOLD : " + std::to_string(kinger.player_gold) + " "};
@@ -225,9 +235,29 @@ void App::render()
             {
                 _state = state_screen::screen_LOOSE;
             }
-            else if (time_play > 60+time_open_window && kinger.health != 0)
+            else if (time_play > 120+time_open_window && kinger.health != 0)
             {
                 _state = state_screen::screen_WIN;
+            }
+
+            if (time_play > current_wave.freq_btw_ennemies_in_s)
+            {
+                // Render the first knight
+                if (Purrsival.target_node_id < Purrsival.enemy_path.size())
+                {
+                    Purrsival.enemy_move();
+                }
+                draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map);
+            }
+
+            if (time_play > current_wave.freq_btw_ennemies_in_s*2)
+            {
+                // Render the second knight
+                if (Excalipurr.target_node_id < Excalipurr.enemy_path.size())
+                {
+                    Excalipurr.enemy_move();
+                }
+                draw_quad_with_texture(Excalipurr._knight, Excalipurr.x, Excalipurr.y, map);
             }
         // 
 

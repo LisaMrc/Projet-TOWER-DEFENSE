@@ -42,7 +42,7 @@ struct Enemy
     void oof();
 
     GLuint _knight {};
-    GLuint _sorcerer {};
+    GLuint _wizard {};
 
     std::vector<node> enemy_path;
     int current_node_id{0};
