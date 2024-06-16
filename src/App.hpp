@@ -35,7 +35,8 @@ public:
     GLuint _texture; 
     GLuint start_button; 
     GLuint stop_button; 
-    GLuint pause_bouton; 
+    GLuint pause_bouton;
+    GLuint title_button; 
     double time_open_window = {};
     double time_play = {};
 

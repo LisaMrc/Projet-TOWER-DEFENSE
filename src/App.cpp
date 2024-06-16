@@ -43,11 +43,12 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     img::Image start {img::load(make_absolute_path("images/textures/buttons/start_button.png", true), 4, true)};
     img::Image stop {img::load(make_absolute_path("images/textures/buttons/stop_button.png", true), 4, true)};
     img::Image pause {img::load(make_absolute_path("images/textures/buttons/pause_button.png", true), 4, true)};
+    img::Image title {img::load(make_absolute_path("images/textures/buttons/title.png", true), 4, true)};
 
-    // _texture = loadTexture(test);
     start_button = loadTexture(start);
     stop_button = loadTexture(stop);
     pause_bouton = loadTexture(pause);
+    title_button = loadTexture(title);
 }
 
 void App::setup()
@@ -67,11 +68,11 @@ void App::setup()
     this->player_gold_text.SetColorf(SimpleText::BACKGROUND_COLOR, 0.f, 0.f, 0.f, 0.f);
     this->player_gold_text.EnableBlending(true);
 
-    // Initialises the buttons
+    // Initializes the buttons
     listeDeButton.push_back(Button{"Boutton_Start", false, 3, 4, 2, 1, start_button}); //0
     listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, stop_button}); //1
-    listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 1, 1, pause_bouton}); //2
-    listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, _texture}); //3
+    listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 2, 1, pause_bouton}); //2
+    listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, title_button}); //3
     listeDeButton.push_back(Button{"Boutton_Loose", false, 3, 2, 6, 2, _texture}); //4
     listeDeButton.push_back(Button{"Boutton_Win", false, 3, 2, 6, 2, _texture}); //5
     listeDeButton.push_back(Button{"Boutton_Play_again", false, 3, 5, 2, 1, _texture}); //6
@@ -80,14 +81,13 @@ void App::setup()
     // Extract information from itd file
     std::vector<std::vector<std::string>> splitted_itd_file = split_itd_file();
 
-    // Tools to print map
+    // Creates the tools to print the map
     map.associate_RGB_to_CaseType(splitted_itd_file);
     map.associate_px_pos_to_CaseType();
 
     // Create graph for ennemies from itd
     std::vector<std::vector<float>> adjacency_matrix {create_adjacency_matrix(splitted_itd_file)};
     Graph::WeightedGraph graph {Graph::build_from_adjacency_matrix(adjacency_matrix)};
-
     
     // Create graph for ennemies
     std::unordered_map<int, std::pair<float, int>> dij_map = graph.dijkstra(0, 7); 
@@ -100,74 +100,71 @@ void App::setup()
 
 void App::update()
 {
-    
-    // std::vector<int> posCaseMouse = passage_pixel_to_case(mouseXpos, mouseYpos);
-    // mouseXpos, mouseYpos = posCaseMouse[0], posCaseMouse[1];
-
     const double currentTime { glfwGetTime() };
     const double elapsedTime { currentTime - _previousTime};
     _previousTime = currentTime;
 
-    // BUTTON TRIGGERS
-    if(listeDeButton[0].isPressed)
+    // if start is pressed
+    if (listeDeButton[0].isPressed)
     {
-        _state = state_screen::screen_LEVEL;
-        time_open_window = {glfwGetTime()};
-
-        // Initialise la position du roi (il ne bougera pas)
+        // Initialise la position du roi (il ne bougera pas) 
         kinger.x = Purrsival.enemy_path.back().node_x;
         kinger.y = Purrsival.enemy_path.back().node_y;
+        kinger.health = kinger.default_health;
+        kinger.is_dead = 0;
 
-        // Initialise la position de l'ennemi 1 (Purrsival) et on lui donne le chemin à suivre
+        // Initialise la position de l'ennemi 1 (Purrsival)
         Purrsival.x = Purrsival.enemy_path.front().node_x;
         Purrsival.y = Purrsival.enemy_path.front().node_y;
+
+        _state = state_screen::screen_LEVEL;
+        time_open_window = {glfwGetTime()};
     }
 
-    if(listeDeButton[1].isPressed)
+    if (listeDeButton[1].isPressed) // if quit is pressed
     {
         window_close = true;
     }
     
-    if(listeDeButton[2].isPressed)
+    if (listeDeButton[2].isPressed) //if pause is pressed
     {
         _state = state_screen::screen_PAUSE;
     }
 
-    if(listeDeButton[7].isPressed)
+    if (listeDeButton[7].isPressed) //if resume play is pressed
     {
         _state = state_screen::screen_LEVEL;
     }
 
-    if(listeDeButton[6].isPressed){
-        _state = state_screen::MENU;        
-    }
-
-        
-    // KING
-
-    if (kinger.health <= 0)
+    if(listeDeButton[6].isPressed) //if play again is pressed
     {
-        kinger.is_dead = 1;
+        _state = state_screen::MENU;
     }
 
-    if (Purrsival.current_node_id == Purrsival.enemy_path.back().node_id)
+    if (state_screen::screen_LEVEL)
     {
-        kinger.health -= Purrsival.damage;
-        std::cout << kinger.health << std::endl;
-    }
+        // KING
+        if (kinger.health <= 0)
+        {
+            kinger.is_dead = 1;
+        }
 
-    // ENEMY
-    Purrsival.get_elapsedTime(elapsedTime);
-    Purrsival.oof();
+        if (Purrsival.current_node_id == Purrsival.enemy_path.back().node_id)
+        {
+            kinger.health -= Purrsival.damage;
+            std::cout << kinger.health << std::endl;
+        }
+
+        // ENEMY
+        Purrsival.get_elapsedTime(elapsedTime);
+        Purrsival.oof();
+    }
 
     render();
 }
 
 void App::render()
 {
-    // Draw a helpful grid
-    // draw_grid();
-
     // Clear the color and depth buffers of the frame buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
@@ -178,7 +175,8 @@ void App::render()
     // Render the text
     TextRenderer.Render();
 
-    if(_state == state_screen::screen_LEVEL){
+    if(_state == state_screen::screen_LEVEL)
+    {
         time_play = glfwGetTime();
         listeDeButton[0].isPressed = false;
         listeDeButton[7].isPressed = false;
@@ -212,14 +210,14 @@ void App::render()
             _state = state_screen::screen_WIN;
         }
         
-
-        // Renders player_gold_text
+        // Render player_gold_text
         std::string GOLD_Label{" GOLD : " + std::to_string(kinger.player_gold) + " "};
         this->player_gold_text.Label(GOLD_Label.c_str() , _width / 80, 100, SimpleText::LEFT);
         this->player_gold_text.Render();
     }
 
-    if(_state == state_screen::MENU){
+    if(_state == state_screen::MENU)
+    {
         listeDeButton[0].isPressed = false;
         listeDeButton[1].isPressed = false;
         listeDeButton[2].isPressed = false;
@@ -229,62 +227,29 @@ void App::render()
         listeDeButton[3].draw_me();
     }
 
-    if (_state == state_screen::screen_PAUSE){
+    if (_state == state_screen::screen_PAUSE)
+    {
         listeDeButton[2].isPressed = false;
         listeDeButton[1].draw_me();
         listeDeButton[7].draw_me();
     }
 
-    if (_state == state_screen::screen_LOOSE){
+    if (_state == state_screen::screen_LOOSE)
+    {
         listeDeButton[4].draw_me();
         listeDeButton[6].draw_me();
-        std::cout<< "vous avez perdue";
-        Purrsival.x = Purrsival.enemy_path.front().node_x;
-        Purrsival.y = Purrsival.enemy_path.front().node_y;
-        kinger.health = kinger.default_health;
-        kinger.is_dead = 0;
     }
 
-    if (_state == state_screen::screen_WIN){
+    if (_state == state_screen::screen_WIN)
+    {
         listeDeButton[5].draw_me();
         listeDeButton[6].draw_me();
-        std::cout<< "vous avez gagner";
-        Purrsival.x = Purrsival.enemy_path.front().node_x;
-        Purrsival.y = Purrsival.enemy_path.front().node_y;
-        kinger.health = kinger.default_health;
-        kinger.is_dead = 0;
+        std::cout<< "Gagné";
     }
-    
-
-
-    
 }
 
 void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {
 }
-
-// void App::mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
-//      if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-//         double xpos, ypos; // Coordonnées en pixels
-//         glfwGetCursorPos(window, &xpos, &ypos);
-//         int windowWidth, windowHeight;
-//         glfwGetWindowSize(window, &windowWidth, &windowHeight);
-        
-//         int offset = (windowWidth - windowHeight) / 2; // Décalage sur les côtés
-
-//         // Normaliser les coordonnées (0 à 1)
-//         xpos = (xpos - offset) / windowHeight; 
-//         ypos = ypos / windowHeight;
-
-//         // Calculer les coordonnées des cases (0 à 7)
-//         int xCase = static_cast<int>(xpos * 8);
-//         int yCase = static_cast<int>(ypos * 8);
-
-//         std::cout << "xCase : " << xCase << "  ";
-//         std::cout << "yCase : " << yCase << std::endl;
-//      }
-// }
-
 
 void App::mouse_button_callback(int button, int action, int mods) {
     if(mouseXpos >= listeDeButton[0].posX && mouseXpos < listeDeButton[0].posX+listeDeButton[0].width && 
@@ -316,7 +281,8 @@ void App::scroll_callback(double /*xoffset*/, double /*yoffset*/) {
 void App::cursor_position_callback(double /*xpos*/, double /*ypos*/) {
 }
 
-void App::size_callback(int width, int height) {
+void App::size_callback(int width, int height)
+{
     _width  = width;
     _height = height;
 

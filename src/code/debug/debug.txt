@@ -1,0 +1,5 @@
+// Draw a helpful grid
+draw_grid();
+
+    // std::vector<int> posCaseMouse = passage_pixel_to_case(mouseXpos, mouseYpos);
+    // mouseXpos, mouseYpos = posCaseMouse[0], posCaseMouse[1];
