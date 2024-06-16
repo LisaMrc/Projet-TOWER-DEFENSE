@@ -62,7 +62,7 @@ private:
         Map map;
 
     // Entities
-        King kinger{250, 0, 0, 0, 100};
+        King kinger{kinger.default_health, 0, 0, 0, 100};
         Enemy Purrsival{50, 1, 20, 10, 0, 0, 0};
         Enemy Excalipurr{50, 1, 20, 10, 0, 0, 0};
         tower arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};

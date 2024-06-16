@@ -15,8 +15,6 @@ struct clickPos {
     float y{};
 };
 
-
-
 struct node
 {
     int node_id;

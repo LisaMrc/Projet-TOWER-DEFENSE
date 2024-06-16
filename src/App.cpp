@@ -107,15 +107,18 @@ void App::update()
     // if start is pressed
     if (listeDeButton[0].isPressed)
     {
-        // Initialise la position du roi (il ne bougera pas) 
+        // Initialise le roi (Kinger) 
         kinger.x = Purrsival.enemy_path.back().node_x;
         kinger.y = Purrsival.enemy_path.back().node_y;
         kinger.health = kinger.default_health;
         kinger.is_dead = 0;
 
-        // Initialise la position de l'ennemi 1 (Purrsival)
+        // Initialise l'ennemi 1 (Purrsival)
         Purrsival.x = Purrsival.enemy_path.front().node_x;
         Purrsival.y = Purrsival.enemy_path.front().node_y;
+        Purrsival.current_node_id = 0;
+        Purrsival.target_node_id = 1;
+        Purrsival.speed = 1;
 
         _state = state_screen::screen_LEVEL;
         time_open_window = {glfwGetTime()};
@@ -175,6 +178,11 @@ void App::render()
     // Render the text          
     TextRenderer.Render();
 
+    if(_state == state_screen::screen_LEVEL and kinger.is_dead != 0)
+    {
+        std::cout << "test";
+    }
+
     if(_state == state_screen::screen_LEVEL)
     {
         time_play = glfwGetTime();
@@ -205,7 +213,8 @@ void App::render()
         
         listeDeButton[2].draw_me();
 
-        if (kinger.is_dead == 1){
+        if (kinger.is_dead == 1)
+        {
             _state = state_screen::screen_LOOSE;
         }
 
