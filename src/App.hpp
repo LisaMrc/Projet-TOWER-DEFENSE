@@ -8,7 +8,7 @@
 #include "code/screens/screens.hpp"
 #include "code/waves/waves.hpp"
 
-enum state_screen {MENU, screen_LEVEL, screen_LOOSE, screen_WIN};
+enum state_screen {MENU, screen_LEVEL, screen_LOOSE, screen_WIN, screen_PAUSE};
 
 class App {
 public:

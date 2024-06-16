@@ -75,6 +75,7 @@ void App::setup()
     listeDeButton.push_back(Button{"Boutton_Loose", false, 3, 2, 6, 2, _texture}); //4
     listeDeButton.push_back(Button{"Boutton_Win", false, 3, 2, 6, 2, _texture}); //5
     listeDeButton.push_back(Button{"Boutton_Play_again", false, 3, 5, 2, 1, _texture}); //6
+    listeDeButton.push_back(Button{"Boutton_Play", false, 3, 4, 2, 1, _texture}); //7
 
     // Extract information from itd file
     std::vector<std::vector<std::string>> splitted_itd_file = split_itd_file();
@@ -95,15 +96,6 @@ void App::setup()
     std::vector<node> enemy_path = get_enemy_path (vec_nodes, shortest_path);
     Purrsival.enemy_path = enemy_path;
     Excalipurr.enemy_path = enemy_path;
-
-    // // Initialise la position du roi (il ne bougera pas)
-    // kinger.x = enemy_path.back().node_x;
-    // kinger.y = enemy_path.back().node_y;
-
-    // // Initialise la position de l'ennemi 1 (Purrsival) et on lui donne le chemin à suivre
-    // Purrsival.x = enemy_path.front().node_x;
-    // Purrsival.y = enemy_path.front().node_y;
-    // Purrsival.enemy_path = enemy_path;
 }
 
 void App::update()
@@ -138,9 +130,19 @@ void App::update()
     
     if(listeDeButton[2].isPressed)
     {
-        _state = state_screen::MENU;
+        _state = state_screen::screen_PAUSE;
     }
 
+    if(listeDeButton[7].isPressed)
+    {
+        _state = state_screen::screen_LEVEL;
+    }
+
+    if(listeDeButton[6].isPressed){
+        _state = state_screen::MENU;        
+    }
+
+        
     // KING
 
     if (kinger.health <= 0)
@@ -157,9 +159,6 @@ void App::update()
     // ENEMY
     Purrsival.get_elapsedTime(elapsedTime);
     Purrsival.oof();
-    if(listeDeButton[6].isPressed){
-        _state = state_screen::MENU;        
-    }
 
     render();
 }
@@ -182,6 +181,7 @@ void App::render()
     if(_state == state_screen::screen_LEVEL){
         time_play = glfwGetTime();
         listeDeButton[0].isPressed = false;
+        listeDeButton[7].isPressed = false;
 
         // Draw the map
         map.draw_map(map);
@@ -229,16 +229,30 @@ void App::render()
         listeDeButton[3].draw_me();
     }
 
+    if (_state == state_screen::screen_PAUSE){
+        listeDeButton[2].isPressed = false;
+        listeDeButton[1].draw_me();
+        listeDeButton[7].draw_me();
+    }
+
     if (_state == state_screen::screen_LOOSE){
         listeDeButton[4].draw_me();
         listeDeButton[6].draw_me();
         std::cout<< "vous avez perdue";
+        Purrsival.x = Purrsival.enemy_path.front().node_x;
+        Purrsival.y = Purrsival.enemy_path.front().node_y;
+        kinger.health = kinger.default_health;
+        kinger.is_dead = 0;
     }
 
     if (_state == state_screen::screen_WIN){
         listeDeButton[5].draw_me();
         listeDeButton[6].draw_me();
         std::cout<< "vous avez gagner";
+        Purrsival.x = Purrsival.enemy_path.front().node_x;
+        Purrsival.y = Purrsival.enemy_path.front().node_y;
+        kinger.health = kinger.default_health;
+        kinger.is_dead = 0;
     }
     
 
@@ -278,7 +292,7 @@ void App::mouse_button_callback(int button, int action, int mods) {
         listeDeButton[0].isPressed = true;
     }
     if(mouseXpos >= listeDeButton[1].posX && mouseXpos < listeDeButton[1].posX+listeDeButton[1].width && 
-    mouseYpos >= listeDeButton[1].posY && mouseYpos < listeDeButton[1].posY + listeDeButton[1].height && _state == state_screen::MENU){
+    mouseYpos >= listeDeButton[1].posY && mouseYpos < listeDeButton[1].posY + listeDeButton[1].height && (_state == state_screen::MENU||_state == state_screen::screen_PAUSE)){
         listeDeButton[1].isPressed = true;
     }
     if(mouseXpos >= listeDeButton[2].posX && mouseXpos < listeDeButton[2].posX+listeDeButton[2].width && 
@@ -289,7 +303,10 @@ void App::mouse_button_callback(int button, int action, int mods) {
     mouseYpos >= listeDeButton[6].posY && mouseYpos < listeDeButton[6].posY + listeDeButton[6].height && (_state == state_screen::screen_LOOSE||_state == state_screen::screen_WIN)){
         listeDeButton[6].isPressed = true;
     }
-    
+    if(mouseXpos >= listeDeButton[7].posX && mouseXpos < listeDeButton[7].posX+listeDeButton[7].width && 
+    mouseYpos >= listeDeButton[7].posY && mouseYpos < listeDeButton[7].posY + listeDeButton[7].height && (_state == state_screen::screen_PAUSE)){
+        listeDeButton[7].isPressed = true;
+    }
 
 }
 
