@@ -2,16 +2,16 @@
 #include <glad/glad.h>
 #include <simpletext.h>
 
-#include "code/screens/screens.hpp"
 #include "code/entities/entities.hpp"
 #include "code/draw/draw.hpp"
-#include "code/entities/entities.hpp"
 #include "code/ui/button.hpp"
 #include <GLFW/glfw3.h>
 #include <unordered_map>
 #include <vector>
+#include "code/screens/screens.hpp"
+#include "code/waves/waves.hpp"
 
-enum state_screen {MENU, screen_LEVEL};
+enum state_screen {MENU, screen_LEVEL, screen_LOOSE, screen_WIN, screen_PAUSE};
 
 class App {
 public:
@@ -36,6 +36,12 @@ public:
     int mouseXpos;
     int mouseYpos;
     GLuint _texture; 
+    GLuint start_button; 
+    GLuint stop_button; 
+    GLuint pause_bouton;
+    GLuint title_button; 
+    double time_open_window = {};
+    double time_play = {};
 
     bool window_close = false;
 
@@ -61,11 +67,18 @@ private:
         // Map map;
 
     // Entities
-        King kinger{250, 0, 0, 0, 100};
+        King kinger{kinger.default_health, 0, 0, 0, 100};
         Enemy Purrsival{50, 1, 20, 10, 0, 0, 0};
+        Enemy Excalipurr{50, 1, 20, 10, 0, 0, 0};
         tower arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
 
     // Text
         SimpleText TextRenderer {};
         SimpleText player_gold_text;
+
+    // Waves
+        Wave wave_one {1, {Purrsival, Excalipurr}, 5, 10};
+        // Wave wave_two {2, {Purrsival}, 30, 5};
+        // Wave wave_three {3, {Purrsival}, 45, 2};
+        // Wave wave_four {4, {Purrsival}, 60, 1};
 };
