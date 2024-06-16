@@ -12,41 +12,42 @@
 #include "utils.hpp"
 #include "GLHelpers.hpp"
 
-App::App() : _previousTime(0.0), _viewSize(2.0) {
+App::App() : _previousTime(0.0), _viewSize(2.0)
+{
     img::Image test {img::load(make_absolute_path("images/level.png", true), 4, true)};
-    //listeDeButton[0].texture = loadTexture(test);
-    
+
     // LAND TEXTURES
     img::Image grass {img::load(make_absolute_path("images/textures/land/grass.bmp", true), 4, true)};
     img::Image path {img::load(make_absolute_path("images/textures/land/path.bmp", true), 4, true)};
     img::Image in {img::load(make_absolute_path("images/textures/land/in.png", true), 4, true)};
     img::Image out {img::load(make_absolute_path("images/textures/land/out.png", true), 4, true)};
+
+    map._grass = loadTexture(grass);
+    map._path = loadTexture(path);
+    map._in = loadTexture(in);
+    map._out = loadTexture(out);
     
     // ENTITIES TEXTURES
     img::Image king {img::load(make_absolute_path("images/textures/entities/king.png", true), 4, true)};
     img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 4, true)};
     img::Image tower {img::load(make_absolute_path("images/textures/entities/tower.png", true), 4, true)};
 
-    // BUTTONS TEXTURE
-    img::Image start {img::load(make_absolute_path("images/button/start_button.png", true), 3, true)};
-    img::Image stop {img::load(make_absolute_path("images/button/stop_button.png", true), 3, true)};
-    img::Image pause {img::load(make_absolute_path("images/button/pause_button.png", true), 3, true)};
-
-    map._grass = loadTexture(grass);
-    map._path = loadTexture(path);
-    map._in = loadTexture(in);
-    map._out = loadTexture(out);
-
     kinger._king = loadTexture(king);
+
     Purrsival._knight = loadTexture(knight);
+    Excalipurr._knight = loadTexture(knight);
 
     arrow._arrow = loadTexture(tower);
 
-    _texture = loadTexture(test);
+    // BUTTONS TEXTURE
+    img::Image start {img::load(make_absolute_path("images/textures/buttons/start_button.png", true), 4, true)};
+    img::Image stop {img::load(make_absolute_path("images/textures/buttons/stop_button.png", true), 4, true)};
+    img::Image pause {img::load(make_absolute_path("images/textures/buttons/pause_button.png", true), 4, true)};
+
+    // _texture = loadTexture(test);
     start_button = loadTexture(start);
     stop_button = loadTexture(stop);
     pause_bouton = loadTexture(pause);
-    
 }
 
 void App::setup()
@@ -165,6 +166,9 @@ void App::update()
 
 void App::render()
 {
+    // Draw a helpful grid
+    // draw_grid();
+
     // Clear the color and depth buffers of the frame buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
@@ -178,9 +182,6 @@ void App::render()
     if(_state == state_screen::screen_LEVEL){
         time_play = glfwGetTime();
         listeDeButton[0].isPressed = false;
-
-        // Draw a helpful grid
-        // draw_grid();
 
         // Draw the map
         map.draw_map(map);
