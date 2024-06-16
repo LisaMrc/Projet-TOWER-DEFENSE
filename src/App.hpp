@@ -33,6 +33,9 @@ public:
     int mouseXpos;
     int mouseYpos;
     GLuint _texture; 
+    GLuint start_button; 
+    GLuint stop_button; 
+    GLuint pause_bouton; 
     double time_open_window = {};
     double time_play = {};
 
