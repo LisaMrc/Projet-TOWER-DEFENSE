@@ -82,9 +82,9 @@ void App::setup()
     listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, quit_button}); //1
     listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 2, 1, pause_bouton}); //2
     listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, title_button}); //3
-    listeDeButton.push_back(Button{"Boutton_Loose", false, 3, 2, 6, 2, defeat_button}); //4
-    listeDeButton.push_back(Button{"Boutton_Win", false, 3, 2, 6, 2, victory_button}); //5
-    listeDeButton.push_back(Button{"Boutton_Play_again", false, 3, 5, 2, 1, retry_button}); //6
+    listeDeButton.push_back(Button{"Boutton_Loose", false, 3, 1, 6, 2, defeat_button}); //4
+    listeDeButton.push_back(Button{"Boutton_Win", false, 3, 1, 6, 2, victory_button}); //5
+    listeDeButton.push_back(Button{"Boutton_Play_again", false, 3, 4, 2, 1, retry_button}); //6
     listeDeButton.push_back(Button{"Boutton_Play", false, 3, 4, 2, 1, resume_button}); //7
 
     // Extract information from itd file
@@ -259,12 +259,14 @@ void App::render()
     {
         listeDeButton[4].draw_me();
         listeDeButton[6].draw_me();
+        listeDeButton[1].draw_me();
     }
 
     if (_state == state_screen::screen_WIN)
     {
         listeDeButton[5].draw_me();
         listeDeButton[6].draw_me();
+        listeDeButton[1].draw_me();
     }
 }
 
@@ -277,7 +279,7 @@ void App::mouse_button_callback(int button, int action, int mods) {
         listeDeButton[0].isPressed = true;
     }
     if(mouseXpos >= listeDeButton[1].posX && mouseXpos < listeDeButton[1].posX+listeDeButton[1].width && 
-    mouseYpos >= listeDeButton[1].posY && mouseYpos < listeDeButton[1].posY + listeDeButton[1].height && (_state == state_screen::MENU||_state == state_screen::screen_PAUSE)){
+    mouseYpos >= listeDeButton[1].posY && mouseYpos < listeDeButton[1].posY + listeDeButton[1].height && (_state == state_screen::MENU||_state == state_screen::screen_PAUSE||_state == state_screen::screen_LOOSE||_state == state_screen::screen_WIN)){
         listeDeButton[1].isPressed = true;
     }
     if(mouseXpos >= listeDeButton[2].posX && mouseXpos < listeDeButton[2].posX+listeDeButton[2].width && 
