@@ -41,14 +41,23 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
 
     // BUTTONS TEXTURE
     img::Image start {img::load(make_absolute_path("images/textures/buttons/start_button.png", true), 4, true)};
-    img::Image stop {img::load(make_absolute_path("images/textures/buttons/stop_button.png", true), 4, true)};
+    img::Image quit {img::load(make_absolute_path("images/textures/buttons/quit_button.png", true), 4, true)};
     img::Image pause {img::load(make_absolute_path("images/textures/buttons/pause_button.png", true), 4, true)};
+    img::Image resume {img::load(make_absolute_path("images/textures/buttons/resume_button.png", true), 4, true)};
+    img::Image retry {img::load(make_absolute_path("images/textures/buttons/retry_button.png", true), 4, true)};
     img::Image title {img::load(make_absolute_path("images/textures/buttons/title.png", true), 4, true)};
+    img::Image victory {img::load(make_absolute_path("images/textures/buttons/victory_button.png", true), 4, true)};
+    img::Image defeat {img::load(make_absolute_path("images/textures/buttons/defeat_button.png", true), 4, true)};
 
     start_button = loadTexture(start);
-    stop_button = loadTexture(stop);
+    quit_button = loadTexture(quit);
     pause_bouton = loadTexture(pause);
     title_button = loadTexture(title);
+    resume_button = loadTexture(resume);
+    retry_button = loadTexture(retry);
+    victory_button = loadTexture(victory);
+    defeat_button = loadTexture(defeat);
+    
 }
 
 void App::setup()
@@ -70,13 +79,13 @@ void App::setup()
 
     // Initializes the buttons
     listeDeButton.push_back(Button{"Boutton_Start", false, 3, 4, 2, 1, start_button}); //0
-    listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, stop_button}); //1
+    listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, quit_button}); //1
     listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 2, 1, pause_bouton}); //2
     listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, title_button}); //3
-    listeDeButton.push_back(Button{"Boutton_Loose", false, 3, 2, 6, 2, _texture}); //4
-    listeDeButton.push_back(Button{"Boutton_Win", false, 3, 2, 6, 2, _texture}); //5
-    listeDeButton.push_back(Button{"Boutton_Play_again", false, 3, 5, 2, 1, _texture}); //6
-    listeDeButton.push_back(Button{"Boutton_Play", false, 3, 4, 2, 1, _texture}); //7
+    listeDeButton.push_back(Button{"Boutton_Loose", false, 3, 2, 6, 2, defeat_button}); //4
+    listeDeButton.push_back(Button{"Boutton_Win", false, 3, 2, 6, 2, victory_button}); //5
+    listeDeButton.push_back(Button{"Boutton_Play_again", false, 3, 5, 2, 1, retry_button}); //6
+    listeDeButton.push_back(Button{"Boutton_Play", false, 3, 4, 2, 1, resume_button}); //7
 
     // Extract information from itd file
     std::vector<std::vector<std::string>> splitted_itd_file = split_itd_file();

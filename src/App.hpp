@@ -37,9 +37,14 @@ public:
     int mouseYpos;
     GLuint _texture; 
     GLuint start_button; 
-    GLuint stop_button; 
+    GLuint quit_button; 
     GLuint pause_bouton;
     GLuint title_button; 
+    GLuint resume_button;
+    GLuint retry_button;
+    GLuint victory_button;
+    GLuint defeat_button;
+
     double time_open_window = {};
     double time_play = {};
 
