@@ -102,7 +102,7 @@ void create_tower(Map &map, tower &tour, float x, float y) {
         gold_earned -= tour.price;
         draw_quad_with_texture(tour._arrow, x, y, map);
     } else {
-        std::cout << "Il n'est pas possible de construire cette tour" << std::endl;
+        //std::cout << "Il n'est pas possible de construire cette tour" << std::endl;
     }
     
 }

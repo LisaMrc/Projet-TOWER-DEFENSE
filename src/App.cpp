@@ -70,7 +70,7 @@ void App::setup()
     // Initialises the buttons
     listeDeButton.push_back(Button{"Boutton_Start", false, 3, 4, 2, 1, start_button}); //0
     listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, stop_button}); //1
-    listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 1, 1, pause_bouton}); //2
+    listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 2, 1, pause_bouton}); //2
     listeDeButton.push_back(Button{"Boutton_Titre", false, 3, 1, 6, 2, _texture}); //3
     listeDeButton.push_back(Button{"Boutton_Loose", false, 3, 2, 6, 2, _texture}); //4
     listeDeButton.push_back(Button{"Boutton_Win", false, 3, 2, 6, 2, _texture}); //5
@@ -139,7 +139,11 @@ void App::update()
     }
 
     if(listeDeButton[6].isPressed){
-        _state = state_screen::MENU;        
+        _state = state_screen::MENU;
+        Purrsival.x = Purrsival.enemy_path.front().node_x;
+        Purrsival.y = Purrsival.enemy_path.front().node_y;
+        kinger.health = kinger.default_health;
+        kinger.is_dead = 0;        
     }
 
         
@@ -165,9 +169,6 @@ void App::update()
 
 void App::render()
 {
-    // Draw a helpful grid
-    // draw_grid();
-
     // Clear the color and depth buffers of the frame buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
@@ -175,13 +176,16 @@ void App::render()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glLoadIdentity();
 
-    // Render the text
+    // Render the text          
     TextRenderer.Render();
 
     if(_state == state_screen::screen_LEVEL){
         time_play = glfwGetTime();
         listeDeButton[0].isPressed = false;
         listeDeButton[7].isPressed = false;
+
+        // Draw a helpful grid
+        // draw_grid();
 
         // Draw the map
         map.draw_map(map);
@@ -239,20 +243,12 @@ void App::render()
         listeDeButton[4].draw_me();
         listeDeButton[6].draw_me();
         std::cout<< "vous avez perdue";
-        Purrsival.x = Purrsival.enemy_path.front().node_x;
-        Purrsival.y = Purrsival.enemy_path.front().node_y;
-        kinger.health = kinger.default_health;
-        kinger.is_dead = 0;
     }
 
     if (_state == state_screen::screen_WIN){
         listeDeButton[5].draw_me();
         listeDeButton[6].draw_me();
         std::cout<< "vous avez gagner";
-        Purrsival.x = Purrsival.enemy_path.front().node_x;
-        Purrsival.y = Purrsival.enemy_path.front().node_y;
-        kinger.health = kinger.default_health;
-        kinger.is_dead = 0;
     }
     
 
