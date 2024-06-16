@@ -100,18 +100,20 @@ int main() {
         // Vérifier si l'emplacement est constructible
         bool constructible = app.map.can_create_tower(app.map, app.xTower, app.yTower);
 
-        if (free && constructible) {
+        if (free && constructible)
+        {
             // Créer une nouvelle tour
             tower arrow{ProjectileKind::Arrow, 2, 4, app.xTower, app.yTower, 200};
             app.towers.push_back(arrow);
 
             // Ajouter les coordonnées de la nouvelle tour
             app.towers_already_builds.push_back(std::make_pair(app.xTower, app.yTower));
-
             
-        } else {
-            std::cout << "Il n'est pas possible de construire cette tour" << std::endl;
         }
+        // else
+        // {
+        //     std::cout << "Il n'est pas possible de construire cette tour" << std::endl;
+        // }
 
         app.mouse_button_callback(button, action, mods);
     }

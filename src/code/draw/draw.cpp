@@ -174,7 +174,7 @@ std::unordered_map<glm::vec3, CaseType> Map::associate_RGB_to_CaseType(std::vect
 // Associe une position de pixel (x, y) à un type de Case
 std::vector<CaseType> Map::associate_px_pos_to_CaseType()
 {
-    sil::Image map {sil::Image("data/map.png")};
+    sil::Image map {sil::Image("images/map/map.png")};
     this->px_pos_CaseType_vec.resize(map.width() * map.height());
 
     for (int x = 0; x < map.width(); x++)
@@ -320,7 +320,7 @@ void draw_quad_with_texture_v2(GLuint const &texture)
 // Dessine la map
 void Map::draw_map (Map &map)
 {
-    sil::Image imagemap {sil::Image("data/map.png")};
+    sil::Image imagemap {sil::Image("images/map/map.png")};
  
     for (float x = 0; x < 8; x++)
     {
@@ -334,7 +334,6 @@ void Map::draw_map (Map &map)
             {
                 draw_quad_with_texture(this->_grass, x, y, map);
             }
-            
             else if (this->px_pos_CaseType_vec[x + imagemap.width()* y] == CaseType::IN)
             {
                 draw_quad_with_texture(this->_in, x, y, map);
@@ -347,13 +346,12 @@ void Map::draw_map (Map &map)
     }
 }
 
-bool Map::can_create_tower(Map &map, float x, float y) {
-    
-    sil::Image imagemap {sil::Image("data/map.png")};
- 
-    
-            
-    if (x < 0 || y < 0 || x >= imagemap.width() || y >= imagemap.height()) {
+bool Map::can_create_tower(Map &map, float x, float y)
+{
+    sil::Image imagemap {sil::Image("images/map/map.png")};
+
+    if (x < 0 || y < 0 || x >= imagemap.width() || y >= imagemap.height()) 
+    {
         return false;
     }
 
@@ -361,7 +359,8 @@ bool Map::can_create_tower(Map &map, float x, float y) {
     int index = static_cast<int>(x) + imagemap.width() * static_cast<int>(y);
 
     // Vérifiez le type de case
-    switch (this->px_pos_CaseType_vec[index]) {
+    switch (this->px_pos_CaseType_vec[index])
+    {
         case CaseType::PATH:
         case CaseType::IN:
         case CaseType::OUT:
@@ -372,6 +371,5 @@ bool Map::can_create_tower(Map &map, float x, float y) {
             return true;
         default:
             return false;
-    }
-        
+    }    
 }
