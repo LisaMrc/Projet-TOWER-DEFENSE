@@ -124,7 +124,49 @@ int main() {
         window_as_app(window).scroll_callback(xoffset, yoffset);
     });
     glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos) {
-        window_as_app(window).cursor_position_callback(xpos, ypos);
+       auto& app = window_as_app(window);
+
+        // Obtenez la taille de la fenêtre
+        GLint windowWidth, windowHeight;
+        glfwGetWindowSize(window, &windowWidth, &windowHeight);
+        
+        // Calculez le décalage sur les côtés
+        int offset = (windowWidth - windowHeight) / 2;
+
+        // Ajustez les coordonnées pour tenir compte du décalage
+        double adjustedXpos = (xpos - offset) / windowHeight; 
+        double adjustedYpos = ypos / windowHeight;
+
+        // Calculez les coordonnées des cases (0 à 7)
+        int xCase = static_cast<int>(adjustedXpos * 8);
+        int yCase = static_cast<int>(adjustedYpos * 8);
+
+        // Mettez à jour les positions de construction
+        app.xBuild = static_cast<float>(xCase);
+        app.yBuild = static_cast<float>(yCase);
+
+        // Vérifier si une tour existe déjà aux coordonnées spécifiées
+        bool free = true;
+        for (const auto& tower : app.towers_already_builds) {
+            if (tower.first == app.xBuild && tower.second == app.yBuild) {
+                free = false;
+                break;
+            }
+        }
+
+        // Vérifier si l'emplacement est constructible
+        bool constructible = app.map.can_create_tower(app.map, app.xBuild, app.yBuild);
+
+        if (free && constructible)
+        {
+            app.case_color = app.map._free;
+        } else {
+            app.case_color = app.map._occupied;
+        }
+
+        // Appelez la fonction de rappel de position du curseur de l'application
+        app.cursor_position_callback(xpos, ypos);
+
     });
     glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height) {
         window_as_app(window).size_callback(width, height);

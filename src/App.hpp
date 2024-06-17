@@ -56,6 +56,10 @@ public:
     std::vector<tower> towers;
     std::vector<std::pair<float, float>> towers_already_builds{};
 
+    float xBuild{};
+    float yBuild{};
+    GLuint case_color;
+
     Map map;
 private:
     void render();

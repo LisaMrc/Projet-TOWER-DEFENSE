@@ -59,6 +59,13 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     retry_button = loadTexture(retry);
     victory_button = loadTexture(victory);
     defeat_button = loadTexture(defeat);
+
+    // TOWER PLACEMENT
+    img::Image free {img::load(make_absolute_path("images/textures/zones_tours/zone_verte.png", true), 4, true)};
+    img::Image occupied {img::load(make_absolute_path("images/textures/zones_tours/zone_rouge.png", true), 4, true)};
+
+    map._free = loadTexture(free);
+    map._occupied = loadTexture(occupied);
 }
 
 void App::setup()
@@ -195,6 +202,8 @@ void App::render()
     // Render the text          
     TextRenderer.Render();
 
+    
+
     if(_state == state_screen::screen_LEVEL)
     {
         // Gets variables
@@ -251,8 +260,11 @@ void App::render()
                 }
                 draw_quad_with_texture(Excalipurr._knight, Excalipurr.x, Excalipurr.y, map);
             }
-        // 
+        
 
+        draw_quad_with_texture(case_color, xBuild, yBuild, map);
+
+        
         for (const auto& tower : towers)
         {
             create_tower(map, arrow, tower.x, tower.y);
