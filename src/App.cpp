@@ -50,6 +50,8 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     img::Image title {img::load(make_absolute_path("images/textures/buttons/title.png", true), 4, true)};
     img::Image victory {img::load(make_absolute_path("images/textures/buttons/victory_button.png", true), 4, true)};
     img::Image defeat {img::load(make_absolute_path("images/textures/buttons/defeat_button.png", true), 4, true)};
+    img::Image hood_arrow {img::load(make_absolute_path("images/textures/entities/tower_1.png", true), 4, true)};
+    img::Image elec_arrow {img::load(make_absolute_path("images/textures/entities/tower_2.png", true), 4, true)};
 
     start_button = loadTexture(start);
     quit_button = loadTexture(quit);
@@ -59,6 +61,8 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     retry_button = loadTexture(retry);
     victory_button = loadTexture(victory);
     defeat_button = loadTexture(defeat);
+    hood_arrow_button = loadTexture(hood_arrow);
+    elec_arrow_button = loadTexture(elec_arrow);
 
     // TOWER PLACEMENT
     img::Image free {img::load(make_absolute_path("images/textures/zones_tours/zone_verte.png", true), 4, true)};
@@ -94,6 +98,8 @@ void App::setup()
     listeDeButton.push_back(Button{"Boutton_Win", false, 3, 1, 6, 2, victory_button}); //5
     listeDeButton.push_back(Button{"Boutton_Play_again", false, 3, 4, 2, 1, retry_button}); //6
     listeDeButton.push_back(Button{"Boutton_Play", false, 3, 4, 2, 1, resume_button}); //7
+    listeDeButton.push_back(Button{"Boutton_Hood_Arrow", false, -3, 2, 1, 1, hood_arrow_button}); //8
+    listeDeButton.push_back(Button{"Boutton_Elec_Arrow", false, -2, 2, 1, 1, elec_arrow_button}); //9
 
     // Extract information from itd file
     std::vector<std::vector<std::string>> splitted_itd_file = split_itd_file();
@@ -201,8 +207,6 @@ void App::render()
     // Render the text          
     TextRenderer.Render();
 
-    
-
     if(_state == state_screen::screen_LEVEL)
     {
         // Gets variables
@@ -216,6 +220,10 @@ void App::render()
 
             // Render pause button
             listeDeButton[2].draw_me();
+
+            // Render types towers button
+            listeDeButton[8].draw_me(); //normal tower
+            listeDeButton[9].draw_me(); //electrical tower
 
             // Render the map
             map.draw_map(map);
@@ -259,15 +267,22 @@ void App::render()
                 }
                 draw_quad_with_texture(Excalipurr._knight, Excalipurr.x, Excalipurr.y, map);
             }
-        
 
+            if (listeDeButton[8].isPressed){    
+                listeDeButton[9].isPressed = false;
+                for (const auto& tower : towers){
+                    create_tower(map, arrow, tower.x, tower.y);
+                }
+            }
+
+            if (listeDeButton[9].isPressed){
+                listeDeButton[8].isPressed = false;
+                for (const auto& tower : towers){
+                    create_tower(map, arrow, tower.x, tower.y);
+                }
+            }
+        
         draw_quad_with_texture(case_color, xBuild, yBuild, map);
-
-        
-        for (const auto& tower : towers)
-        {
-            create_tower(map, arrow, tower.x, tower.y);
-        }
     }
 
     if(_state == state_screen::MENU)
@@ -276,6 +291,8 @@ void App::render()
         listeDeButton[1].isPressed = false;
         listeDeButton[2].isPressed = false;
         listeDeButton[6].isPressed = false;
+        listeDeButton[8].isPressed = false;
+        listeDeButton[9].isPressed = false;
         listeDeButton[0].draw_me();
         listeDeButton[1].draw_me();
         listeDeButton[3].draw_me();
@@ -283,6 +300,8 @@ void App::render()
 
     if (_state == state_screen::screen_PAUSE)
     {
+        listeDeButton[8].isPressed = false;
+        listeDeButton[9].isPressed = false;
         listeDeButton[2].isPressed = false;
         listeDeButton[1].draw_me();
         listeDeButton[7].draw_me();
@@ -326,6 +345,14 @@ void App::mouse_button_callback(int button, int action, int mods) {
     if(mouseXpos >= listeDeButton[7].posX && mouseXpos < listeDeButton[7].posX+listeDeButton[7].width && 
     mouseYpos >= listeDeButton[7].posY && mouseYpos < listeDeButton[7].posY + listeDeButton[7].height && (_state == state_screen::screen_PAUSE)){
         listeDeButton[7].isPressed = true;
+    }
+    if(mouseXpos >= listeDeButton[8].posX+1 && mouseXpos < listeDeButton[8].posX+listeDeButton[8].width+1 && 
+    mouseYpos >= listeDeButton[8].posY && mouseYpos < listeDeButton[8].posY + listeDeButton[8].height && _state == state_screen::screen_LEVEL){
+        listeDeButton[8].isPressed = true;
+    }
+    if(mouseXpos >= listeDeButton[9].posX+1 && mouseXpos < listeDeButton[9].posX+listeDeButton[9].width+1 && 
+    mouseYpos >= listeDeButton[9].posY && mouseYpos < listeDeButton[9].posY + listeDeButton[9].height && _state == state_screen::screen_LEVEL){
+        listeDeButton[9].isPressed = true;
     }
 
 }

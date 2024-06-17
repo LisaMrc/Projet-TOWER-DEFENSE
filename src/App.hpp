@@ -44,6 +44,8 @@ public:
     GLuint retry_button;
     GLuint victory_button;
     GLuint defeat_button;
+    GLuint hood_arrow_button;
+    GLuint elec_arrow_button;
 
     double time_open_window = {};
     double time_play = {};
