@@ -268,8 +268,11 @@ void App::render()
                 }
                 draw_quad_with_texture(Excalipurr._knight, Excalipurr.x, Excalipurr.y, map);
             }
-        // 
-        draw_quad_with_texture(map._free, xBuild, yBuild, map);
+        
+
+        draw_quad_with_texture(case_color, xBuild, yBuild, map);
+
+        
         for (const auto& tower : towers)
         {
             create_tower(map, arrow, tower.x, tower.y);

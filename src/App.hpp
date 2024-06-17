@@ -58,6 +58,7 @@ public:
 
     float xBuild{};
     float yBuild{};
+    GLuint case_color;
 
     Map map;
 private:

@@ -145,6 +145,25 @@ int main() {
         app.xBuild = static_cast<float>(xCase);
         app.yBuild = static_cast<float>(yCase);
 
+        // Vérifier si une tour existe déjà aux coordonnées spécifiées
+        bool free = true;
+        for (const auto& tower : app.towers_already_builds) {
+            if (tower.first == app.xBuild && tower.second == app.yBuild) {
+                free = false;
+                break;
+            }
+        }
+
+        // Vérifier si l'emplacement est constructible
+        bool constructible = app.map.can_create_tower(app.map, app.xBuild, app.yBuild);
+
+        if (free && constructible)
+        {
+            app.case_color = app.map._free;
+        } else {
+            app.case_color = app.map._occupied;
+        }
+
         // Appelez la fonction de rappel de position du curseur de l'application
         app.cursor_position_callback(xpos, ypos);
 
