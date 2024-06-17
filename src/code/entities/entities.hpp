@@ -51,6 +51,8 @@ struct Enemy
     double enemy_clock;
     void get_elapsedTime(double const & elapsedTime);
     void enemy_move();
+
+    void reset();
 };
 
 std::vector<node> create_vect_nodes(std::vector<std::vector<std::string>> splitted_itd_file);
@@ -68,6 +70,8 @@ struct King
     int const default_health = 250;
 
     GLuint _king{};
+
+    void reset();
 };
 
 struct projectile

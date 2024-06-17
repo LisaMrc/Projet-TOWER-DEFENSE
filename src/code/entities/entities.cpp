@@ -11,40 +11,7 @@
 // Initialise la somme d'argent en début de partie
 int gold_earned {10};
 
-void Enemy::oof()
-{
-    if (health <= 0)
-    {
-        is_dead == true;
-    }
-}
-
-void damage(Enemy Enemy, projectile projectile)
-{
-    if (projectile.x == Enemy.x && projectile.y == Enemy.y) {
-        Enemy.health -= projectile.damages;
-    }
-}
-
-bool in_range(Enemy Enemy, tower tour)
-{
-    if (Enemy.x - tour.x <= tour.range || Enemy.y - tour.y <= tour.range) {
-        return true;
-    }
-}
-
-// void fire(Enemy Enemy, tower tour)
-// {
-//     bool range {in_range(Enemy, tour)};
-//     bool death {Enemy.is_dead()};
-
-//     while (range == true || death == false)
-//     {
-//         range = in_range(Enemy, tour);
-//         death = Enemy.is_dead();
-//         // envoyer un projectile (== projectileKind) toutes les XX secondes (== tower.rate) sur l'Enemy
-//     }
-// }
+// _________________________________________ GRAPH FOR ENEMIES + ENEMIES PATH ____________________________________________________
 
 std::vector<node> create_vect_nodes(std::vector<std::vector<std::string>> splitted_itd_file)
 {
@@ -96,21 +63,7 @@ std::vector<node> get_enemy_path (std::vector<node> vector_of_nodes, std::vector
     return enemy_path;
 }
 
-/*
-bool is_there_tower(float x, float y) {
-    auto is_tower { app.towers_already_builds.find(x, y) };
-    if (is_tower != app.towers_already_builds.end()) {
-        return true;
-    } else {
-        return false;
-    }
-}
-*/
-void create_tower(Map &map, tower &tour, float x, float y) {
-        gold_earned -= tour.price;
-        draw_quad_with_texture(tour._arrow, x, y, map);   
-}
-
+// __________________________________________ ENEMY ___________________________________________________
 
 void Enemy::get_elapsedTime (const double & elapsedTime)
 {
@@ -153,6 +106,22 @@ void Enemy::enemy_move()
         }
 }
 
+void Enemy::oof()
+{
+    if (health <= 0)
+    {
+        is_dead == true;
+    }
+}
+
+void Enemy::reset()
+{
+    x = enemy_path.front().node_x;
+    y = enemy_path.front().node_y;
+    current_node_id = 0;
+    target_node_id = 1;
+}
+
 void Player::analyses_ennemies(std::vector<Enemy> ennemies_in_wave)
 {
     for (Enemy enemy : ennemies_in_wave)
@@ -163,3 +132,49 @@ void Player::analyses_ennemies(std::vector<Enemy> ennemies_in_wave)
         }
     }  
 }
+
+// __________________________________________ TOWERS ___________________________________________________
+
+void create_tower(Map &map, tower &tour, float x, float y)
+{
+        gold_earned -= tour.price;
+        draw_quad_with_texture(tour._arrow, x, y, map);   
+}
+
+void damage(Enemy Enemy, projectile projectile)
+{
+    if (projectile.x == Enemy.x && projectile.y == Enemy.y) {
+        Enemy.health -= projectile.damages;
+    }
+}
+
+bool in_range(Enemy Enemy, tower tour)
+{
+    if (Enemy.x - tour.x <= tour.range || Enemy.y - tour.y <= tour.range) {
+        return true;
+    }
+}
+
+/*
+bool is_there_tower(float x, float y) {
+    auto is_tower { app.towers_already_builds.find(x, y) };
+    if (is_tower != app.towers_already_builds.end()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+*/
+
+// void fire(Enemy Enemy, tower tour)
+// {
+//     bool range {in_range(Enemy, tour)};
+//     bool death {Enemy.is_dead()};
+
+//     while (range == true || death == false)
+//     {
+//         range = in_range(Enemy, tour);
+//         death = Enemy.is_dead();
+//         // envoyer un projectile (== projectileKind) toutes les XX secondes (== tower.rate) sur l'Enemy
+//     }
+// }
