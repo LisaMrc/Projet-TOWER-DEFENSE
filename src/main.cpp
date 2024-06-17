@@ -124,23 +124,25 @@ int main() {
         window_as_app(window).scroll_callback(xoffset, yoffset);
     });
     glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos) {
-       auto& app = window_as_app(window);
+    auto& app = window_as_app(window);
 
-        // Obtenez la taille de la fenêtre
-        GLint windowWidth, windowHeight;
-        glfwGetWindowSize(window, &windowWidth, &windowHeight);
-        
-        // Calculez le décalage sur les côtés
-        int offset = (windowWidth - windowHeight) / 2;
+    // Obtenez la taille de la fenêtre
+    GLint windowWidth, windowHeight;
+    glfwGetWindowSize(window, &windowWidth, &windowHeight);
+    
+    // Calculez le décalage sur les côtés
+    int offset = (windowWidth - windowHeight) / 2;
 
-        // Ajustez les coordonnées pour tenir compte du décalage
-        double adjustedXpos = (xpos - offset) / windowHeight; 
-        double adjustedYpos = ypos / windowHeight;
+    // Ajustez les coordonnées pour tenir compte du décalage
+    double adjustedXpos = (xpos - offset) / windowHeight; 
+    double adjustedYpos = ypos / windowHeight;
 
-        // Calculez les coordonnées des cases (0 à 7)
-        int xCase = static_cast<int>(adjustedXpos * 8);
-        int yCase = static_cast<int>(adjustedYpos * 8);
+    // Calculez les coordonnées des cases (0 à 7)
+    int xCase = static_cast<int>(adjustedXpos * 8);
+    int yCase = static_cast<int>(adjustedYpos * 8);
 
+    // Vérifiez si les coordonnées sont à l'intérieur de la carte du jeu
+    if (xCase >= 0 && xCase < 8 && yCase >= 0 && yCase < 8) {
         // Mettez à jour les positions de construction
         app.xBuild = static_cast<float>(xCase);
         app.yBuild = static_cast<float>(yCase);
@@ -157,17 +159,20 @@ int main() {
         // Vérifier si l'emplacement est constructible
         bool constructible = app.map.can_create_tower(app.map, app.xBuild, app.yBuild);
 
-        if (free && constructible)
-        {
+        if (free && constructible) {
             app.case_color = app.map._free;
         } else {
             app.case_color = app.map._occupied;
         }
+        } else {
+            // Si les coordonnées sont en dehors de la carte, ne coloriez pas la case
+            app.case_color = app.map._grass; // Ou toute autre valeur qui indique qu'il n'y a pas de case colorée
+        }
 
         // Appelez la fonction de rappel de position du curseur de l'application
         app.cursor_position_callback(xpos, ypos);
-
     });
+
     glfwSetWindowSizeCallback(window, [](GLFWwindow* window, int width, int height) {
         window_as_app(window).size_callback(width, height);
     });
