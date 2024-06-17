@@ -4,8 +4,11 @@
 
 struct Wave
 {
-    int nbr;
-    std::vector<Enemy> vector_of_ennemies;
+    int id;
+    std::vector<Enemy> enemies_in_wave;
     int start;
     int freq_btw_ennemies_in_s;
+
+    int nbr_knights;
+    int nbr_wizards;
 };

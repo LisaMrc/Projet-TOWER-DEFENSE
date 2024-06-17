@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+
 #include "../draw/sil.hpp"
 #include <GLHelpers.hpp>
 #include "../draw/draw.hpp"
@@ -30,28 +31,28 @@ enum class EnemyType
 
 struct Enemy
 {
+    int enemy_id;
+    bool is_dead{};
+
+    float x {};
+    float y {};
+
     int health {};
     int speed {};
     int damage {};
     int gold {};
 
-    float x {};
-    float y {};
-
-    bool is_dead{};
-    void oof();
-
-    GLuint _knight {};
-    GLuint _wizard {};
+    EnemyType type{};
+    GLuint texture {};
 
     std::vector<node> enemy_path;
-    int current_node_id{0};
-    int target_node_id{1};
-
+    int current_node_id{};
+    int target_node_id{};
     double enemy_clock;
-    void get_elapsedTime(double const & elapsedTime);
+    
     void enemy_move();
-
+    void get_elapsedTime(double const & elapsedTime);
+    void oof();
     void reset();
 };
 
