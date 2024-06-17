@@ -34,12 +34,10 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     img::Image tower {img::load(make_absolute_path("images/textures/entities/tower_1.png", true), 4, true)};
 
     kinger._king = loadTexture(king);
-
-    Purrsival._knight = loadTexture(knight);
-    Excalipurr._knight = loadTexture(knight);
-    Meowlin._wizard = loadTexture(wizard);
-
     arrow._arrow = loadTexture(tower);
+
+    knight_enemy = loadTexture(knight);
+    wizard_enemy = loadTexture(wizard);
 
     // BUTTONS TEXTURE
     img::Image start {img::load(make_absolute_path("images/textures/buttons/start_button.png", true), 4, true)};
@@ -112,11 +110,14 @@ void App::setup()
     std::vector<int> shortest_path = get_shortest_path (dij_map, vec_nodes);
     std::vector<node> enemy_path = get_enemy_path (vec_nodes, shortest_path);
 
-    // Initializes enemy_path in each enemy
-    Purrsival.enemy_path = enemy_path;
-    Excalipurr.enemy_path = enemy_path;
-
+    // Initializes ennemy_path in king
     kinger.enemy_path = enemy_path;
+
+    // Ajout des ennemis à la vague 1
+    for (int i = 0; i < wave_one.nbr_knights; i++)
+    {
+        wave_one.enemies_in_wave.push_back(Enemy{i, false, 0, 0, 50, 1, 20, 20, EnemyType::KNIGHT, knight_enemy, enemy_path, 0, 1, 0});
+    }
 }
 
 void App::update()
@@ -128,19 +129,17 @@ void App::update()
     // if start is pressed
     if (listeDeButton[0].isPressed)
     {
-        // Ajout des ennemis à la vague
-        wave_one.enemies_in_wave.push_back(Purrsival);
-        wave_one.enemies_in_wave.push_back(Excalipurr);
-
-        // Initializes the wave
-        current_wave = wave_one;
-
         // Initialise le roi (Kinger) 
         kinger.reset();
 
         // Initialise tous les ennemis de la vague 1
-        current_wave.enemies_in_wave[0].reset();
-        current_wave.enemies_in_wave[1].reset();
+        for (int i = 0; i < wave_one.enemies_in_wave.size(); i++)
+        {
+            wave_one.enemies_in_wave[i].reset();
+        }
+
+        // Initializes the wave
+        current_wave = wave_one;
     
         _state = state_screen::screen_LEVEL;
         time_open_window = {glfwGetTime()};
@@ -174,17 +173,17 @@ void App::update()
             kinger.is_dead = 1;
         }
 
-        if (Purrsival.current_node_id == Purrsival.enemy_path.back().node_id)
-        {
-            kinger.health -= Purrsival.damage;
-        }
-
         // ENEMY
-        Purrsival.get_elapsedTime(elapsedTime);
-        Purrsival.oof();
+        for (int i = 0; i < current_wave.enemies_in_wave.size(); i++)
+        {
+            current_wave.enemies_in_wave[i].get_elapsedTime(elapsedTime);
+            current_wave.enemies_in_wave[i].oof();
 
-        Excalipurr.get_elapsedTime(elapsedTime);
-        Excalipurr.oof();
+            if (current_wave.enemies_in_wave[i].current_node_id == current_wave.enemies_in_wave[i].enemy_path.back().node_id)
+            {
+                kinger.health -= current_wave.enemies_in_wave[i].damage;
+            }
+        }
     }
 
     render();
@@ -201,8 +200,6 @@ void App::render()
 
     // Render the text          
     TextRenderer.Render();
-
-    
 
     if(_state == state_screen::screen_LEVEL)
     {
@@ -244,27 +241,25 @@ void App::render()
             if (time_play > current_wave.freq_btw_ennemies_in_s)
             {
                 // Render the first knight
-                if (Purrsival.target_node_id < Purrsival.enemy_path.size())
+                if (current_wave.enemies_in_wave[0].target_node_id < current_wave.enemies_in_wave[0].enemy_path.size())
                 {
-                    Purrsival.enemy_move();
+                    current_wave.enemies_in_wave[0].enemy_move();
                 }
-                draw_quad_with_texture(Purrsival._knight, Purrsival.x, Purrsival.y, map);
+                draw_quad_with_texture(current_wave.enemies_in_wave[0].texture, current_wave.enemies_in_wave[0].x, current_wave.enemies_in_wave[0].y, map);
             }
 
-            if (time_play > current_wave.freq_btw_ennemies_in_s*2)
-            {
-                // Render the second knight
-                if (Excalipurr.target_node_id < Excalipurr.enemy_path.size())
-                {
-                    Excalipurr.enemy_move();
-                }
-                draw_quad_with_texture(Excalipurr._knight, Excalipurr.x, Excalipurr.y, map);
-            }
-        
+            // if (time_play > current_wave.freq_btw_ennemies_in_s*2)
+            // {
+            //     // Render the second knight
+            //     if (Excalipurr.target_node_id < Excalipurr.enemy_path.size())
+            //     {
+            //         Excalipurr.enemy_move();
+            //     }
+            //     draw_quad_with_texture(Excalipurr._knight, Excalipurr.x, Excalipurr.y, map);
+            // }
 
         draw_quad_with_texture(case_color, xBuild, yBuild, map);
 
-        
         for (const auto& tower : towers)
         {
             create_tower(map, arrow, tower.x, tower.y);
@@ -328,7 +323,6 @@ void App::mouse_button_callback(int button, int action, int mods) {
     mouseYpos >= listeDeButton[7].posY && mouseYpos < listeDeButton[7].posY + listeDeButton[7].height && (_state == state_screen::screen_PAUSE)){
         listeDeButton[7].isPressed = true;
     }
-
 }
 
 void App::scroll_callback(double /*xoffset*/, double /*yoffset*/) {

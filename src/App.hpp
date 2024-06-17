@@ -45,6 +45,9 @@ public:
     GLuint victory_button;
     GLuint defeat_button;
 
+    GLuint knight_enemy;
+    GLuint wizard_enemy;
+
     double time_open_window = {};
     double time_play = {};
 
@@ -75,10 +78,6 @@ private:
     // Entities
         King kinger{250, 0, 0, 0, 100};
 
-        Enemy Purrsival{50, 2, 20, 10};
-        Enemy Excalipurr{50, 1, 20, 10, 0, 0, 0};
-        Enemy Meowlin{40, 3, 40, 20, 0, 0, 0};
-
         tower arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
 
     // Text
@@ -87,8 +86,9 @@ private:
 
     // Waves
         Wave current_wave{};
-        Wave wave_one {1, {}, 5, 10};
-        // Wave wave_two {2, {Purrsival}, 30, 5};
-        // Wave wave_three {3, {Purrsival}, 45, 2};
-        // Wave wave_four {4, {Purrsival}, 60, 1};
+
+        Wave wave_one {1, {}, 5, 10, 2, 0};
+        // Wave wave_two {2, {}, 20, 5, 3, 1};
+        // Wave wave_three {3, {}, 35, 2, 5, 2};
+        // Wave wave_four {4, {}, 50, 1, 7, 4};
 };
