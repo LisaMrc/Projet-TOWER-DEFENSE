@@ -115,7 +115,6 @@ void App::setup()
     // Initializes enemy_path in each enemy
     Purrsival.enemy_path = enemy_path;
     Excalipurr.enemy_path = enemy_path;
-    Meowlin.enemy_path = enemy_path;
 
     kinger.enemy_path = enemy_path;
 }
@@ -129,17 +128,19 @@ void App::update()
     // if start is pressed
     if (listeDeButton[0].isPressed)
     {
-        // Initialise le roi (Kinger) 
-        kinger.reset();
-
-        // Initialise l'ennemi 1 (Purrsival)
-        Purrsival.reset();
-
-        // Initialise l'ennemi 2 (Excalipurr)
-        Excalipurr.reset();
+        // Ajout des ennemis à la vague
+        wave_one.enemies_in_wave.push_back(Purrsival);
+        wave_one.enemies_in_wave.push_back(Excalipurr);
 
         // Initializes the wave
         current_wave = wave_one;
+
+        // Initialise le roi (Kinger) 
+        kinger.reset();
+
+        // Initialise tous les ennemis de la vague 1
+        current_wave.enemies_in_wave[0].reset();
+        current_wave.enemies_in_wave[1].reset();
     
         _state = state_screen::screen_LEVEL;
         time_open_window = {glfwGetTime()};
