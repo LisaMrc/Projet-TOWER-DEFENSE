@@ -58,7 +58,7 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     victory_button = loadTexture(victory);
     defeat_button = loadTexture(defeat);
 
-    // TOWER PLACEMENT
+    // TOWER PLACEMENT TEXTURES
     img::Image free {img::load(make_absolute_path("images/textures/zones_tours/zone_verte.png", true), 4, true)};
     img::Image occupied {img::load(make_absolute_path("images/textures/zones_tours/zone_rouge.png", true), 4, true)};
 
@@ -71,19 +71,19 @@ void App::setup()
     // Set the background color to black
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-    // Setup the text renderer with blending enabled and white text color
+    // Set the text renderer with blending enabled and white text color
     TextRenderer.ResetFont();
     TextRenderer.SetColor(SimpleText::TEXT_COLOR, SimpleText::Color::WHITE);
     TextRenderer.SetColorf(SimpleText::BACKGROUND_COLOR, 0.f, 0.f, 0.f, 0.f);
     TextRenderer.EnableBlending(true);
 
-    // Initializes player_gold_text
+    // Set player_gold_text
     this->player_gold_text.SetColor(SimpleText::TEXT_COLOR, SimpleText::Color::WHITE);
     this->player_gold_text.SetTextSize(SimpleText::FontSize::SIZE_32);
     this->player_gold_text.SetColorf(SimpleText::BACKGROUND_COLOR, 0.f, 0.f, 0.f, 0.f);
     this->player_gold_text.EnableBlending(true);
 
-    // Initializes the buttons
+    // Set buttons list
     listeDeButton.push_back(Button{"Boutton_Start", false, 3, 4, 2, 1, start_button}); //0
     listeDeButton.push_back(Button{"Boutton_Quit", false, 3, 6, 2, 1, quit_button}); //1
     listeDeButton.push_back(Button{"Boutton_Pause", false, 8, 0, 2, 1, pause_bouton}); //2
@@ -96,7 +96,7 @@ void App::setup()
     // Extract information from itd file
     std::vector<std::vector<std::string>> splitted_itd_file = split_itd_file();
 
-    // Creates the tools to print the map
+    // Create the tools to print the map
     map.associate_RGB_to_CaseType(splitted_itd_file);
     map.associate_px_pos_to_CaseType();
 
@@ -104,25 +104,39 @@ void App::setup()
     std::vector<std::vector<float>> adjacency_matrix {create_adjacency_matrix(splitted_itd_file)};
     Graph::WeightedGraph graph {Graph::build_from_adjacency_matrix(adjacency_matrix)};
     
-    // Create graph for ennemies
+    // Create path for ennemies
     std::unordered_map<int, std::pair<float, int>> dij_map = graph.dijkstra(0, 7); 
     std::vector<node> vec_nodes = create_vect_nodes(splitted_itd_file);
     std::vector<int> shortest_path = get_shortest_path (dij_map, vec_nodes);
     std::vector<node> enemy_path = get_enemy_path (vec_nodes, shortest_path);
 
-    // Initializes ennemy_path in king
+    // King gets enemy path
     kinger.enemy_path = enemy_path;
 
-    // Ajout des ennemis à la vague 1
-    for (int i = 0; i < wave_one.nbr_knights; i++)
+    // Set waves in waves list
+    waves_list.push_back(Wave {1, {}, 5, 10, 2, 0});
+    waves_list.push_back(Wave {2, {}, 20, 5, 3, 1});
+    waves_list.push_back(Wave {3, {}, 35, 2, 5, 2});
+    waves_list.push_back(Wave {4, {}, 50, 1, 7, 4});
+
+    // Add enemies to each wave
+    for (size_t i = 0; i < waves_list.size(); i++)
     {
-        wave_one.enemies_in_wave.push_back(Enemy{i, false, 0, 0, 50, 1, 20, 20, EnemyType::KNIGHT, knight_enemy, enemy_path, 0, 1, 0});
+        for (int j = 0; j < waves_list[i].nbr_knights; j++)
+        {
+            waves_list[i].enemies_in_wave.push_back(Enemy{j, false, 0, 0, 50, 1, 20, 20, EnemyType::KNIGHT, knight_enemy, enemy_path, 0, 1, 0});
+        }
+
+        for (int k = waves_list[i].nbr_knights; k < waves_list[i].nbr_knights + waves_list[i].nbr_wizards; k++)
+        {
+            waves_list[i].enemies_in_wave.push_back(Enemy{k, false, 0, 0, 20, 2, 40, 40, EnemyType::KNIGHT, knight_enemy, enemy_path, 0, 1, 0});
+        }
     }
 }
 
 void App::update()
 {
-    const double currentTime { glfwGetTime() };
+    const double currentTime {glfwGetTime()};
     const double elapsedTime { currentTime - _previousTime};
     _previousTime = currentTime;
 
@@ -133,13 +147,13 @@ void App::update()
         kinger.reset();
 
         // Initialise tous les ennemis de la vague 1
-        for (int i = 0; i < wave_one.enemies_in_wave.size(); i++)
+        for (int i = 0; i < waves_list[0].enemies_in_wave.size(); i++)
         {
-            wave_one.enemies_in_wave[i].reset();
+            waves_list[0].enemies_in_wave[i].reset();
         }
 
-        // Initializes the wave
-        current_wave = wave_one;
+        // Initializes the current wave
+        current_wave = waves_list[0];
     
         _state = state_screen::screen_LEVEL;
         time_open_window = {glfwGetTime()};
@@ -225,10 +239,13 @@ void App::render()
             std::string GOLD_Label{" GOLD : " + std::to_string(kinger.player_gold) + " "};
             this->player_gold_text.Label(GOLD_Label.c_str() , _width / 80, 100, SimpleText::LEFT);
             this->player_gold_text.Render();
+
+            // Render tower placement
+            draw_quad_with_texture(case_color, xBuild, yBuild, map);
         // 
 
         // TRIGGERS (awaits for...)
-            
+
             if (kinger.is_dead == 1)
             {
                 _state = state_screen::screen_LOOSE;
@@ -249,8 +266,7 @@ void App::render()
                     draw_quad_with_texture(current_wave.enemies_in_wave[i].texture, current_wave.enemies_in_wave[i].x, current_wave.enemies_in_wave[i].y, map);
                 }
             }
-
-        draw_quad_with_texture(case_color, xBuild, yBuild, map);
+        // 
 
         for (const auto& tower : towers)
         {

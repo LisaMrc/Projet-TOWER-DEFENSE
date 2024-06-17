@@ -85,10 +85,6 @@ private:
         SimpleText player_gold_text;
 
     // Waves
+        std::vector<Wave> waves_list{};
         Wave current_wave{};
-
-        Wave wave_one {1, {}, 5, 10, 2, 0};
-        // Wave wave_two {2, {}, 20, 5, 3, 1};
-        // Wave wave_three {3, {}, 35, 2, 5, 2};
-        // Wave wave_four {4, {}, 50, 1, 7, 4};
 };
