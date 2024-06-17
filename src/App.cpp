@@ -238,25 +238,17 @@ void App::render()
                 _state = state_screen::screen_WIN;
             }
 
-            if (time_play > current_wave.freq_btw_ennemies_in_s)
+            for (int i = 0; i < current_wave.enemies_in_wave.size(); i++)
             {
-                // Render the first knight
-                if (current_wave.enemies_in_wave[0].target_node_id < current_wave.enemies_in_wave[0].enemy_path.size())
+                if (time_play > current_wave.freq_btw_ennemies_in_s*(i+1))
                 {
-                    current_wave.enemies_in_wave[0].enemy_move();
+                    if (current_wave.enemies_in_wave[i].target_node_id < current_wave.enemies_in_wave[i].enemy_path.size())
+                    {
+                        current_wave.enemies_in_wave[i].enemy_move();
+                    }
+                    draw_quad_with_texture(current_wave.enemies_in_wave[i].texture, current_wave.enemies_in_wave[i].x, current_wave.enemies_in_wave[i].y, map);
                 }
-                draw_quad_with_texture(current_wave.enemies_in_wave[0].texture, current_wave.enemies_in_wave[0].x, current_wave.enemies_in_wave[0].y, map);
             }
-
-            // if (time_play > current_wave.freq_btw_ennemies_in_s*2)
-            // {
-            //     // Render the second knight
-            //     if (Excalipurr.target_node_id < Excalipurr.enemy_path.size())
-            //     {
-            //         Excalipurr.enemy_move();
-            //     }
-            //     draw_quad_with_texture(Excalipurr._knight, Excalipurr.x, Excalipurr.y, map);
-            // }
 
         draw_quad_with_texture(case_color, xBuild, yBuild, map);
 
