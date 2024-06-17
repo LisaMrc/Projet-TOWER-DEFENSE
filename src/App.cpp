@@ -116,6 +116,8 @@ void App::setup()
     Purrsival.enemy_path = enemy_path;
     Excalipurr.enemy_path = enemy_path;
     Meowlin.enemy_path = enemy_path;
+
+    kinger.enemy_path = enemy_path;
 }
 
 void App::update()
@@ -128,10 +130,7 @@ void App::update()
     if (listeDeButton[0].isPressed)
     {
         // Initialise le roi (Kinger) 
-        kinger.x = Purrsival.enemy_path.back().node_x;
-        kinger.y = Purrsival.enemy_path.back().node_y;
-        kinger.health = kinger.default_health;
-        kinger.is_dead = 0;
+        kinger.reset();
 
         // Initialise l'ennemi 1 (Purrsival)
         Purrsival.reset();

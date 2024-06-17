@@ -133,6 +133,16 @@ void Player::analyses_ennemies(std::vector<Enemy> ennemies_in_wave)
     }  
 }
 
+// __________________________________________ KING ___________________________________________________
+
+void King::reset()
+{
+    x = enemy_path.back().node_x;
+    y = enemy_path.back().node_y;
+    health = 250;
+    is_dead = 0;
+}
+
 // __________________________________________ TOWERS ___________________________________________________
 
 void create_tower(Map &map, tower &tour, float x, float y)

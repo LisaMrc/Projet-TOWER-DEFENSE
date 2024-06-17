@@ -62,12 +62,13 @@ std::vector<node> get_enemy_path (std::vector<node> vector_of_nodes, std::vector
 struct King
 {
     int health{};
-    float x {}; // position en x sur la grille
-    float y {}; // position en y sur la grille
+    float x {};
+    float y {};
     bool is_dead{0};
 
     int player_gold;
-    int const default_health = 250;
+
+    std::vector<node> enemy_path;
 
     GLuint _king{};
 
