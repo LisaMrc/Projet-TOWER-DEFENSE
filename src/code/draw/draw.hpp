@@ -59,6 +59,9 @@ struct Map
     GLuint _in {};
     GLuint _out {};
 
+    GLuint _occupied {};
+    GLuint _free {};
+
     std::unordered_map<glm::vec3, CaseType> RGB_CaseType_map;
     std::vector<CaseType> px_pos_CaseType_vec;
     
