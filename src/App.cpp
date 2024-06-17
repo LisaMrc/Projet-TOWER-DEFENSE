@@ -134,18 +134,10 @@ void App::update()
         kinger.is_dead = 0;
 
         // Initialise l'ennemi 1 (Purrsival)
-        Purrsival.x = Purrsival.enemy_path.front().node_x;
-        Purrsival.y = Purrsival.enemy_path.front().node_y;
-        Purrsival.current_node_id = 0;
-        Purrsival.target_node_id = 1;
-        Purrsival.speed = 1;
+        Purrsival.reset();
 
         // Initialise l'ennemi 2 (Excalipurr)
-        Excalipurr.x = Excalipurr.enemy_path.front().node_x;
-        Excalipurr.y = Excalipurr.enemy_path.front().node_y;
-        Excalipurr.current_node_id = 0;
-        Excalipurr.target_node_id = 1;
-        Excalipurr.speed = 1;
+        Excalipurr.reset();
 
         // Initializes the wave
         current_wave = wave_one;
