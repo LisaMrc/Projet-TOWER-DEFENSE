@@ -201,10 +201,10 @@ void App::update()
                 waves_list[m].enemies_in_wave[i].get_elapsedTime(elapsedTime);
                 waves_list[m].enemies_in_wave[i].oof();
 
-                // if (waves_list[0].enemies_in_wave[i].current_node_id == waves_list[0].enemies_in_wave[i].enemy_path.back().node_id)
-                // {
-                //     kinger.health -= waves_list[0].enemies_in_wave[i].damage;
-                // }
+                if (waves_list[m].enemies_in_wave[i].current_node_id == waves_list[m].enemies_in_wave[i].enemy_path.back().node_id)
+                {
+                    kinger.health -= waves_list[m].enemies_in_wave[i].damage;
+                }
             }
         }
     }
