@@ -229,7 +229,8 @@ void Enemy::update(double elapsedTime) {
     // Mise à jour de la position de l'ennemi
 }
 
-void Projectile::update(double elapsedTime) {
+void Projectile::update(double elapsedTime)
+{
     // Mise à jour de la position du projectile
     // Calcul de la direction vers l'ennemi cible
     float dx = target.x - x;
@@ -249,9 +250,8 @@ bool Projectile::hasHitTarget() const {
     return x == target.x && y == target.y;
 }
 
-void Enemy::takeDamage(int damage) {
+void Enemy::takeDamage(int damage)
+{
     health -= damage;
-    if (health <= 0) {
-        is_dead = true;
-    }
+    std::cout << "DAMAGE :" << damage << std::endl;
 }

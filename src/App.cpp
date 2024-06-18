@@ -213,10 +213,12 @@ void App::update() {
                     }
                 }
             }
+
+            // std::cout << waves_list[0].enemies_in_wave[0].health;
         // 
 
         // TOWERS UPDATE
-            for (auto& tower : towers)
+            for (tower& tower : towers)
             {
                 // Détection des ennemis à portée
                 for (Wave w : waves_list)
@@ -244,6 +246,7 @@ void App::update() {
                     if (projectile.hasHitTarget())
                     {
                         projectile.target.takeDamage(projectile.damages);
+                        projectile.target.ko();
                         
                         // Incrémenter l'or si l'ennemi est mort
                         if (projectile.target.is_dead)
@@ -384,41 +387,42 @@ void App::render()
                     }
                 }
             }
-        // 
 
-            if (listeDeButton[8].isPressed){    
+            if (listeDeButton[8].isPressed)
+            {    
                 listeDeButton[9].isPressed = false;
-                for (const auto& tower : towers){
+                for (const auto& tower : towers)
+                {
                     create_tower(map, normal_arrow_tower, tower.x, tower.y);
                 }
             }
-        }
 
-            if (listeDeButton[9].isPressed){
+            if (listeDeButton[9].isPressed)
+            {
                 listeDeButton[8].isPressed = false;
-                for (const auto& tower : towers){
+                for (const auto& tower : towers)
+                {
                     create_tower(map, elec_arrow_tower, tower.x, tower.y);
                 }
             }
-        }
-        
-        draw_quad_with_texture(case_color, xBuild, yBuild, map);
+        // 
 
-        // Rendu des tourelles et des projectiles
-        for (const auto& tower : towers)
-        {
-            float towerX = tower.x;
-            float towerY = tower.y;
-            draw_quad_with_texture(arrow_tower._arrow, towerX, towerY, map);
-            for (const auto& projectile : tower.projectiles) {
-                float projectileX = projectile.x;
-                float projectileY = projectile.y;
-                draw_quad_with_texture(projectile_texture, projectileX, projectileY, map);
+        // Render towers
+            for (const auto& tower : towers)
+            {
+                float towerX = tower.x;
+                float towerY = tower.y;
+                draw_quad_with_texture(normal_arrow_tower._arrow, towerX, towerY, map);
+                for (const auto& projectile : tower.projectiles) {
+                    float projectileX = projectile.x;
+                    float projectileY = projectile.y;
+                    draw_quad_with_texture(projectile_texture, projectileX, projectileY, map);
+                }
             }
-        }
+        //
     }
 
-    if(_state == state_screen::MENU)
+    if (_state == state_screen::MENU)
     {
         listeDeButton[0].isPressed = false;
         listeDeButton[1].isPressed = false;
