@@ -113,10 +113,9 @@ struct tower
     float x {};
     float y {};
     int price{};
+    GLuint _arrow{};
     std::vector<Projectile> projectiles; // Liste des projectiles tirés
     double lastShotTime;
-
-    GLuint _arrow{};
 };
 
 bool in_range(Enemy Enemy, tower tour);

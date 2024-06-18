@@ -75,8 +75,8 @@ public:
         std::vector<Button> listeDeButton;
 
     //Entities 
-        tower normal_arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
-        tower elec_arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
+        tower normal_arrow_tower{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
+        tower elec_arrow_tower{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
 
 private:
     void render();
@@ -88,8 +88,6 @@ private:
 
     // Entities
         King kinger{250, 0, 0, 0, 100};
-
-        tower arrow_tower{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
 
         Projectile arrow{ProjectileKind::Arrow, 10, 5, 0, 0};
         Projectile ligthening_arrow{ProjectileKind::Lightning_arrow, 10, 5, 0, 0};

@@ -36,9 +36,9 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     img::Image elec_tower {img::load(make_absolute_path("images/textures/entities/tower_2.png", true), 4, true)};
 
     kinger._king = loadTexture(king);
-    arrow_tower._arrow = loadTexture(normal_tower);
+    normal_arrow_tower._arrow = loadTexture(normal_tower);
+    elec_arrow_tower._arrow = loadTexture(elec_tower);
     projectile_texture = loadTexture(arrow_tex);
-    elec_arrow._arrow = loadTexture(elec_tower);
     knight_enemy = loadTexture(knight);
     wizard_enemy = loadTexture(wizard);
 
@@ -151,7 +151,6 @@ void App::update() {
     {
         // Réinitialise le tableau towers
         towers.clear();
-        //elec_towers.clear();
         towers_already_builds.clear();
        
         // Réinitialise le roi (Kinger) 
@@ -387,17 +386,19 @@ void App::render()
             }
         // 
 
-        if (listeDeButton[8].isPressed){    
-            listeDeButton[9].isPressed = false;
-            for (const auto& tower : towers){
-                create_tower(map, arrow_tower, tower.x, tower.y);
+            if (listeDeButton[8].isPressed){    
+                listeDeButton[9].isPressed = false;
+                for (const auto& tower : towers){
+                    create_tower(map, normal_arrow_tower, tower.x, tower.y);
+                }
             }
         }
 
-        if (listeDeButton[9].isPressed){
-            listeDeButton[8].isPressed = false;
-            for (const auto& tower : towers){
-                create_tower(map, elec_arrow, tower.x, tower.y);
+            if (listeDeButton[9].isPressed){
+                listeDeButton[8].isPressed = false;
+                for (const auto& tower : towers){
+                    create_tower(map, elec_arrow_tower, tower.x, tower.y);
+                }
             }
         }
         
