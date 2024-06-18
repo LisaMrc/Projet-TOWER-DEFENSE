@@ -41,7 +41,7 @@ int main() {
 #endif
 
     // Create window
-    GLFWwindow* window { glfwCreateWindow(1280, 720, "Tower Defense", nullptr, nullptr) };
+    GLFWwindow* window { glfwCreateWindow(1920, 1080, "Tower Defense", nullptr, nullptr) };
     if (!window) {
         std::cerr << "Failed to create window" << std::endl;
         glfwTerminate();
@@ -82,8 +82,8 @@ int main() {
         int xCase = static_cast<int>(xpos * 8);
         int yCase = static_cast<int>(ypos * 8);
 
-        std::cout << "xCase : " << xCase << "  ";
-        std::cout << "yCase : " << yCase << std::endl;
+        // std::cout << "xCase : " << xCase << "  ";
+        // std::cout << "yCase : " << yCase << std::endl;
 
         app.xTower = static_cast<float>(xCase);
         app.yTower = static_cast<float>(yCase);
@@ -103,8 +103,8 @@ int main() {
         if (free && constructible)
         {
             // Créer une nouvelle tour
-            tower arrow{ProjectileKind::Arrow, 2, 4, app.xTower, app.yTower, 200};
-            app.towers.push_back(arrow);
+            tower arrow_tower{ProjectileKind::Arrow, 2, 2, app.xTower, app.yTower, 200};
+            app.towers.push_back(arrow_tower);
 
             // Ajouter les coordonnées de la nouvelle tour
             app.towers_already_builds.push_back(std::make_pair(app.xTower, app.yTower));
@@ -166,7 +166,8 @@ int main() {
         }
         } else {
             // Si les coordonnées sont en dehors de la carte, ne coloriez pas la case
-            app.case_color = app.map._grass; // Ou toute autre valeur qui indique qu'il n'y a pas de case colorée
+            app.case_color = app.map._grass; // Vu qu'il y a de l'herbe tout autour de la map, on peut utiliser la texture herbe pour montrer qu'on est sortis de la map
+
         }
 
         // Appelez la fonction de rappel de position du curseur de l'application

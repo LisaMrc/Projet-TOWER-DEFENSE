@@ -31,10 +31,12 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     img::Image king {img::load(make_absolute_path("images/textures/entities/king.png", true), 4, true)};
     img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 4, true)};
     img::Image wizard {img::load(make_absolute_path("images/textures/entities/wizard.png", true), 4, true)};
-    img::Image tower {img::load(make_absolute_path("images/textures/entities/tower_1.png", true), 4, true)};
+    img::Image normal_tower {img::load(make_absolute_path("images/textures/entities/tower_1.png", true), 4, true)};
+    img::Image elec_tower {img::load(make_absolute_path("images/textures/entities/tower_2.png", true), 4, true)};
 
     kinger._king = loadTexture(king);
-    arrow._arrow = loadTexture(tower);
+    arrow._arrow = loadTexture(normal_tower);
+    elec_arrow._arrow = loadTexture(elec_tower);
 
     knight_enemy = loadTexture(knight);
     wizard_enemy = loadTexture(wizard);
@@ -48,8 +50,6 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     img::Image title {img::load(make_absolute_path("images/textures/buttons/title.png", true), 4, true)};
     img::Image victory {img::load(make_absolute_path("images/textures/buttons/victory_button.png", true), 4, true)};
     img::Image defeat {img::load(make_absolute_path("images/textures/buttons/defeat_button.png", true), 4, true)};
-    img::Image hood_arrow {img::load(make_absolute_path("images/textures/entities/tower_1.png", true), 4, true)};
-    img::Image elec_arrow {img::load(make_absolute_path("images/textures/entities/tower_2.png", true), 4, true)};
 
     start_button = loadTexture(start);
     quit_button = loadTexture(quit);
@@ -59,8 +59,8 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     retry_button = loadTexture(retry);
     victory_button = loadTexture(victory);
     defeat_button = loadTexture(defeat);
-    hood_arrow_button = loadTexture(hood_arrow);
-    elec_arrow_button = loadTexture(elec_arrow);
+    hood_arrow_button = loadTexture(normal_tower);
+    elec_arrow_button = loadTexture(elec_tower);
 
     // TOWER PLACEMENT TEXTURES
     img::Image free {img::load(make_absolute_path("images/textures/zones_tours/zone_verte.png", true), 4, true)};
@@ -149,6 +149,12 @@ void App::update()
     // if start is pressed
     if (listeDeButton[0].isPressed)
     {
+        //réinitizzliser le tableau towers
+        towers.clear();
+        //elec_towers.clear();
+        towers_already_builds.clear();
+       
+
         // Initialise le roi (Kinger) 
         kinger.reset();
 
@@ -162,6 +168,10 @@ void App::update()
         current_wave = waves_list[0];
     
         _state = state_screen::screen_LEVEL;
+
+        // Render tower placement
+        //draw_quad_with_texture(case_color, xBuild, yBuild, map);
+
         time_open_window = {glfwGetTime()};
     }
 
@@ -250,9 +260,9 @@ void App::render()
             this->player_gold_text.Label(GOLD_Label.c_str() , _width / 80, 100, SimpleText::LEFT);
             this->player_gold_text.Render();
 
-            // Render tower placement
+            // // Render tower placement
             draw_quad_with_texture(case_color, xBuild, yBuild, map);
-        // 
+        
 
         // TRIGGERS (awaits for...)
 
@@ -287,11 +297,10 @@ void App::render()
             if (listeDeButton[9].isPressed){
                 listeDeButton[8].isPressed = false;
                 for (const auto& tower : towers){
-                    create_tower(map, arrow, tower.x, tower.y);
+                    create_tower(map, elec_arrow, tower.x, tower.y);
                 }
             }
-        
-        draw_quad_with_texture(case_color, xBuild, yBuild, map);
+
     }
 
     if(_state == state_screen::MENU)
