@@ -31,14 +31,16 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     img::Image king {img::load(make_absolute_path("images/textures/entities/king.png", true), 4, true)};
     img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 4, true)};
     img::Image wizard {img::load(make_absolute_path("images/textures/entities/wizard.png", true), 4, true)};
-    img::Image arrow_tex {img::load(make_absolute_path("images/textures/buttons/MEOWOLAS_Arrow.png", true), 4, true)};
+    img::Image arrow_regular {img::load(make_absolute_path("images/textures/buttons/MEOWOLAS_Arrow.png", true), 4, true)};
+    img::Image arrow_elec {img::load(make_absolute_path("images/textures/buttons/Electric_arrow.png", true), 4, true)};
     img::Image normal_tower {img::load(make_absolute_path("images/textures/entities/tower_1.png", true), 4, true)};
     img::Image elec_tower {img::load(make_absolute_path("images/textures/entities/tower_2.png", true), 4, true)};
 
     kinger._king = loadTexture(king);
     normal_arrow_tower._arrow = loadTexture(normal_tower);
     elec_arrow_tower._arrow = loadTexture(elec_tower);
-    projectile_texture = loadTexture(arrow_tex);
+    projectile1_texture = loadTexture(arrow_regular);
+    projectile2_texture = loadTexture(arrow_elec);
     knight_enemy = loadTexture(knight);
     wizard_enemy = loadTexture(wizard);
 
@@ -134,12 +136,12 @@ void App::setup()
     {
         for (int j = 0; j < waves_list[i].nbr_knights; j++)
         {
-            waves_list[i].enemies_in_wave.push_back(Enemy{j, false, false, 0, 0, 50, 1, 20, 20, EnemyType::KNIGHT, knight_enemy, enemy_path, 0, 1, 0});
+            waves_list[i].enemies_in_wave.push_back(Enemy{j, false, false, 0, 0, 200, 1, 20, 20, EnemyType::KNIGHT, knight_enemy, enemy_path, 0, 1, 0});
         }
 
         for (int k = waves_list[i].nbr_knights; k < waves_list[i].nbr_knights + waves_list[i].nbr_wizards; k++)
         {
-            waves_list[i].enemies_in_wave.push_back(Enemy{k, false, false, 0, 0, 20, 1.2, 40, 40, EnemyType::WIZARD, wizard_enemy, enemy_path, 0, 1, 0});
+            waves_list[i].enemies_in_wave.push_back(Enemy{k, false, false, 0, 0, 150, 1.2, 40, 40, EnemyType::WIZARD, wizard_enemy, enemy_path, 0, 1, 0});
         }
     }
 }
@@ -204,21 +206,26 @@ void App::update() {
         kinger.ko();
 
         // ENEMY UPDATE
-            for (int m = 0; m < waves_list.size(); m++)
+            for (auto& wave : waves_list)
+        {
+            for (auto& enemy : wave.enemies_in_wave)
             {
-                for (int i = 0; i < waves_list[m].enemies_in_wave.size(); i++)
-                {
-                    waves_list[m].enemies_in_wave[i].get_elapsedTime(elapsedTime);
-                    waves_list[m].enemies_in_wave[i].ko();
+                enemy.get_elapsedTime(elapsedTime);
+                enemy.ko();
 
-                    if (waves_list[m].enemies_in_wave[i].current_node_id == waves_list[m].enemies_in_wave[i].enemy_path.back().node_id)
-                    {
-                        kinger.health -= waves_list[m].enemies_in_wave[i].damage;
-                        std::cout << kinger.health << std::endl;
-                    }
+                if (enemy.current_node_id == enemy.enemy_path.back().node_id)
+                {
+                    kinger.health -= enemy.damage;
+                    std::cout << kinger.health << std::endl;
                 }
             }
-        // 
+            // Supprimer les ennemis morts de la vague actuelle
+            wave.enemies_in_wave.erase(
+                std::remove_if(wave.enemies_in_wave.begin(), wave.enemies_in_wave.end(), 
+                    [](const Enemy& enemy) { return enemy.is_dead; }),
+                wave.enemies_in_wave.end()
+            );
+        }
 
         // TOWERS UPDATE
             for (tower& tower : normal_towers)
@@ -234,7 +241,7 @@ void App::update() {
                             if (currentTime - tower.lastShotTime >= 1.0 / tower.rate) 
                             {
                                 // Création d'un projectile
-                                tower.projectiles.push_back(createProjectile(tower, e));
+                                tower.projectiles.push_back(createProjectile(tower, e, ProjectileKind::Arrow));
                                 tower.lastShotTime = currentTime; // Met à jour le temps du dernier tir
                                 break; // Une tourelle ne tire qu'un projectile par mise à jour
                             }
@@ -255,6 +262,51 @@ void App::update() {
                         if (projectile.target->is_dead)
                         {
                             player.gold += projectile.target->gold;
+                            std::cout << "Bye looser";
+                        }
+                    }
+                }
+
+                // Supprimer les projectiles arrivés à destination
+                tower.projectiles.erase(std::remove_if(tower.projectiles.begin(), tower.projectiles.end(), [](const Projectile& projectile) { return projectile.hasHitTarget(); }), tower.projectiles.end());
+            }
+
+
+             // TOWERS UPDATE
+            for (tower& tower : elec_towers)
+            {
+                // Détection des ennemis à portée
+                for (Wave &w : waves_list)
+                {
+                    for (Enemy &e : w.enemies_in_wave)
+                    {
+                        if (e.is_on_stage && isWithinRange(tower, e))
+                        {
+                            // Vérifie si assez de temps s'est écoulé depuis le dernier tir
+                            if (currentTime - tower.lastShotTime >= 1.0 / tower.rate) 
+                            {
+                                // Création d'un projectile
+                                tower.projectiles.push_back(createProjectile(tower, e, ProjectileKind::Lightning_arrow));
+                                tower.lastShotTime = currentTime; // Met à jour le temps du dernier tir
+                                break; // Une tourelle ne tire qu'un projectile par mise à jour
+                            }
+                        }
+                    }
+                }
+
+                // Mise à jour des projectiles
+                for (auto& projectile : tower.projectiles)
+                {
+                    projectile.update(elapsedTime);
+                    if (projectile.hasHitTarget())
+                    {
+                        projectile.target->takeDamage(projectile.damages);
+                        projectile.target->ko();
+                        
+                        // Incrémenter l'or si l'ennemi est mort
+                        if (projectile.target->is_dead)
+                        {
+                            // player.gold += projectile.target.gold;
                             std::cout << "Bye looser";
                         }
                     }
@@ -429,7 +481,20 @@ void App::render()
                 for (const auto& projectile : tower.projectiles) {
                     float projectileX = projectile.x;
                     float projectileY = projectile.y;
-                    draw_quad_with_texture(projectile_texture, projectileX, projectileY, map);
+                    draw_quad_with_texture(projectile1_texture, projectileX, projectileY, map);
+                }
+            }
+
+
+            for (const auto& tower : elec_towers)
+            {
+                float towerX = tower.x;
+                float towerY = tower.y;
+                draw_quad_with_texture(elec_arrow_tower._arrow, towerX, towerY, map);
+                for (const auto& projectile : tower.projectiles) {
+                    float projectileX = projectile.x;
+                    float projectileY = projectile.y;
+                    draw_quad_with_texture(projectile2_texture, projectileX, projectileY, map);
                 }
             }
         //
@@ -542,13 +607,18 @@ bool App::isWithinRange(const tower& tour, const Enemy& enemy)
     return distance <= tour.range;
 }
 
-Projectile App::createProjectile(const tower& tour, Enemy& enemy)
+Projectile App::createProjectile(const tower& tour, Enemy& enemy, ProjectileKind kind)
 {
     Projectile projectile;
     projectile.x = tour.x;
     projectile.y = tour.y;
     projectile.target = &enemy;
-    projectile.speed = 10.0f; // Vitesse du projectile
-    projectile.damages = 10; // Dégâts infligés par le projectile
+    if (kind == ProjectileKind::Arrow) {
+        projectile.speed = 10.0f; // Vitesse du projectile
+        projectile.damages = 10; // Dégâts infligés par le projectile
+    } else if (kind == ProjectileKind::Lightning_arrow) {
+        projectile.speed = 20.0f; // Vitesse du projectile
+        projectile.damages = 40; // Dégâts infligés par le projectile
+    }
     return projectile;
 }

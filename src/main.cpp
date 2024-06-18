@@ -118,7 +118,7 @@ int main() {
             }
             if (app.listeDeButton[9].isPressed){
                 // Créer une nouvelle tour
-            tower elec_tower{ProjectileKind::Arrow, 2, 2, app.xTower, app.yTower, 200, app.elec_arrow_tower._arrow};
+            tower elec_tower{ProjectileKind::Lightning_arrow, 1, 1, app.xTower, app.yTower, 200, app.elec_arrow_tower._arrow};
             app.elec_towers.push_back(elec_tower);
 
             // Ajouter les coordonnées de la nouvelle tour

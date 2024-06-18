@@ -28,7 +28,7 @@ public:
     void size_callback(int width, int height);
 
     bool isWithinRange(const tower& tour, const Enemy& enemy);
-    Projectile createProjectile(const tower& tour, Enemy& enemy);
+    Projectile createProjectile(const tower& tour, Enemy& enemy, ProjectileKind kind);
     
 
     state_screen _state = state_screen::MENU;
@@ -100,7 +100,9 @@ private:
 
         Projectile arrow{ProjectileKind::Arrow, 10, 5, 0, 0};
         Projectile ligthening_arrow{ProjectileKind::Lightning_arrow, 40, 10, 0, 0};
-        GLuint projectile_texture;
+
+        GLuint projectile1_texture;
+        GLuint projectile2_texture;
 
         Player player{200};
 
