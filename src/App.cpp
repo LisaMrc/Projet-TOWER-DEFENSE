@@ -401,7 +401,7 @@ void App::render()
 
             if (listeDeButton[8].isPressed)
             {    
-                listeDeButton[9].isPressed = false;
+                listeDeButton[10].draw_me();
                 for (const auto& tower : normal_towers)
                 {
                     create_tower(map, normal_arrow_tower, tower.x, tower.y);
