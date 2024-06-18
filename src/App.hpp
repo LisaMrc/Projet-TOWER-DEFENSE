@@ -92,6 +92,8 @@ private:
 
         GLuint projectile_texture;
 
+        std::vector<Enemy> enemies_on_stage{};
+
     // Text
         SimpleText TextRenderer {};
         SimpleText player_gold_text;

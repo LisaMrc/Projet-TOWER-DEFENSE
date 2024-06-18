@@ -52,7 +52,7 @@ struct Enemy
     
     void enemy_move();
     void get_elapsedTime(double const & elapsedTime);
-    void oof();
+    void ko();
     void reset();
     void update(double elapsedTime);
     void takeDamage(int damage);
@@ -78,6 +78,7 @@ struct King
     GLuint _king{};
 
     void reset();
+    void ko();
 };
 
 enum class ProjectileKind
@@ -104,8 +105,6 @@ struct Projectile
     bool hasHitTarget() const;
 };
 
-
-
 struct tower
 {
     ProjectileKind projectile;
@@ -120,11 +119,9 @@ struct tower
     GLuint _arrow{};
 };
 
-
 bool in_range(Enemy Enemy, tower tour);
 void fire(Enemy Enemy, tower tour);
 void create_tower(Map &map, tower &tour, float x, float y);
-
 
 struct Player
 {

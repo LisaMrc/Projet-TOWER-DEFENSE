@@ -41,7 +41,7 @@ int main() {
 #endif
 
     // Create window
-    GLFWwindow* window { glfwCreateWindow(1920, 1080, "Tower Defense", nullptr, nullptr) };
+    GLFWwindow* window { glfwCreateWindow(1920/2, 1080/2, "Tower Defense", nullptr, nullptr) };
     if (!window) {
         std::cerr << "Failed to create window" << std::endl;
         glfwTerminate();

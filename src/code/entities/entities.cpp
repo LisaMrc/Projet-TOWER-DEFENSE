@@ -106,7 +106,7 @@ void Enemy::enemy_move()
         }
 }
 
-void Enemy::oof()
+void Enemy::ko()
 {
     if (health <= 0)
     {
@@ -149,6 +149,14 @@ void King::reset()
     y = enemy_path.back().node_y;
     health = 250;
     is_dead = 0;
+}
+
+void King::ko()
+{
+    if (health <= 0)
+    {
+        is_dead == true;
+    }
 }
 
 // __________________________________________ TOWERS ___________________________________________________
