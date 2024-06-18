@@ -101,6 +101,7 @@ void App::setup()
     listeDeButton.push_back(Button{"Boutton_Play", false, 3, 4, 2, 1, resume_button}); //7
     listeDeButton.push_back(Button{"Boutton_wood_arrow", false, -3, 2, 1, 1, wood_arrow_button}); //8
     listeDeButton.push_back(Button{"Boutton_Elec_Arrow", false, -2, 2, 1, 1, elec_arrow_button}); //9
+    listeDeButton.push_back(Button{"Boutton_croix", false, -2, 3, 1, 1, elec_arrow_button}); //10
 
     // Extract information from itd file
     std::vector<std::vector<std::string>> splitted_itd_file = split_itd_file();
@@ -377,28 +378,40 @@ void App::render()
                     }
                 }
             }
-        // 
-
-            if (listeDeButton[8].isPressed){    
-                listeDeButton[9].isPressed = false;
-                for (const auto& tower : normal_towers){
-                    create_tower(map, normal_arrow_tower, tower.x, tower.y);
-                }
-                for (const auto& tower : elec_towers){
-                    create_tower(map, elec_arrow_tower, tower.x, tower.y);
-                }
-            }
 
             if (listeDeButton[9].isPressed){
-                listeDeButton[8].isPressed = false;
+                std::cout << "bouton 9 presse" << std::endl;
+                //listeDeButton[9].isPressed = false;
+                //listeDeButton[8].isPressed = false;
+                listeDeButton[10].draw_me();
                 for (const auto& tower : elec_towers){
                     create_tower(map, elec_arrow_tower, tower.x, tower.y);
                 }
                 for (const auto& tower : normal_towers){
                     create_tower(map, normal_arrow_tower, tower.x, tower.y);
                 }
+            }        
+            
+            if (listeDeButton[8].isPressed){ 
+                std::cout << "bouton 8 presse" << std::endl;
+                //listeDeButton[9].isPressed = false;
+                listeDeButton[10].draw_me();
+                for (const auto& tower : normal_towers){
+                    create_tower(map, normal_arrow_tower, tower.x, tower.y);
+                }
+                for (const auto& tower : elec_towers){
+                    create_tower(map, elec_arrow_tower, tower.x, tower.y);
+                }
             }
-        
+
+            if(listeDeButton[10].isPressed){
+                listeDeButton[9].isPressed = false;
+                listeDeButton[8].isPressed = false;
+                listeDeButton[10].isPressed = false;
+            }
+
+            
+
         draw_quad_with_texture(case_color, xBuild, yBuild, map);
         
 
@@ -484,6 +497,10 @@ void App::mouse_button_callback(int button, int action, int mods) {
     if(mouseXpos >= listeDeButton[9].posX+1 && mouseXpos < listeDeButton[9].posX+listeDeButton[9].width+1 && 
     mouseYpos >= listeDeButton[9].posY && mouseYpos < listeDeButton[9].posY + listeDeButton[9].height && _state == state_screen::screen_LEVEL){
         listeDeButton[9].isPressed = true;
+    }
+    if(mouseXpos >= listeDeButton[10].posX+1 && mouseXpos < listeDeButton[10].posX+listeDeButton[10].width+1 && 
+    mouseYpos >= listeDeButton[10].posY && mouseYpos < listeDeButton[10].posY + listeDeButton[10].height && _state == state_screen::screen_LEVEL){
+        listeDeButton[10].isPressed = true;
     }
 
 }
