@@ -27,6 +27,10 @@ public:
     void cursor_position_callback(double xpos, double ypos);
     void size_callback(int width, int height);
 
+    bool isWithinRange(const tower& tour, const Enemy& enemy);
+    Projectile createProjectile(const tower& tour, const Enemy& enemy);
+    
+
     state_screen _state = state_screen::MENU;
     int windowWidth;
     int windowHeight;
@@ -44,7 +48,7 @@ public:
     GLuint retry_button;
     GLuint victory_button;
     GLuint defeat_button;
-    GLuint hood_arrow_button;
+    GLuint wood_arrow_button;
     GLuint elec_arrow_button;
 
     GLuint knight_enemy;
@@ -60,6 +64,7 @@ public:
 
     std::vector<tower> towers;
     std::vector<std::pair<float, float>> towers_already_builds{};
+    std::vector<Enemy> enemies;
 
     float xBuild{};
     float yBuild{};
@@ -83,6 +88,13 @@ private:
 
     // Entities
         King kinger{250, 0, 0, 0, 100};
+
+        tower arrow_tower{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
+
+        Projectile arrow{ProjectileKind::Arrow, 10, 5, 0, 0};
+        Projectile ligthening_arrow{ProjectileKind::Lightning_arrow, 10, 5, 0, 0};
+
+        GLuint projectile_texture;
 
     // Text
         SimpleText TextRenderer {};

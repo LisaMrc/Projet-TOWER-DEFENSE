@@ -31,10 +31,16 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     img::Image king {img::load(make_absolute_path("images/textures/entities/king.png", true), 4, true)};
     img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 4, true)};
     img::Image wizard {img::load(make_absolute_path("images/textures/entities/wizard.png", true), 4, true)};
+    img::Image tower {img::load(make_absolute_path("images/textures/entities/tower_1.png", true), 4, true)};
+    img::Image arrow {img::load(make_absolute_path("images/textures/buttons/MEOWOLAS_Arrow.png", true), 4, true)};
     img::Image normal_tower {img::load(make_absolute_path("images/textures/entities/tower_1.png", true), 4, true)};
     img::Image elec_tower {img::load(make_absolute_path("images/textures/entities/tower_2.png", true), 4, true)};
 
     kinger._king = loadTexture(king);
+
+    arrow_tower._arrow = loadTexture(tower);
+
+    projectile_texture = loadTexture(arrow);
     arrow._arrow = loadTexture(normal_tower);
     elec_arrow._arrow = loadTexture(elec_tower);
 
@@ -59,8 +65,8 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     retry_button = loadTexture(retry);
     victory_button = loadTexture(victory);
     defeat_button = loadTexture(defeat);
-    hood_arrow_button = loadTexture(normal_tower);
-    elec_arrow_button = loadTexture(elec_tower);
+    wood_arrow_button = loadTexture(wood_arrow);
+    elec_arrow_button = loadTexture(elec_arrow);
 
     // TOWER PLACEMENT TEXTURES
     img::Image free {img::load(make_absolute_path("images/textures/zones_tours/zone_verte.png", true), 4, true)};
@@ -68,6 +74,8 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
 
     map._free = loadTexture(free);
     map._occupied = loadTexture(occupied);
+
+    
 }
 
 void App::setup()
@@ -96,7 +104,7 @@ void App::setup()
     listeDeButton.push_back(Button{"Boutton_Win", false, 3, 1, 6, 2, victory_button}); //5
     listeDeButton.push_back(Button{"Boutton_Play_again", false, 3, 4, 2, 1, retry_button}); //6
     listeDeButton.push_back(Button{"Boutton_Play", false, 3, 4, 2, 1, resume_button}); //7
-    listeDeButton.push_back(Button{"Boutton_Hood_Arrow", false, -3, 2, 1, 1, hood_arrow_button}); //8
+    listeDeButton.push_back(Button{"Boutton_wood_arrow", false, -3, 2, 1, 1, wood_arrow_button}); //8
     listeDeButton.push_back(Button{"Boutton_Elec_Arrow", false, -2, 2, 1, 1, elec_arrow_button}); //9
 
     // Extract information from itd file
@@ -120,10 +128,10 @@ void App::setup()
     kinger.enemy_path = enemy_path;
 
     // Set waves in waves list
-    waves_list.push_back(Wave {1, {}, 5, 10, 2, 0});
-    waves_list.push_back(Wave {2, {}, 20, 5, 3, 1});
-    waves_list.push_back(Wave {3, {}, 35, 2, 5, 2});
-    waves_list.push_back(Wave {4, {}, 50, 1, 7, 4});
+    waves_list.push_back(Wave {1, {}, 0, 10, 2, 0});
+    waves_list.push_back(Wave {2, {}, 12, 5, 3, 1});
+    waves_list.push_back(Wave {3, {}, 31, 2, 4, 2});
+    waves_list.push_back(Wave {4, {}, 43, 1, 6, 4});
 
     // Add enemies to each wave
     for (size_t i = 0; i < waves_list.size(); i++)
@@ -135,13 +143,12 @@ void App::setup()
 
         for (int k = waves_list[i].nbr_knights; k < waves_list[i].nbr_knights + waves_list[i].nbr_wizards; k++)
         {
-            waves_list[i].enemies_in_wave.push_back(Enemy{k, false, 0, 0, 20, 2, 40, 40, EnemyType::KNIGHT, knight_enemy, enemy_path, 0, 1, 0});
+            waves_list[i].enemies_in_wave.push_back(Enemy{k, false, 0, 0, 20, 1.2, 40, 40, EnemyType::WIZARD, wizard_enemy, enemy_path, 0, 1, 0});
         }
     }
 }
 
-void App::update()
-{
+void App::update() {
     const double currentTime {glfwGetTime()};
     const double elapsedTime { currentTime - _previousTime};
     _previousTime = currentTime;
@@ -158,14 +165,14 @@ void App::update()
         // Initialise le roi (Kinger) 
         kinger.reset();
 
-        // Initialise tous les ennemis de la vague 1
-        for (int i = 0; i < waves_list[0].enemies_in_wave.size(); i++)
-        {
-            waves_list[0].enemies_in_wave[i].reset();
+        // Réinitialise tous les ennemis de toutes les vagues
+        for (size_t m = 0; m < waves_list.size(); m++)
+        {      
+            for (int i = 0; i < waves_list[m].enemies_in_wave.size(); i++)
+            {
+                waves_list[m].enemies_in_wave[i].reset();
+            }
         }
-
-        // Initializes the current wave
-        current_wave = waves_list[0];
     
         _state = state_screen::screen_LEVEL;
 
@@ -175,49 +182,90 @@ void App::update()
         time_open_window = {glfwGetTime()};
     }
 
-    if (listeDeButton[1].isPressed) // if quit is pressed
-    {
+    if (listeDeButton[1].isPressed) { // if quit is pressed
         window_close = true;
     }
     
-    if (listeDeButton[2].isPressed) //if pause is pressed
+    if (listeDeButton[2].isPressed) // if pause is pressed
     {
         _state = state_screen::screen_PAUSE;
     }
 
-    if (listeDeButton[7].isPressed) //if resume play is pressed
+    if (listeDeButton[7].isPressed) // if resume play is pressed
     {
         _state = state_screen::screen_LEVEL;
     }
 
-    if(listeDeButton[6].isPressed) //if play again is pressed
+    if(listeDeButton[6].isPressed) // if play again is pressed
     {
         _state = state_screen::MENU;
     }
 
-    if (state_screen::screen_LEVEL)
-    {
+    if (_state == state_screen::screen_LEVEL) {
         // KING
-        if (kinger.health <= 0)
-        {
+        if (kinger.health <= 0) {
             kinger.is_dead = 1;
         }
 
-        // ENEMY
-        for (int i = 0; i < current_wave.enemies_in_wave.size(); i++)
+        // ENEMY UPDATE
+        for (int m = 0; m < waves_list.size(); m++)
         {
-            current_wave.enemies_in_wave[i].get_elapsedTime(elapsedTime);
-            current_wave.enemies_in_wave[i].oof();
-
-            if (current_wave.enemies_in_wave[i].current_node_id == current_wave.enemies_in_wave[i].enemy_path.back().node_id)
+            for (int i = 0; i < waves_list[m].enemies_in_wave.size(); i++)
             {
-                kinger.health -= current_wave.enemies_in_wave[i].damage;
+                waves_list[m].enemies_in_wave[i].get_elapsedTime(elapsedTime);
+                waves_list[m].enemies_in_wave[i].oof();
+
+                if (waves_list[m].enemies_in_wave[i].current_node_id == waves_list[m].enemies_in_wave[i].enemy_path.back().node_id)
+                {
+                    kinger.health -= waves_list[m].enemies_in_wave[i].damage;
+                }
             }
         }
-    }
 
+        // Mise à jour des tourelles et des projectiles
+        for (auto& tower : towers) {
+            // Détection des ennemis à portée
+            for (auto& enemy : current_wave.enemies_in_wave) {
+                if (!enemy.is_dead && isWithinRange(tower, enemy)) {
+                    // Vérifie si assez de temps s'est écoulé depuis le dernier tir
+                    if (currentTime - tower.lastShotTime >= 1.0 / tower.rate) {
+                        // Création d'un projectile
+                        tower.projectiles.push_back(createProjectile(tower, enemy));
+                        tower.lastShotTime = currentTime; // Met à jour le temps du dernier tir
+                        break; // Une tourelle ne tire qu'un projectile par mise à jour
+                    }
+                }
+            }
+
+            // Mise à jour des projectiles
+            for (auto& projectile : tower.projectiles) {
+                projectile.update(elapsedTime);
+                if (projectile.hasHitTarget()) {
+                    projectile.target.takeDamage(projectile.damages);
+                    // Incrémenter l'or si l'ennemi est mort
+                    if (projectile.target.is_dead) {
+                        // player.gold += projectile.target.gold;
+                    }
+                }
+            }
+
+            // Supprimer les projectiles arrivés à destination
+            tower.projectiles.erase(
+                std::remove_if(tower.projectiles.begin(), tower.projectiles.end(),
+                    [](const Projectile& projectile) { return projectile.hasHitTarget(); }),
+                tower.projectiles.end());
+        }
+
+        // Supprimer les ennemis morts
+        current_wave.enemies_in_wave.erase(
+            std::remove_if(current_wave.enemies_in_wave.begin(), current_wave.enemies_in_wave.end(),
+                [](const Enemy& enemy) { return enemy.is_dead; }),
+            current_wave.enemies_in_wave.end());
+    }
     render();
 }
+
+
 
 void App::render()
 {
@@ -270,22 +318,71 @@ void App::render()
             {
                 _state = state_screen::screen_LOOSE;
             }
-            else if (time_play > 120+time_open_window && kinger.health != 0)
+            else if (time_play > 75 + time_open_window && kinger.health != 0)
             {
                 _state = state_screen::screen_WIN;
             }
 
-            for (int i = 0; i < current_wave.enemies_in_wave.size(); i++)
+            if (time_play >= waves_list[0].start)
             {
-                if (time_play > current_wave.freq_btw_ennemies_in_s*(i+1))
+                for (int i = 0; i < waves_list[0].enemies_in_wave.size(); i++)
                 {
-                    if (current_wave.enemies_in_wave[i].target_node_id < current_wave.enemies_in_wave[i].enemy_path.size())
+                    if (time_play >= waves_list[0].start + waves_list[0].freq_btw_ennemies_in_s*(i))
                     {
-                        current_wave.enemies_in_wave[i].enemy_move();
+                        if (waves_list[0].enemies_in_wave[i].target_node_id < waves_list[0].enemies_in_wave[i].enemy_path.size())
+                        {
+                            waves_list[0].enemies_in_wave[i].enemy_move();
+                        }
+                        draw_quad_with_texture(waves_list[0].enemies_in_wave[i].texture, waves_list[0].enemies_in_wave[i].x, waves_list[0].enemies_in_wave[i].y, map);
                     }
-                    draw_quad_with_texture(current_wave.enemies_in_wave[i].texture, current_wave.enemies_in_wave[i].x, current_wave.enemies_in_wave[i].y, map);
                 }
             }
+
+            if (time_play >= waves_list[1].start)
+            {
+                for (int i = 0; i < waves_list[1].enemies_in_wave.size(); i++)
+                {
+                    if (time_play > waves_list[1].start + waves_list[1].freq_btw_ennemies_in_s*(i+1))
+                    {
+                        if (waves_list[1].enemies_in_wave[i].target_node_id < waves_list[1].enemies_in_wave[i].enemy_path.size())
+                        {
+                            waves_list[1].enemies_in_wave[i].enemy_move();
+                        }
+                        draw_quad_with_texture(waves_list[1].enemies_in_wave[i].texture, waves_list[1].enemies_in_wave[i].x, waves_list[1].enemies_in_wave[i].y, map);
+                    }
+                }
+            }
+
+            if (time_play >= waves_list[2].start)
+            {
+                for (int i = 0; i < waves_list[2].enemies_in_wave.size(); i++)
+                {
+                    if (time_play > waves_list[2].start + waves_list[2].freq_btw_ennemies_in_s*(i+1))
+                    {
+                        if (waves_list[2].enemies_in_wave[i].target_node_id < waves_list[2].enemies_in_wave[i].enemy_path.size())
+                        {
+                            waves_list[2].enemies_in_wave[i].enemy_move();
+                        }
+                        draw_quad_with_texture(waves_list[2].enemies_in_wave[i].texture, waves_list[2].enemies_in_wave[i].x, waves_list[2].enemies_in_wave[i].y, map);
+                    }
+                }
+            }
+
+            if (time_play >= waves_list[3].start)
+            {
+                for (int i = 0; i < waves_list[3].enemies_in_wave.size(); i++)
+                {
+                    if (time_play > waves_list[3].start + waves_list[3].freq_btw_ennemies_in_s*(i+1))
+                    {
+                        if (waves_list[3].enemies_in_wave[i].target_node_id < waves_list[3].enemies_in_wave[i].enemy_path.size())
+                        {
+                            waves_list[3].enemies_in_wave[i].enemy_move();
+                        }
+                        draw_quad_with_texture(waves_list[3].enemies_in_wave[i].texture, waves_list[3].enemies_in_wave[i].x, waves_list[3].enemies_in_wave[i].y, map);
+                    }
+                }
+            }
+        // 
 
             if (listeDeButton[8].isPressed){    
                 listeDeButton[9].isPressed = false;
@@ -300,7 +397,21 @@ void App::render()
                     create_tower(map, elec_arrow, tower.x, tower.y);
                 }
             }
+        
+        draw_quad_with_texture(case_color, xBuild, yBuild, map);
+        
 
+        // Rendu des tourelles et des projectiles
+        for (const auto& tower : towers) {
+            float towerX = tower.x;
+            float towerY = tower.y;
+            draw_quad_with_texture(arrow_tower._arrow, towerX, towerY, map);
+            for (const auto& projectile : tower.projectiles) {
+                float projectileX = projectile.x;
+                float projectileY = projectile.y;
+                draw_quad_with_texture(projectile_texture, projectileX, projectileY, map);
+            }
+        }
     }
 
     if(_state == state_screen::MENU)
@@ -339,6 +450,7 @@ void App::render()
         listeDeButton[1].draw_me();
     }
 }
+
 
 void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {
 }
@@ -399,4 +511,22 @@ void App::size_callback(int width, int height)
     } else {
         glOrtho(-_viewSize / 2.0f, _viewSize / 2.0f, -_viewSize / 2.0f / aspectRatio, _viewSize / 2.0f / aspectRatio, -1.0f, 1.0f);
     }
+}
+
+
+bool App::isWithinRange(const tower& tour, const Enemy& enemy) {
+    float dx = tour.x - enemy.x;
+    float dy = tour.y - enemy.y;
+    float distance = sqrt(dx * dy + dy * dy);
+    return distance <= tour.range;
+}
+
+Projectile App::createProjectile(const tower& tour, const Enemy& enemy) {
+    Projectile projectile;
+    projectile.x = tour.x;
+    projectile.y = tour.y;
+    projectile.target = enemy;
+    projectile.speed = 10.0f; // Vitesse du projectile
+    projectile.damages = 10; // Dégâts infligés par le projectile
+    return projectile;
 }
