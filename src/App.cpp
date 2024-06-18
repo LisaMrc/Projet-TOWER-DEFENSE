@@ -212,12 +212,12 @@ void App::update() {
 
                 if (enemy.current_node_id == enemy.enemy_path.back().node_id)
                 {
-                    waves_list[m].enemies_in_wave[i].get_elapsedTime(elapsedTime);
-                    waves_list[m].enemies_in_wave[i].ko();
+                    enemy.get_elapsedTime(elapsedTime);
+                    enemy.ko();
 
-                    if (waves_list[m].enemies_in_wave[i].current_node_id == waves_list[m].enemies_in_wave[i].enemy_path.back().node_id)
+                    if (enemy.current_node_id == enemy.enemy_path.back().node_id)
                     {
-                        kinger.health -= waves_list[m].enemies_in_wave[i].damage;
+                        kinger.health -= enemy.damage;
                     }
                 }
             }
@@ -307,8 +307,7 @@ void App::update() {
                         // Incrémenter l'or si l'ennemi est mort
                         if (projectile.target->is_dead)
                         {
-                            // player.gold += projectile.target.gold;
-                            std::cout << "Bye looser";
+                            player.gold += projectile.target->gold;
                         }
                     }
                 }
