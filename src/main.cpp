@@ -100,11 +100,21 @@ int main() {
         // Vérifier si l'emplacement est constructible
         bool constructible = app.map.can_create_tower(app.map, app.xTower, app.yTower);
 
-        if (free && constructible && (app.listeDeButton[8].isPressed||app.listeDeButton[9].isPressed))
+        if (free && constructible && app.listeDeButton[8].isPressed)
         {
             // Créer une nouvelle tour
-            tower arrow_tower{ProjectileKind::Arrow, 2, 2, app.xTower, app.yTower, 200};
-            app.towers.push_back(arrow_tower);
+            tower normal_tower{ProjectileKind::Arrow, 2, 2, app.xTower, app.yTower, 200, app.normal_arrow_tower._arrow};
+            app.towers.push_back(normal_tower);
+
+            // Ajouter les coordonnées de la nouvelle tour
+            app.towers_already_builds.push_back(std::make_pair(app.xTower, app.yTower));
+            
+        }
+        if (free && constructible && app.listeDeButton[9].isPressed)
+        {
+            // Créer une nouvelle tour
+            tower elec_tower{ProjectileKind::Arrow, 2, 2, app.xTower, app.yTower, 200, app.elec_arrow_tower._arrow};
+            app.towers.push_back(elec_tower);
 
             // Ajouter les coordonnées de la nouvelle tour
             app.towers_already_builds.push_back(std::make_pair(app.xTower, app.yTower));

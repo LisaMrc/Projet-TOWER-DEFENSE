@@ -36,9 +36,9 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     img::Image elec_tower {img::load(make_absolute_path("images/textures/entities/tower_2.png", true), 4, true)};
 
     kinger._king = loadTexture(king);
-    arrow_tower._arrow = loadTexture(normal_tower);
+    normal_arrow_tower._arrow = loadTexture(normal_tower);
+    elec_arrow_tower._arrow = loadTexture(elec_tower);
     projectile_texture = loadTexture(arrow_tex);
-    elec_arrow._arrow = loadTexture(elec_tower);
     knight_enemy = loadTexture(knight);
     wizard_enemy = loadTexture(wizard);
 
@@ -380,14 +380,14 @@ void App::render()
             if (listeDeButton[8].isPressed){    
                 listeDeButton[9].isPressed = false;
                 for (const auto& tower : towers){
-                    create_tower(map, arrow_tower, tower.x, tower.y);
+                    create_tower(map, normal_arrow_tower, tower.x, tower.y);
                 }
             }
 
             if (listeDeButton[9].isPressed){
                 listeDeButton[8].isPressed = false;
                 for (const auto& tower : towers){
-                    create_tower(map, elec_arrow, tower.x, tower.y);
+                    create_tower(map, elec_arrow_tower, tower.x, tower.y);
                 }
             }
         
@@ -395,16 +395,16 @@ void App::render()
         
 
         // Rendu des tourelles et des projectiles
-        for (const auto& tower : towers) {
-            float towerX = tower.x;
-            float towerY = tower.y;
-            draw_quad_with_texture(arrow_tower._arrow, towerX, towerY, map);
-            for (const auto& projectile : tower.projectiles) {
-                float projectileX = projectile.x;
-                float projectileY = projectile.y;
-                draw_quad_with_texture(projectile_texture, projectileX, projectileY, map);
-            }
-        }
+        // for (const auto& tower : towers) {
+        //     float towerX = tower.x;
+        //     float towerY = tower.y;
+        //     draw_quad_with_texture(normal_arrow_tower._arrow, towerX, towerY, map);
+        //     for (const auto& projectile : tower.projectiles) {
+        //         float projectileX = projectile.x;
+        //         float projectileY = projectile.y;
+        //         draw_quad_with_texture(projectile_texture, projectileX, projectileY, map);
+        //     }
+        // }
     }
 
     if(_state == state_screen::MENU)
