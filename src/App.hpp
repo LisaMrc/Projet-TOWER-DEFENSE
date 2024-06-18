@@ -50,6 +50,7 @@ public:
     GLuint defeat_button;
     GLuint wood_arrow_button;
     GLuint elec_arrow_button;
+    GLuint toggle_button;
 
     GLuint knight_enemy;
     GLuint wizard_enemy;
