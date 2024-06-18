@@ -152,7 +152,7 @@ void App::update() {
     // if start is pressed
     if (listeDeButton[0].isPressed)
     {
-        //réinitizzliser le tableau towers
+        // Réinitialise le tableau towers
         normal_towers.clear();
         elec_towers.clear();
         normal_towers_already_builds.clear();
@@ -171,9 +171,6 @@ void App::update() {
         }
     
         _state = state_screen::screen_LEVEL;
-
-        // Render tower placement
-        //draw_quad_with_texture(case_color, xBuild, yBuild, map);
 
         time_open_window = {glfwGetTime()};
     }
@@ -214,7 +211,6 @@ void App::update() {
                     if (waves_list[m].enemies_in_wave[i].current_node_id == waves_list[m].enemies_in_wave[i].enemy_path.back().node_id)
                     {
                         kinger.health -= waves_list[m].enemies_in_wave[i].damage;
-                        std::cout << kinger.health << std::endl;
                     }
                 }
             }
@@ -255,7 +251,6 @@ void App::update() {
                         if (projectile.target->is_dead)
                         {
                             player.gold += projectile.target->gold;
-                            std::cout << "Bye looser";
                         }
                     }
                 }
@@ -393,23 +388,32 @@ void App::render()
 
             if (listeDeButton[9].isPressed){
                 listeDeButton[10].draw_me();
-                for (const auto& tower : elec_towers){
-                    create_tower(map, elec_arrow_tower, tower.x, tower.y);
+                for (const auto& tower : elec_towers)
+                {
+                    if (player.gold >= tower.price)
+                    {
+                        create_tower(map, elec_arrow_tower, tower.x, tower.y, player);
+                    }
                 }
-                for (const auto& tower : normal_towers){
-                    create_tower(map, normal_arrow_tower, tower.x, tower.y);
+                for (const auto& tower : normal_towers)
+                {
+                    if (player.gold >= tower.price)
+                    {
+                        create_tower(map, normal_arrow_tower, tower.x, tower.y, player);
+                    }
                 }
-            }        
+            }
 
             if (listeDeButton[8].isPressed)
             {    
                 listeDeButton[10].draw_me();
                 for (const auto& tower : normal_towers)
                 {
-                    create_tower(map, normal_arrow_tower, tower.x, tower.y);
+                    create_tower(map, normal_arrow_tower, tower.x, tower.y, player);
                 }
-                for (const auto& tower : elec_towers){
-                    create_tower(map, elec_arrow_tower, tower.x, tower.y);
+                for (const auto& tower : elec_towers)
+                {
+                    create_tower(map, elec_arrow_tower, tower.x, tower.y, player);
                 }
             }
 

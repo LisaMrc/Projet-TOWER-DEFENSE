@@ -108,29 +108,43 @@ int main() {
 
         if (free && constructible)
         {
-            if (app.listeDeButton[8].isPressed){
-                // Créer une nouvelle tour
-            tower normal_tower{ProjectileKind::Arrow, 2, 2, app.xTower, app.yTower, 200, app.normal_arrow_tower._arrow};
-            app.normal_towers.push_back(normal_tower);
+            if (app.listeDeButton[8].isPressed)
+            {
+                if (app.player.gold >= 100)
+                {
+                    // Créer une nouvelle tour
+                    tower normal_tower{ProjectileKind::Arrow, 2, 2, app.xTower, app.yTower, 100, app.normal_arrow_tower._arrow};
+                    app.normal_towers.push_back(normal_tower);
+                    app.player.gold -= normal_tower.price;
 
-            // Ajouter les coordonnées de la nouvelle tour
-            app.normal_towers_already_builds.push_back(std::make_pair(app.xTower, app.yTower));
+                    // Ajouter les coordonnées de la nouvelle tour
+                    app.normal_towers_already_builds.push_back(std::make_pair(app.xTower, app.yTower));
+                }
+                else
+                {
+                    std::cout << "Pas assez d'or en poche ! - Pas possible de creer une tour normale" << std::endl;
+                }
+                
             }
-            if (app.listeDeButton[9].isPressed){
-                // Créer une nouvelle tour
-            tower elec_tower{ProjectileKind::Arrow, 2, 2, app.xTower, app.yTower, 200, app.elec_arrow_tower._arrow};
-            app.elec_towers.push_back(elec_tower);
 
-            // Ajouter les coordonnées de la nouvelle tour
-            app.elec_towers_already_builds.push_back(std::make_pair(app.xTower, app.yTower));
+            if (app.listeDeButton[9].isPressed)
+            {
+                if (app.player.gold >= 200)
+                {
+                    // Créer une nouvelle tour
+                    tower elec_tower{ProjectileKind::Arrow, 2, 2, app.xTower, app.yTower, 200, app.elec_arrow_tower._arrow};
+                    app.elec_towers.push_back(elec_tower);
+                    app.player.gold -= elec_tower.price;
+
+                    // Ajouter les coordonnées de la nouvelle tour
+                    app.elec_towers_already_builds.push_back(std::make_pair(app.xTower, app.yTower));
+                }
+                else
+                {
+                    std::cout << "Pas assez d'or en poche ! - Pas possible de creer une tour elec" << std::endl;
+                }
             } 
-            
         }
-
-        // else
-        // {
-        //     std::cout << "Il n'est pas possible de construire cette tour" << std::endl;
-        // }
 
         app.mouse_button_callback(button, action, mods);
     }
