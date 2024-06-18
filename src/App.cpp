@@ -51,6 +51,7 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     img::Image title {img::load(make_absolute_path("images/textures/buttons/title.png", true), 4, true)};
     img::Image victory {img::load(make_absolute_path("images/textures/buttons/victory_button.png", true), 4, true)};
     img::Image defeat {img::load(make_absolute_path("images/textures/buttons/defeat_button.png", true), 4, true)};
+    img::Image toggle {img::load(make_absolute_path("images/textures/buttons/toggle_towers.png", true), 4, true)};
 
     start_button = loadTexture(start);
     quit_button = loadTexture(quit);
@@ -62,6 +63,7 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     defeat_button = loadTexture(defeat);
     wood_arrow_button = loadTexture(normal_tower);
     elec_arrow_button = loadTexture(elec_tower);
+    toggle_button = loadTexture(toggle);
 
     // TOWER PLACEMENT TEXTURES
     img::Image free {img::load(make_absolute_path("images/textures/zones_tours/zone_verte.png", true), 4, true)};
@@ -99,7 +101,7 @@ void App::setup()
     listeDeButton.push_back(Button{"Boutton_Play", false, 3, 4, 2, 1, resume_button}); //7
     listeDeButton.push_back(Button{"Boutton_wood_arrow", false, -3, 2, 1, 1, wood_arrow_button}); //8
     listeDeButton.push_back(Button{"Boutton_Elec_Arrow", false, -2, 2, 1, 1, elec_arrow_button}); //9
-    listeDeButton.push_back(Button{"Boutton_croix", false, -2, 3, 1, 1, elec_arrow_button}); //10
+    listeDeButton.push_back(Button{"Boutton_croix", false, -2, 3, 1, 1, toggle_button}); //10
 
     // Extract information from itd file
     std::vector<std::vector<std::string>> splitted_itd_file = split_itd_file();
