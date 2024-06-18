@@ -134,13 +134,13 @@ void Player::analyses_ennemies(std::vector<Enemy> ennemies_in_wave)
     }  
 }
 
-void damage(Enemy enemy, int damage)
-{
-    enemy.health -= damage;
-    if (enemy.health <= 0) {
-        enemy.is_dead = true;
-    }
-}
+// void damage(Enemy enemy, int damage)
+// {
+//     enemy.health -= damage;
+//     if (enemy.health <= 0) {
+//         enemy.is_dead = true;
+//     }
+// }
 
 // __________________________________________ KING ___________________________________________________
 
@@ -169,12 +169,12 @@ void create_tower(Map &map, tower &tour, float x, float y)
         draw_quad_with_texture(tour._arrow, x, y, map);   
 }
 
-bool in_range(Enemy enemy, tower tour) {
-    float dx = tour.x - enemy.x;
-    float dy = tour.y - enemy.y;
-    float distance = sqrt(dx * dx + dy * dy); // Correction ici
-    return distance <= tour.range;
-}
+// bool in_range(Enemy enemy, tower tour) {
+//     float dx = tour.x - enemy.x;
+//     float dy = tour.y - enemy.y;
+//     float distance = sqrt(dx * dx + dy * dy); // Correction ici
+//     return distance <= tour.range;
+// }
 
 
 // void fire(Enemy enemy, tower tour)
@@ -233,13 +233,13 @@ void Projectile::update(double elapsedTime)
 {
     // Mise à jour de la position du projectile
     // Calcul de la direction vers l'ennemi cible
-    float dx = target.x - x;
-    float dy = target.y - y;
+    float dx = target->x - x;
+    float dy = target->y - y;
     float distance = sqrt(dx * dx + dy * dy);
 
     if (distance < speed * elapsedTime) {
-        x = target.x;
-        y = target.y;
+        x = target->x;
+        y = target->y;
     } else {
         x += dx / distance * speed * elapsedTime;
         y += dy / distance * speed * elapsedTime;
@@ -247,11 +247,12 @@ void Projectile::update(double elapsedTime)
 }
 
 bool Projectile::hasHitTarget() const {
-    return x == target.x && y == target.y;
+    return x == target->x && y == target->y;
 }
 
 void Enemy::takeDamage(int damage)
 {
-    health -= damage;
+    std::cout << health << std::endl;
+    this->health -= damage;
     std::cout << "DAMAGE :" << damage << std::endl;
 }

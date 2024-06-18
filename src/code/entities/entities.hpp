@@ -95,7 +95,7 @@ struct Projectile
     float speed {};
     float x {};
     float y {};
-    Enemy target{};
+    Enemy *target{};
 
     GLuint _Arrow;
     GLuint _Lightning_arrow;
@@ -118,8 +118,8 @@ struct tower
     double lastShotTime;
 };
 
-bool in_range(Enemy Enemy, tower tour);
-void fire(Enemy Enemy, tower tour);
+// bool in_range(Enemy Enemy, tower tour);
+// void fire(Enemy Enemy, tower tour);
 void create_tower(Map &map, tower &tour, float x, float y);
 
 struct Player

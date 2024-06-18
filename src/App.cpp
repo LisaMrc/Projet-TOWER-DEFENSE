@@ -99,6 +99,7 @@ void App::setup()
     listeDeButton.push_back(Button{"Boutton_Play", false, 3, 4, 2, 1, resume_button}); //7
     listeDeButton.push_back(Button{"Boutton_wood_arrow", false, -3, 2, 1, 1, wood_arrow_button}); //8
     listeDeButton.push_back(Button{"Boutton_Elec_Arrow", false, -2, 2, 1, 1, elec_arrow_button}); //9
+    listeDeButton.push_back(Button{"Boutton_croix", false, -2, 3, 1, 1, elec_arrow_button}); //10
 
     // Extract information from itd file
     std::vector<std::vector<std::string>> splitted_itd_file = split_itd_file();
@@ -215,19 +216,17 @@ void App::update() {
                     }
                 }
             }
-
-            // std::cout << waves_list[0].enemies_in_wave[0].health;
         // 
 
         // TOWERS UPDATE
-            for (tower& tower : towers)
+            for (tower& tower : normal_towers)
             {
                 // Détection des ennemis à portée
-                for (Wave w : waves_list)
+                for (Wave &w : waves_list)
                 {
-                    for (Enemy e : w.enemies_in_wave)
+                    for (Enemy &e : w.enemies_in_wave)
                     {
-                        if (e.is_on_stage == 1 && isWithinRange(tower, e))
+                        if (e.is_on_stage && isWithinRange(tower, e))
                         {
                             // Vérifie si assez de temps s'est écoulé depuis le dernier tir
                             if (currentTime - tower.lastShotTime >= 1.0 / tower.rate) 
@@ -247,11 +246,11 @@ void App::update() {
                     projectile.update(elapsedTime);
                     if (projectile.hasHitTarget())
                     {
-                        projectile.target.takeDamage(projectile.damages);
-                        projectile.target.ko();
+                        projectile.target->takeDamage(projectile.damages);
+                        projectile.target->ko();
                         
                         // Incrémenter l'or si l'ennemi est mort
-                        if (projectile.target.is_dead)
+                        if (projectile.target->is_dead)
                         {
                             // player.gold += projectile.target.gold;
                             std::cout << "Bye looser";
@@ -390,10 +389,20 @@ void App::render()
                 }
             }
 
+            if (listeDeButton[9].isPressed){
+                listeDeButton[10].draw_me();
+                for (const auto& tower : elec_towers){
+                    create_tower(map, elec_arrow_tower, tower.x, tower.y);
+                }
+                for (const auto& tower : normal_towers){
+                    create_tower(map, normal_arrow_tower, tower.x, tower.y);
+                }
+            }        
+
             if (listeDeButton[8].isPressed)
             {    
-                listeDeButton[9].isPressed = false;
-                for (const auto& tower : towers)
+                listeDeButton[10].draw_me();
+                for (const auto& tower : normal_towers)
                 {
                     create_tower(map, normal_arrow_tower, tower.x, tower.y);
                 }
@@ -402,21 +411,15 @@ void App::render()
                 }
             }
 
-            if (listeDeButton[9].isPressed)
-            {
+            if(listeDeButton[10].isPressed){
+                listeDeButton[9].isPressed = false;
                 listeDeButton[8].isPressed = false;
-                for (const auto& tower : towers)
-                {
-                    create_tower(map, elec_arrow_tower, tower.x, tower.y);
-                }
-                for (const auto& tower : normal_towers){
-                    create_tower(map, normal_arrow_tower, tower.x, tower.y);
-                }
+                listeDeButton[10].isPressed = false;
             }
         // 
 
         // Render towers
-            for (const auto& tower : towers)
+            for (const auto& tower : normal_towers)
             {
                 float towerX = tower.x;
                 float towerY = tower.y;
@@ -498,6 +501,10 @@ void App::mouse_button_callback(int button, int action, int mods) {
     mouseYpos >= listeDeButton[9].posY && mouseYpos < listeDeButton[9].posY + listeDeButton[9].height && _state == state_screen::screen_LEVEL){
         listeDeButton[9].isPressed = true;
     }
+    if(mouseXpos >= listeDeButton[10].posX+1 && mouseXpos < listeDeButton[10].posX+listeDeButton[10].width+1 && 
+    mouseYpos >= listeDeButton[10].posY && mouseYpos < listeDeButton[10].posY + listeDeButton[10].height && _state == state_screen::screen_LEVEL){
+        listeDeButton[10].isPressed = true;
+    }
 
 }
 
@@ -533,12 +540,12 @@ bool App::isWithinRange(const tower& tour, const Enemy& enemy)
     return distance <= tour.range;
 }
 
-Projectile App::createProjectile(const tower& tour, const Enemy& enemy)
+Projectile App::createProjectile(const tower& tour, Enemy& enemy)
 {
     Projectile projectile;
     projectile.x = tour.x;
     projectile.y = tour.y;
-    projectile.target = enemy;
+    projectile.target = &enemy;
     projectile.speed = 10.0f; // Vitesse du projectile
     projectile.damages = 10; // Dégâts infligés par le projectile
     return projectile;
