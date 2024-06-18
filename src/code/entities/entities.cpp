@@ -110,7 +110,8 @@ void Enemy::ko()
 {
     if (health <= 0)
     {
-        is_dead == true;
+        is_dead = true;
+        is_on_stage = false;
     }
 }
 
@@ -155,7 +156,7 @@ void King::ko()
 {
     if (health <= 0)
     {
-        is_dead == true;
+        is_dead = true;
     }
 }
 
@@ -167,8 +168,6 @@ void create_tower(Map &map, tower &tour, float x, float y)
         tour.lastShotTime = 0.0;
         draw_quad_with_texture(tour._arrow, x, y, map);   
 }
-
-
 
 bool in_range(Enemy enemy, tower tour) {
     float dx = tour.x - enemy.x;
@@ -224,8 +223,6 @@ bool in_range(Enemy enemy, tower tour) {
 //         y += dy / distance * speed * elapsedTime;
 //     }
 // }
-
-
 
 
 void Enemy::update(double elapsedTime) {

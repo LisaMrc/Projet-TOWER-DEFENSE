@@ -33,6 +33,7 @@ struct Enemy
 {
     int enemy_id;
     bool is_dead{};
+    bool is_on_stage{};
 
     float x {};
     float y {};
@@ -56,7 +57,6 @@ struct Enemy
     void reset();
     void update(double elapsedTime);
     void takeDamage(int damage);
-    
 };
 
 std::vector<node> create_vect_nodes(std::vector<std::vector<std::string>> splitted_itd_file);
