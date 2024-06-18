@@ -38,7 +38,7 @@ struct Enemy
     float y {};
 
     int health {};
-    int speed {};
+    float speed {};
     int damage {};
     int gold {};
 

@@ -44,7 +44,7 @@ public:
     GLuint retry_button;
     GLuint victory_button;
     GLuint defeat_button;
-    GLuint hood_arrow_button;
+    GLuint wood_arrow_button;
     GLuint elec_arrow_button;
 
     GLuint knight_enemy;

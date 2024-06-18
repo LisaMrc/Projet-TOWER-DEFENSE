@@ -41,7 +41,7 @@ int main() {
 #endif
 
     // Create window
-    GLFWwindow* window { glfwCreateWindow(1280, 720, "Tower Defense", nullptr, nullptr) };
+    GLFWwindow* window { glfwCreateWindow(1920, 1080, "Tower Defense", nullptr, nullptr) };
     if (!window) {
         std::cerr << "Failed to create window" << std::endl;
         glfwTerminate();
@@ -82,8 +82,8 @@ int main() {
         int xCase = static_cast<int>(xpos * 8);
         int yCase = static_cast<int>(ypos * 8);
 
-        std::cout << "xCase : " << xCase << "  ";
-        std::cout << "yCase : " << yCase << std::endl;
+        // std::cout << "xCase : " << xCase << "  ";
+        // std::cout << "yCase : " << yCase << std::endl;
 
         app.xTower = static_cast<float>(xCase);
         app.yTower = static_cast<float>(yCase);
