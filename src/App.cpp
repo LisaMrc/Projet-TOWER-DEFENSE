@@ -149,9 +149,11 @@ void App::update() {
     // if start is pressed
     if (listeDeButton[0].isPressed)
     {
-        // Réinitialise le tableau towers
-        towers.clear();
-        towers_already_builds.clear();
+        //réinitizzliser le tableau towers
+        normal_towers.clear();
+        elec_towers.clear();
+        normal_towers_already_builds.clear();
+        elec_towers_already_builds.clear();
        
         // Réinitialise le roi (Kinger) 
         kinger.reset();
@@ -395,6 +397,9 @@ void App::render()
                 {
                     create_tower(map, normal_arrow_tower, tower.x, tower.y);
                 }
+                for (const auto& tower : elec_towers){
+                    create_tower(map, elec_arrow_tower, tower.x, tower.y);
+                }
             }
 
             if (listeDeButton[9].isPressed)
@@ -403,6 +408,9 @@ void App::render()
                 for (const auto& tower : towers)
                 {
                     create_tower(map, elec_arrow_tower, tower.x, tower.y);
+                }
+                for (const auto& tower : normal_towers){
+                    create_tower(map, normal_arrow_tower, tower.x, tower.y);
                 }
             }
         // 

@@ -62,8 +62,11 @@ public:
     float xTower{};
     float yTower{};
 
-    std::vector<tower> towers;
-    std::vector<std::pair<float, float>> towers_already_builds{};
+    std::vector<tower> normal_towers;
+    std::vector<tower> elec_towers;
+    std::vector<std::pair<float, float>> normal_towers_already_builds{};
+    std::vector<std::pair<float, float>> elec_towers_already_builds{};
+    
     std::vector<Enemy> enemies;
 
     float xBuild{};
