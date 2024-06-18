@@ -390,9 +390,6 @@ void App::render()
             }
 
             if (listeDeButton[9].isPressed){
-                std::cout << "bouton 9 presse" << std::endl;
-                //listeDeButton[9].isPressed = false;
-                //listeDeButton[8].isPressed = false;
                 listeDeButton[10].draw_me();
                 for (const auto& tower : elec_towers){
                     create_tower(map, elec_arrow_tower, tower.x, tower.y);
@@ -401,12 +398,6 @@ void App::render()
                     create_tower(map, normal_arrow_tower, tower.x, tower.y);
                 }
             }        
-            
-            if (listeDeButton[8].isPressed){ 
-                std::cout << "bouton 8 presse" << std::endl;
-                //listeDeButton[9].isPressed = false;
-                listeDeButton[10].draw_me();
-                for (const auto& tower : normal_towers){
 
             if (listeDeButton[8].isPressed)
             {    
@@ -424,13 +415,6 @@ void App::render()
                 listeDeButton[9].isPressed = false;
                 listeDeButton[8].isPressed = false;
                 listeDeButton[10].isPressed = false;
-                for (const auto& tower : normal_towers)
-                {
-                    create_tower(map, elec_arrow_tower, tower.x, tower.y);
-                }
-                for (const auto& tower : normal_towers){
-                    create_tower(map, normal_arrow_tower, tower.x, tower.y);
-                }
             }
         // 
 
