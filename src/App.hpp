@@ -71,6 +71,13 @@ public:
     GLuint case_color;
 
     Map map;
+    // Buttons
+        std::vector<Button> listeDeButton;
+
+    //Entities 
+        tower normal_arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
+        tower elec_arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
+
 private:
     void render();
     
@@ -78,9 +85,6 @@ private:
     int _height {};
     double _previousTime {};
     float _viewSize {};
-
-    // Buttons
-        std::vector<Button> listeDeButton;
 
     // Entities
         King kinger{250, 0, 0, 0, 100};
