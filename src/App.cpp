@@ -135,7 +135,7 @@ void App::setup()
 
         for (int k = waves_list[i].nbr_knights; k < waves_list[i].nbr_knights + waves_list[i].nbr_wizards; k++)
         {
-            waves_list[i].enemies_in_wave.push_back(Enemy{k, false, 0, 0, 20, 1, 40, 40, EnemyType::WIZARD, wizard_enemy, enemy_path, 0, 1, 0});
+            waves_list[i].enemies_in_wave.push_back(Enemy{k, false, 0, 0, 20, 1.2, 40, 40, EnemyType::WIZARD, wizard_enemy, enemy_path, 0, 1, 0});
         }
     }
 }
