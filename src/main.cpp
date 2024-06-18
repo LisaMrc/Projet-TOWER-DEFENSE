@@ -100,7 +100,7 @@ int main() {
         // Vérifier si l'emplacement est constructible
         bool constructible = app.map.can_create_tower(app.map, app.xTower, app.yTower);
 
-        if (free && constructible)
+        if (free && constructible && (app.listeDeButton[8].isPressed||app.listeDeButton[9].isPressed))
         {
             // Créer une nouvelle tour
             tower arrow_tower{ProjectileKind::Arrow, 2, 2, app.xTower, app.yTower, 200};

@@ -153,10 +153,8 @@ void App::update() {
     {
         //réinitizzliser le tableau towers
         towers.clear();
-        //elec_towers.clear();
         towers_already_builds.clear();
        
-
         // Initialise le roi (Kinger) 
         kinger.reset();
 
