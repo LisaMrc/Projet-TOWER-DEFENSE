@@ -54,11 +54,15 @@ struct Enemy
     void get_elapsedTime(double const & elapsedTime);
     void oof();
     void reset();
+    void update(double elapsedTime);
+    void takeDamage(int damage);
+    
 };
 
 std::vector<node> create_vect_nodes(std::vector<std::vector<std::string>> splitted_itd_file);
 std::vector<int> get_shortest_path (std::unordered_map <int, std::pair<float, int>> dij_map, std::vector<node> vector_of_nodes);
 std::vector<node> get_enemy_path (std::vector<node> vector_of_nodes, std::vector<int> shortest_path);
+void damage(Enemy enemy, int damage);
 
 struct King
 {
@@ -76,37 +80,51 @@ struct King
     void reset();
 };
 
-struct projectile
-{
-    int damages {};
-    float speed {};
-    float x {};
-    float y {};
-};
-
 enum class ProjectileKind
 {
     Arrow,
     Fireball,
-    lightning_arrow,
+    Lightning_arrow,
 };
+
+struct Projectile
+{
+    ProjectileKind projectile;
+    int damages {};
+    float speed {};
+    float x {};
+    float y {};
+    Enemy target{};
+
+    GLuint _Arrow;
+    GLuint _Lightning_arrow;
+    void update(double elapsedTime);
+    // void move(const double &elapsedTime);
+    bool is_enemy_hit();
+    bool hasHitTarget() const;
+};
+
+
 
 struct tower
 {
     ProjectileKind projectile;
-    int range {};
+    float range {};
     int rate {}; // tir par seconde
     float x {};
     float y {};
     int price{};
+    std::vector<Projectile> projectiles; // Liste des projectiles tirés
+    double lastShotTime;
 
     GLuint _arrow{};
 };
 
-void damage(Enemy Enemy, projectile projectile);
+
 bool in_range(Enemy Enemy, tower tour);
 void fire(Enemy Enemy, tower tour);
 void create_tower(Map &map, tower &tour, float x, float y);
+
 
 struct Player
 {

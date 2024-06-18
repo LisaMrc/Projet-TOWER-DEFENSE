@@ -126,11 +126,19 @@ void Player::analyses_ennemies(std::vector<Enemy> ennemies_in_wave)
 {
     for (Enemy enemy : ennemies_in_wave)
     {
-        if (enemy.is_dead = 1)
+        if (enemy.is_dead == 1)
         {
             gold+= enemy.gold;
         }
     }  
+}
+
+void damage(Enemy enemy, int damage)
+{
+    enemy.health -= damage;
+    if (enemy.health <= 0) {
+        enemy.is_dead = true;
+    }
 }
 
 // __________________________________________ KING ___________________________________________________
@@ -148,43 +156,97 @@ void King::reset()
 void create_tower(Map &map, tower &tour, float x, float y)
 {
         gold_earned -= tour.price;
+        tour.lastShotTime = 0.0;
         draw_quad_with_texture(tour._arrow, x, y, map);   
 }
 
-void damage(Enemy Enemy, projectile projectile)
-{
-    if (projectile.x == Enemy.x && projectile.y == Enemy.y) {
-        Enemy.health -= projectile.damages;
-    }
+
+
+bool in_range(Enemy enemy, tower tour) {
+    float dx = tour.x - enemy.x;
+    float dy = tour.y - enemy.y;
+    float distance = sqrt(dx * dx + dy * dy); // Correction ici
+    return distance <= tour.range;
 }
 
-bool in_range(Enemy Enemy, tower tour)
-{
-    if (Enemy.x - tour.x <= tour.range || Enemy.y - tour.y <= tour.range) {
-        return true;
-    }
-}
 
-/*
-bool is_there_tower(float x, float y) {
-    auto is_tower { app.towers_already_builds.find(x, y) };
-    if (is_tower != app.towers_already_builds.end()) {
-        return true;
-    } else {
-        return false;
-    }
-}
-*/
-
-// void fire(Enemy Enemy, tower tour)
+// void fire(Enemy enemy, tower tour)
 // {
-//     bool range {in_range(Enemy, tour)};
-//     bool death {Enemy.is_dead()};
+//     bool range {in_range(enemy, tour)};
+//     bool death {enemy.is_dead};
 
 //     while (range == true || death == false)
 //     {
-//         range = in_range(Enemy, tour);
-//         death = Enemy.is_dead();
-//         // envoyer un projectile (== projectileKind) toutes les XX secondes (== tower.rate) sur l'Enemy
+//         range = in_range(enemy, tour);
+//         death = enemy.is_dead;
+//         auto now {std::chrono::steady_clock::now()};
+//         std::chrono::duration<double> elapsed = now - tour.lastFireTime;
+//         if (elapsed.count() >= tour.rate) {
+//             if (tour.projectile == ProjectileKind::Arrow) {
+//                 Projectile newProjectile{ProjectileKind::Arrow, 10, 5, tour.x, tour.y, enemy};
+//                 tour.projectiles.push_back(newProjectile);
+//             }
+//             else if (tour.projectile == ProjectileKind::Lightning_arrow) {
+//                 Projectile newProjectile{ProjectileKind::Lightning_arrow, 15, 7, tour.x, tour.y, enemy};
+//                 tour.projectiles.push_back(newProjectile);
+//             }
+//         tour.lastTime = now;
+//     }
 //     }
 // }
+
+// bool Projectile::is_enemy_hit() {
+//     if (cible.x == x || cible.y == y) {
+//         return true;
+//     } else {
+//         return false;
+//     }
+// }
+
+// void Projectile::move(const double & elapsedTime) {
+//     float dx = cible.x - x;
+//     float dy = cible.y - y;
+//     float distance = sqrt(dx * dx + dy * dy);
+
+//     if (distance < speed * elapsedTime) {
+//         x = cible.x;
+//         y = cible.y;
+//     } else {
+//         x += dx / distance * speed * elapsedTime;
+//         y += dy / distance * speed * elapsedTime;
+//     }
+// }
+
+
+
+
+void Enemy::update(double elapsedTime) {
+    // Mise à jour de la position de l'ennemi
+}
+
+void Projectile::update(double elapsedTime) {
+    // Mise à jour de la position du projectile
+    // Calcul de la direction vers l'ennemi cible
+    float dx = target.x - x;
+    float dy = target.y - y;
+    float distance = sqrt(dx * dx + dy * dy);
+
+    if (distance < speed * elapsedTime) {
+        x = target.x;
+        y = target.y;
+    } else {
+        x += dx / distance * speed * elapsedTime;
+        y += dy / distance * speed * elapsedTime;
+    }
+}
+
+bool Projectile::hasHitTarget() const {
+    return x == target.x && y == target.y;
+}
+
+void Enemy::takeDamage(int damage) {
+    health -= damage;
+    if (health <= 0) {
+        is_dead = true;
+    }
+}

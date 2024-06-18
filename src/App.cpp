@@ -32,9 +32,13 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 4, true)};
     img::Image wizard {img::load(make_absolute_path("images/textures/entities/wizard.png", true), 4, true)};
     img::Image tower {img::load(make_absolute_path("images/textures/entities/tower_1.png", true), 4, true)};
+    img::Image arrow {img::load(make_absolute_path("images/textures/buttons/MEOWOLAS_Arrow.png", true), 4, true)};
 
     kinger._king = loadTexture(king);
-    arrow._arrow = loadTexture(tower);
+
+    arrow_tower._arrow = loadTexture(tower);
+
+    projectile_texture = loadTexture(arrow);
 
     knight_enemy = loadTexture(knight);
     wizard_enemy = loadTexture(wizard);
@@ -68,6 +72,8 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
 
     map._free = loadTexture(free);
     map._occupied = loadTexture(occupied);
+
+    
 }
 
 void App::setup()
@@ -140,8 +146,7 @@ void App::setup()
     }
 }
 
-void App::update()
-{
+void App::update() {
     const double currentTime {glfwGetTime()};
     const double elapsedTime { currentTime - _previousTime};
     _previousTime = currentTime;
@@ -165,8 +170,7 @@ void App::update()
         time_open_window = {glfwGetTime()};
     }
 
-    if (listeDeButton[1].isPressed) // if quit is pressed
-    {
+    if (listeDeButton[1].isPressed) { // if quit is pressed
         window_close = true;
     }
     
@@ -185,11 +189,9 @@ void App::update()
         _state = state_screen::MENU;
     }
 
-    if (state_screen::screen_LEVEL)
-    {
+    if (_state == state_screen::screen_LEVEL) {
         // KING
-        if (kinger.health <= 0)
-        {
+        if (kinger.health <= 0) {
             kinger.is_dead = 1;
         }
 
@@ -207,9 +209,51 @@ void App::update()
                 }
             }
         }
+
+        // Mise à jour des tourelles et des projectiles
+        for (auto& tower : towers) {
+            // Détection des ennemis à portée
+            for (auto& enemy : current_wave.enemies_in_wave) {
+                if (!enemy.is_dead && isWithinRange(tower, enemy)) {
+                    // Vérifie si assez de temps s'est écoulé depuis le dernier tir
+                    if (currentTime - tower.lastShotTime >= 1.0 / tower.rate) {
+                        // Création d'un projectile
+                        tower.projectiles.push_back(createProjectile(tower, enemy));
+                        tower.lastShotTime = currentTime; // Met à jour le temps du dernier tir
+                        break; // Une tourelle ne tire qu'un projectile par mise à jour
+                    }
+                }
+            }
+
+            // Mise à jour des projectiles
+            for (auto& projectile : tower.projectiles) {
+                projectile.update(elapsedTime);
+                if (projectile.hasHitTarget()) {
+                    projectile.target.takeDamage(projectile.damages);
+                    // Incrémenter l'or si l'ennemi est mort
+                    if (projectile.target.is_dead) {
+                        // player.gold += projectile.target.gold;
+                    }
+                }
+            }
+
+            // Supprimer les projectiles arrivés à destination
+            tower.projectiles.erase(
+                std::remove_if(tower.projectiles.begin(), tower.projectiles.end(),
+                    [](const Projectile& projectile) { return projectile.hasHitTarget(); }),
+                tower.projectiles.end());
+        }
+
+        // Supprimer les ennemis morts
+        current_wave.enemies_in_wave.erase(
+            std::remove_if(current_wave.enemies_in_wave.begin(), current_wave.enemies_in_wave.end(),
+                [](const Enemy& enemy) { return enemy.is_dead; }),
+            current_wave.enemies_in_wave.end());
     }
     render();
 }
+
+
 
 void App::render()
 {
@@ -252,9 +296,7 @@ void App::render()
             this->player_gold_text.Label(GOLD_Label.c_str() , _width / 80, 100, SimpleText::LEFT);
             this->player_gold_text.Render();
 
-            // Render tower placement
-            draw_quad_with_texture(case_color, xBuild, yBuild, map);
-        // 
+        draw_quad_with_texture(case_color, xBuild, yBuild, map);
 
         // TRIGGERS (awaits for...)
 
@@ -343,6 +385,19 @@ void App::render()
             }
         
         draw_quad_with_texture(case_color, xBuild, yBuild, map);
+        
+
+        // Rendu des tourelles et des projectiles
+        for (const auto& tower : towers) {
+            float towerX = tower.x;
+            float towerY = tower.y;
+            draw_quad_with_texture(arrow_tower._arrow, towerX, towerY, map);
+            for (const auto& projectile : tower.projectiles) {
+                float projectileX = projectile.x;
+                float projectileY = projectile.y;
+                draw_quad_with_texture(projectile_texture, projectileX, projectileY, map);
+            }
+        }
     }
 
     if(_state == state_screen::MENU)
@@ -381,6 +436,7 @@ void App::render()
         listeDeButton[1].draw_me();
     }
 }
+
 
 void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {
 }
@@ -441,4 +497,22 @@ void App::size_callback(int width, int height)
     } else {
         glOrtho(-_viewSize / 2.0f, _viewSize / 2.0f, -_viewSize / 2.0f / aspectRatio, _viewSize / 2.0f / aspectRatio, -1.0f, 1.0f);
     }
+}
+
+
+bool App::isWithinRange(const tower& tour, const Enemy& enemy) {
+    float dx = tour.x - enemy.x;
+    float dy = tour.y - enemy.y;
+    float distance = sqrt(dx * dy + dy * dy);
+    return distance <= tour.range;
+}
+
+Projectile App::createProjectile(const tower& tour, const Enemy& enemy) {
+    Projectile projectile;
+    projectile.x = tour.x;
+    projectile.y = tour.y;
+    projectile.target = enemy;
+    projectile.speed = 10.0f; // Vitesse du projectile
+    projectile.damages = 10; // Dégâts infligés par le projectile
+    return projectile;
 }
