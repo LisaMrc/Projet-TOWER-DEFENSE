@@ -31,19 +31,14 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     img::Image king {img::load(make_absolute_path("images/textures/entities/king.png", true), 4, true)};
     img::Image knight {img::load(make_absolute_path("images/textures/entities/knight.png", true), 4, true)};
     img::Image wizard {img::load(make_absolute_path("images/textures/entities/wizard.png", true), 4, true)};
-    img::Image tower {img::load(make_absolute_path("images/textures/entities/tower_1.png", true), 4, true)};
-    img::Image arrow {img::load(make_absolute_path("images/textures/buttons/MEOWOLAS_Arrow.png", true), 4, true)};
+    img::Image arrow_tex {img::load(make_absolute_path("images/textures/buttons/MEOWOLAS_Arrow.png", true), 4, true)};
     img::Image normal_tower {img::load(make_absolute_path("images/textures/entities/tower_1.png", true), 4, true)};
     img::Image elec_tower {img::load(make_absolute_path("images/textures/entities/tower_2.png", true), 4, true)};
 
     kinger._king = loadTexture(king);
-
-    arrow_tower._arrow = loadTexture(tower);
-
-    projectile_texture = loadTexture(arrow);
-    arrow._arrow = loadTexture(normal_tower);
+    arrow_tower._arrow = loadTexture(normal_tower);
+    projectile_texture = loadTexture(arrow_tex);
     elec_arrow._arrow = loadTexture(elec_tower);
-
     knight_enemy = loadTexture(knight);
     wizard_enemy = loadTexture(wizard);
 
@@ -65,8 +60,8 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
     retry_button = loadTexture(retry);
     victory_button = loadTexture(victory);
     defeat_button = loadTexture(defeat);
-    wood_arrow_button = loadTexture(wood_arrow);
-    elec_arrow_button = loadTexture(elec_arrow);
+    wood_arrow_button = loadTexture(normal_tower);
+    elec_arrow_button = loadTexture(elec_tower);
 
     // TOWER PLACEMENT TEXTURES
     img::Image free {img::load(make_absolute_path("images/textures/zones_tours/zone_verte.png", true), 4, true)};
@@ -387,7 +382,7 @@ void App::render()
             if (listeDeButton[8].isPressed){    
                 listeDeButton[9].isPressed = false;
                 for (const auto& tower : towers){
-                    create_tower(map, arrow, tower.x, tower.y);
+                    create_tower(map, arrow_tower, tower.x, tower.y);
                 }
             }
 

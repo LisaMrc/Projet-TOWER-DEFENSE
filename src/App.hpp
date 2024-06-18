@@ -75,7 +75,7 @@ public:
         std::vector<Button> listeDeButton;
 
     //Entities 
-        tower arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
+        tower normal_arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
         tower elec_arrow{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
 
 private:
