@@ -28,7 +28,7 @@ public:
     void size_callback(int width, int height);
 
     bool isWithinRange(const tower& tour, const Enemy& enemy);
-    Projectile createProjectile(const tower& tour, const Enemy& enemy);
+    Projectile createProjectile(const tower& tour, Enemy& enemy);
     
 
     state_screen _state = state_screen::MENU;
@@ -73,6 +73,8 @@ public:
     float yBuild{};
     GLuint case_color;
 
+    ProjectileKind type_projectile{};
+
     Map map;
     // Buttons
         std::vector<Button> listeDeButton;
@@ -92,8 +94,11 @@ private:
     // Entities
         King kinger{250, 0, 0, 0, 100};
 
+        tower arrow_tower{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
+        tower electric_tower{ProjectileKind::Lightning_arrow, 1, 1, 0, 0, 300};
+
         Projectile arrow{ProjectileKind::Arrow, 10, 5, 0, 0};
-        Projectile ligthening_arrow{ProjectileKind::Lightning_arrow, 10, 5, 0, 0};
+        Projectile ligthening_arrow{ProjectileKind::Lightning_arrow, 40, 10, 0, 0};
 
         GLuint projectile_texture;
 

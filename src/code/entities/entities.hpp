@@ -33,6 +33,7 @@ struct Enemy
 {
     int enemy_id;
     bool is_dead{};
+    bool is_on_stage{};
 
     float x {};
     float y {};
@@ -52,11 +53,10 @@ struct Enemy
     
     void enemy_move();
     void get_elapsedTime(double const & elapsedTime);
-    void oof();
+    void ko();
     void reset();
     void update(double elapsedTime);
     void takeDamage(int damage);
-    
 };
 
 std::vector<node> create_vect_nodes(std::vector<std::vector<std::string>> splitted_itd_file);
@@ -78,6 +78,7 @@ struct King
     GLuint _king{};
 
     void reset();
+    void ko();
 };
 
 enum class ProjectileKind
@@ -94,7 +95,7 @@ struct Projectile
     float speed {};
     float x {};
     float y {};
-    Enemy target{};
+    Enemy *target{};
 
     GLuint _Arrow;
     GLuint _Lightning_arrow;
@@ -103,8 +104,6 @@ struct Projectile
     bool is_enemy_hit();
     bool hasHitTarget() const;
 };
-
-
 
 struct tower
 {
@@ -119,11 +118,9 @@ struct tower
     double lastShotTime;
 };
 
-
-bool in_range(Enemy Enemy, tower tour);
-void fire(Enemy Enemy, tower tour);
+// bool in_range(Enemy Enemy, tower tour);
+// void fire(Enemy Enemy, tower tour);
 void create_tower(Map &map, tower &tour, float x, float y);
-
 
 struct Player
 {

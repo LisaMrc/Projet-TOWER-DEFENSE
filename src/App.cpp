@@ -69,8 +69,6 @@ App::App() : _previousTime(0.0), _viewSize(2.0)
 
     map._free = loadTexture(free);
     map._occupied = loadTexture(occupied);
-
-    
 }
 
 void App::setup()
@@ -110,11 +108,11 @@ void App::setup()
     map.associate_RGB_to_CaseType(splitted_itd_file);
     map.associate_px_pos_to_CaseType();
 
-    // Create graph for ennemies from itd
+    // Create graph for enemies from itd
     std::vector<std::vector<float>> adjacency_matrix {create_adjacency_matrix(splitted_itd_file)};
     Graph::WeightedGraph graph {Graph::build_from_adjacency_matrix(adjacency_matrix)};
     
-    // Create path for ennemies
+    // Create path for enemies
     std::unordered_map<int, std::pair<float, int>> dij_map = graph.dijkstra(0, 7); 
     std::vector<node> vec_nodes = create_vect_nodes(splitted_itd_file);
     std::vector<int> shortest_path = get_shortest_path (dij_map, vec_nodes);
@@ -134,12 +132,12 @@ void App::setup()
     {
         for (int j = 0; j < waves_list[i].nbr_knights; j++)
         {
-            waves_list[i].enemies_in_wave.push_back(Enemy{j, false, 0, 0, 50, 1, 20, 20, EnemyType::KNIGHT, knight_enemy, enemy_path, 0, 1, 0});
+            waves_list[i].enemies_in_wave.push_back(Enemy{j, false, false, 0, 0, 50, 1, 20, 20, EnemyType::KNIGHT, knight_enemy, enemy_path, 0, 1, 0});
         }
 
         for (int k = waves_list[i].nbr_knights; k < waves_list[i].nbr_knights + waves_list[i].nbr_wizards; k++)
         {
-            waves_list[i].enemies_in_wave.push_back(Enemy{k, false, 0, 0, 20, 1.2, 40, 40, EnemyType::WIZARD, wizard_enemy, enemy_path, 0, 1, 0});
+            waves_list[i].enemies_in_wave.push_back(Enemy{k, false, false, 0, 0, 20, 1.2, 40, 40, EnemyType::WIZARD, wizard_enemy, enemy_path, 0, 1, 0});
         }
     }
 }
@@ -158,7 +156,7 @@ void App::update() {
         normal_towers_already_builds.clear();
         elec_towers_already_builds.clear();
        
-        // Initialise le roi (Kinger) 
+        // Réinitialise le roi (Kinger) 
         kinger.reset();
 
         // Réinitialise tous les ennemis de toutes les vagues
@@ -178,7 +176,8 @@ void App::update() {
         time_open_window = {glfwGetTime()};
     }
 
-    if (listeDeButton[1].isPressed) { // if quit is pressed
+    if (listeDeButton[1].isPressed) // if quit is pressed
+    {
         window_close = true;
     }
     
@@ -197,71 +196,78 @@ void App::update() {
         _state = state_screen::MENU;
     }
 
-    if (_state == state_screen::screen_LEVEL) {
-        // KING
-        if (kinger.health <= 0) {
-            kinger.is_dead = 1;
-        }
+    if (_state == state_screen::screen_LEVEL)
+    {
+        // KING UPDATE
+        kinger.ko();
 
         // ENEMY UPDATE
-        for (int m = 0; m < waves_list.size(); m++)
-        {
-            for (int i = 0; i < waves_list[m].enemies_in_wave.size(); i++)
+            for (int m = 0; m < waves_list.size(); m++)
             {
-                waves_list[m].enemies_in_wave[i].get_elapsedTime(elapsedTime);
-                waves_list[m].enemies_in_wave[i].oof();
-
-                if (waves_list[m].enemies_in_wave[i].current_node_id == waves_list[m].enemies_in_wave[i].enemy_path.back().node_id)
+                for (int i = 0; i < waves_list[m].enemies_in_wave.size(); i++)
                 {
-                    kinger.health -= waves_list[m].enemies_in_wave[i].damage;
+                    waves_list[m].enemies_in_wave[i].get_elapsedTime(elapsedTime);
+                    waves_list[m].enemies_in_wave[i].ko();
+
+                    if (waves_list[m].enemies_in_wave[i].current_node_id == waves_list[m].enemies_in_wave[i].enemy_path.back().node_id)
+                    {
+                        kinger.health -= waves_list[m].enemies_in_wave[i].damage;
+                        std::cout << kinger.health << std::endl;
+                    }
                 }
             }
-        }
+        // 
 
-        // Mise à jour des tourelles et des projectiles
-        // for (auto& tower : normal_towers) {
-        //     // Détection des ennemis à portée
-        //     for (auto& enemy : current_wave.enemies_in_wave) {
-        //         if (!enemy.is_dead && isWithinRange(tower, enemy)) {
-        //             // Vérifie si assez de temps s'est écoulé depuis le dernier tir
-        //             if (currentTime - tower.lastShotTime >= 1.0 / tower.rate) {
-        //                 // Création d'un projectile
-        //                 tower.projectiles.push_back(createProjectile(tower, enemy));
-        //                 tower.lastShotTime = currentTime; // Met à jour le temps du dernier tir
-        //                 break; // Une tourelle ne tire qu'un projectile par mise à jour
-        //             }
-        //         }
-        //     }
+        // TOWERS UPDATE
+            for (tower& tower : normal_towers)
+            {
+                // Détection des ennemis à portée
+                for (Wave &w : waves_list)
+                {
+                    for (Enemy &e : w.enemies_in_wave)
+                    {
+                        if (e.is_on_stage && isWithinRange(tower, e))
+                        {
+                            // Vérifie si assez de temps s'est écoulé depuis le dernier tir
+                            if (currentTime - tower.lastShotTime >= 1.0 / tower.rate) 
+                            {
+                                // Création d'un projectile
+                                tower.projectiles.push_back(createProjectile(tower, e));
+                                tower.lastShotTime = currentTime; // Met à jour le temps du dernier tir
+                                break; // Une tourelle ne tire qu'un projectile par mise à jour
+                            }
+                        }
+                    }
+                }
 
-        //     // Mise à jour des projectiles
-        //     for (auto& projectile : tower.projectiles) {
-        //         projectile.update(elapsedTime);
-        //         if (projectile.hasHitTarget()) {
-        //             projectile.target.takeDamage(projectile.damages);
-        //             // Incrémenter l'or si l'ennemi est mort
-        //             if (projectile.target.is_dead) {
-        //                 // player.gold += projectile.target.gold;
-        //             }
-        //         }
-        //     }
+                // Mise à jour des projectiles
+                for (auto& projectile : tower.projectiles)
+                {
+                    projectile.update(elapsedTime);
+                    if (projectile.hasHitTarget())
+                    {
+                        projectile.target->takeDamage(projectile.damages);
+                        projectile.target->ko();
+                        
+                        // Incrémenter l'or si l'ennemi est mort
+                        if (projectile.target->is_dead)
+                        {
+                            // player.gold += projectile.target.gold;
+                            std::cout << "Bye looser";
+                        }
+                    }
+                }
 
-        //     // Supprimer les projectiles arrivés à destination
-        //     tower.projectiles.erase(
-        //         std::remove_if(tower.projectiles.begin(), tower.projectiles.end(),
-        //             [](const Projectile& projectile) { return projectile.hasHitTarget(); }),
-        //         tower.projectiles.end());
-        // }
+                // Supprimer les projectiles arrivés à destination
+                tower.projectiles.erase(std::remove_if(tower.projectiles.begin(), tower.projectiles.end(), [](const Projectile& projectile) { return projectile.hasHitTarget(); }), tower.projectiles.end());
+            }
 
-        // // Supprimer les ennemis morts
-        // current_wave.enemies_in_wave.erase(
-        //     std::remove_if(current_wave.enemies_in_wave.begin(), current_wave.enemies_in_wave.end(),
-        //         [](const Enemy& enemy) { return enemy.is_dead; }),
-        //     current_wave.enemies_in_wave.end());
+            // // Supprimer les ennemis morts
+            // all_enemies.erase(std::remove_if(all_enemies.begin(), all_enemies.end(), [](const Enemy& enemy) { return enemy.is_dead;}), all_enemies.end());
+        // 
     }
     render();
 }
-
-
 
 void App::render()
 {
@@ -306,7 +312,7 @@ void App::render()
 
             // // Render tower placement
             draw_quad_with_texture(case_color, xBuild, yBuild, map);
-        
+        // 
 
         // TRIGGERS (awaits for...)
 
@@ -330,6 +336,7 @@ void App::render()
                             waves_list[0].enemies_in_wave[i].enemy_move();
                         }
                         draw_quad_with_texture(waves_list[0].enemies_in_wave[i].texture, waves_list[0].enemies_in_wave[i].x, waves_list[0].enemies_in_wave[i].y, map);
+                        waves_list[0].enemies_in_wave[i].is_on_stage = true;
                     }
                 }
             }
@@ -345,6 +352,7 @@ void App::render()
                             waves_list[1].enemies_in_wave[i].enemy_move();
                         }
                         draw_quad_with_texture(waves_list[1].enemies_in_wave[i].texture, waves_list[1].enemies_in_wave[i].x, waves_list[1].enemies_in_wave[i].y, map);
+                        waves_list[1].enemies_in_wave[i].is_on_stage = true;
                     }
                 }
             }
@@ -360,6 +368,7 @@ void App::render()
                             waves_list[2].enemies_in_wave[i].enemy_move();
                         }
                         draw_quad_with_texture(waves_list[2].enemies_in_wave[i].texture, waves_list[2].enemies_in_wave[i].x, waves_list[2].enemies_in_wave[i].y, map);
+                        waves_list[2].enemies_in_wave[i].is_on_stage = true;
                     }
                 }
             }
@@ -375,6 +384,7 @@ void App::render()
                             waves_list[3].enemies_in_wave[i].enemy_move();
                         }
                         draw_quad_with_texture(waves_list[3].enemies_in_wave[i].texture, waves_list[3].enemies_in_wave[i].x, waves_list[3].enemies_in_wave[i].y, map);
+                        waves_list[3].enemies_in_wave[i].is_on_stage = true;
                     }
                 }
             }
@@ -397,6 +407,12 @@ void App::render()
                 //listeDeButton[9].isPressed = false;
                 listeDeButton[10].draw_me();
                 for (const auto& tower : normal_towers){
+
+            if (listeDeButton[8].isPressed)
+            {    
+                listeDeButton[9].isPressed = false;
+                for (const auto& tower : normal_towers)
+                {
                     create_tower(map, normal_arrow_tower, tower.x, tower.y);
                 }
                 for (const auto& tower : elec_towers){
@@ -408,27 +424,32 @@ void App::render()
                 listeDeButton[9].isPressed = false;
                 listeDeButton[8].isPressed = false;
                 listeDeButton[10].isPressed = false;
+                for (const auto& tower : normal_towers)
+                {
+                    create_tower(map, elec_arrow_tower, tower.x, tower.y);
+                }
+                for (const auto& tower : normal_towers){
+                    create_tower(map, normal_arrow_tower, tower.x, tower.y);
+                }
             }
+        // 
 
-            
-
-        draw_quad_with_texture(case_color, xBuild, yBuild, map);
-        
-
-        // Rendu des tourelles et des projectiles
-        // for (const auto& tower : towers) {
-        //     float towerX = tower.x;
-        //     float towerY = tower.y;
-        //     draw_quad_with_texture(normal_arrow_tower._arrow, towerX, towerY, map);
-        //     for (const auto& projectile : tower.projectiles) {
-        //         float projectileX = projectile.x;
-        //         float projectileY = projectile.y;
-        //         draw_quad_with_texture(projectile_texture, projectileX, projectileY, map);
-        //     }
-        // }
+        // Render towers
+            for (const auto& tower : normal_towers)
+            {
+                float towerX = tower.x;
+                float towerY = tower.y;
+                draw_quad_with_texture(normal_arrow_tower._arrow, towerX, towerY, map);
+                for (const auto& projectile : tower.projectiles) {
+                    float projectileX = projectile.x;
+                    float projectileY = projectile.y;
+                    draw_quad_with_texture(projectile_texture, projectileX, projectileY, map);
+                }
+            }
+        //
     }
 
-    if(_state == state_screen::MENU)
+    if (_state == state_screen::MENU)
     {
         listeDeButton[0].isPressed = false;
         listeDeButton[1].isPressed = false;
@@ -465,9 +486,7 @@ void App::render()
     }
 }
 
-
-void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/) {
-}
+void App::key_callback(int /*key*/, int /*scancode*/, int /*action*/, int /*mods*/){}
 
 void App::mouse_button_callback(int button, int action, int mods) {
     if(mouseXpos >= listeDeButton[0].posX && mouseXpos < listeDeButton[0].posX+listeDeButton[0].width && 
@@ -505,11 +524,9 @@ void App::mouse_button_callback(int button, int action, int mods) {
 
 }
 
-void App::scroll_callback(double /*xoffset*/, double /*yoffset*/) {
-}
+void App::scroll_callback(double /*xoffset*/, double /*yoffset*/){}
 
-void App::cursor_position_callback(double /*xpos*/, double /*ypos*/) {
-}
+void App::cursor_position_callback(double /*xpos*/, double /*ypos*/){}
 
 void App::size_callback(int width, int height)
 {
@@ -531,19 +548,20 @@ void App::size_callback(int width, int height)
     }
 }
 
-
-bool App::isWithinRange(const tower& tour, const Enemy& enemy) {
+bool App::isWithinRange(const tower& tour, const Enemy& enemy)
+{
     float dx = tour.x - enemy.x;
     float dy = tour.y - enemy.y;
     float distance = sqrt(dx * dy + dy * dy);
     return distance <= tour.range;
 }
 
-Projectile App::createProjectile(const tower& tour, const Enemy& enemy) {
+Projectile App::createProjectile(const tower& tour, Enemy& enemy)
+{
     Projectile projectile;
     projectile.x = tour.x;
     projectile.y = tour.y;
-    projectile.target = enemy;
+    projectile.target = &enemy;
     projectile.speed = 10.0f; // Vitesse du projectile
     projectile.damages = 10; // Dégâts infligés par le projectile
     return projectile;
