@@ -90,7 +90,13 @@ int main() {
 
         // Vérifier si une tour existe déjà aux coordonnées spécifiées
         bool free = true;
-        for (const auto& tower : app.towers_already_builds) {
+        for (const auto& tower : app.normal_towers_already_builds) {
+            if (tower.first == app.xTower && tower.second == app.yTower) {
+                free = false;
+                break;
+            }
+        }
+        for (const auto& tower : app.elec_towers_already_builds) {
             if (tower.first == app.xTower && tower.second == app.yTower) {
                 free = false;
                 break;
@@ -104,20 +110,20 @@ int main() {
         {
             // Créer une nouvelle tour
             tower normal_tower{ProjectileKind::Arrow, 2, 2, app.xTower, app.yTower, 200, app.normal_arrow_tower._arrow};
-            app.towers.push_back(normal_tower);
+            app.normal_towers.push_back(normal_tower);
 
             // Ajouter les coordonnées de la nouvelle tour
-            app.towers_already_builds.push_back(std::make_pair(app.xTower, app.yTower));
+            app.normal_towers_already_builds.push_back(std::make_pair(app.xTower, app.yTower));
             
         }
         if (free && constructible && app.listeDeButton[9].isPressed)
         {
             // Créer une nouvelle tour
             tower elec_tower{ProjectileKind::Arrow, 2, 2, app.xTower, app.yTower, 200, app.elec_arrow_tower._arrow};
-            app.towers.push_back(elec_tower);
+            app.elec_towers.push_back(elec_tower);
 
             // Ajouter les coordonnées de la nouvelle tour
-            app.towers_already_builds.push_back(std::make_pair(app.xTower, app.yTower));
+            app.elec_towers_already_builds.push_back(std::make_pair(app.xTower, app.yTower));
             
         }
         // else
@@ -159,7 +165,13 @@ int main() {
 
         // Vérifier si une tour existe déjà aux coordonnées spécifiées
         bool free = true;
-        for (const auto& tower : app.towers_already_builds) {
+        for (const auto& tower : app.normal_towers_already_builds) {
+            if (tower.first == app.xBuild && tower.second == app.yBuild) {
+                free = false;
+                break;
+            }
+        }
+        for (const auto& tower : app.elec_towers_already_builds) {
             if (tower.first == app.xBuild && tower.second == app.yBuild) {
                 free = false;
                 break;

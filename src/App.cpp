@@ -152,8 +152,10 @@ void App::update() {
     if (listeDeButton[0].isPressed)
     {
         //réinitizzliser le tableau towers
-        towers.clear();
-        towers_already_builds.clear();
+        normal_towers.clear();
+        elec_towers.clear();
+        normal_towers_already_builds.clear();
+        elec_towers_already_builds.clear();
        
         // Initialise le roi (Kinger) 
         kinger.reset();
@@ -216,44 +218,44 @@ void App::update() {
         }
 
         // Mise à jour des tourelles et des projectiles
-        for (auto& tower : towers) {
-            // Détection des ennemis à portée
-            for (auto& enemy : current_wave.enemies_in_wave) {
-                if (!enemy.is_dead && isWithinRange(tower, enemy)) {
-                    // Vérifie si assez de temps s'est écoulé depuis le dernier tir
-                    if (currentTime - tower.lastShotTime >= 1.0 / tower.rate) {
-                        // Création d'un projectile
-                        tower.projectiles.push_back(createProjectile(tower, enemy));
-                        tower.lastShotTime = currentTime; // Met à jour le temps du dernier tir
-                        break; // Une tourelle ne tire qu'un projectile par mise à jour
-                    }
-                }
-            }
+        // for (auto& tower : normal_towers) {
+        //     // Détection des ennemis à portée
+        //     for (auto& enemy : current_wave.enemies_in_wave) {
+        //         if (!enemy.is_dead && isWithinRange(tower, enemy)) {
+        //             // Vérifie si assez de temps s'est écoulé depuis le dernier tir
+        //             if (currentTime - tower.lastShotTime >= 1.0 / tower.rate) {
+        //                 // Création d'un projectile
+        //                 tower.projectiles.push_back(createProjectile(tower, enemy));
+        //                 tower.lastShotTime = currentTime; // Met à jour le temps du dernier tir
+        //                 break; // Une tourelle ne tire qu'un projectile par mise à jour
+        //             }
+        //         }
+        //     }
 
-            // Mise à jour des projectiles
-            for (auto& projectile : tower.projectiles) {
-                projectile.update(elapsedTime);
-                if (projectile.hasHitTarget()) {
-                    projectile.target.takeDamage(projectile.damages);
-                    // Incrémenter l'or si l'ennemi est mort
-                    if (projectile.target.is_dead) {
-                        // player.gold += projectile.target.gold;
-                    }
-                }
-            }
+        //     // Mise à jour des projectiles
+        //     for (auto& projectile : tower.projectiles) {
+        //         projectile.update(elapsedTime);
+        //         if (projectile.hasHitTarget()) {
+        //             projectile.target.takeDamage(projectile.damages);
+        //             // Incrémenter l'or si l'ennemi est mort
+        //             if (projectile.target.is_dead) {
+        //                 // player.gold += projectile.target.gold;
+        //             }
+        //         }
+        //     }
 
-            // Supprimer les projectiles arrivés à destination
-            tower.projectiles.erase(
-                std::remove_if(tower.projectiles.begin(), tower.projectiles.end(),
-                    [](const Projectile& projectile) { return projectile.hasHitTarget(); }),
-                tower.projectiles.end());
-        }
+        //     // Supprimer les projectiles arrivés à destination
+        //     tower.projectiles.erase(
+        //         std::remove_if(tower.projectiles.begin(), tower.projectiles.end(),
+        //             [](const Projectile& projectile) { return projectile.hasHitTarget(); }),
+        //         tower.projectiles.end());
+        // }
 
-        // Supprimer les ennemis morts
-        current_wave.enemies_in_wave.erase(
-            std::remove_if(current_wave.enemies_in_wave.begin(), current_wave.enemies_in_wave.end(),
-                [](const Enemy& enemy) { return enemy.is_dead; }),
-            current_wave.enemies_in_wave.end());
+        // // Supprimer les ennemis morts
+        // current_wave.enemies_in_wave.erase(
+        //     std::remove_if(current_wave.enemies_in_wave.begin(), current_wave.enemies_in_wave.end(),
+        //         [](const Enemy& enemy) { return enemy.is_dead; }),
+        //     current_wave.enemies_in_wave.end());
     }
     render();
 }
@@ -379,15 +381,21 @@ void App::render()
 
             if (listeDeButton[8].isPressed){    
                 listeDeButton[9].isPressed = false;
-                for (const auto& tower : towers){
+                for (const auto& tower : normal_towers){
                     create_tower(map, normal_arrow_tower, tower.x, tower.y);
+                }
+                for (const auto& tower : elec_towers){
+                    create_tower(map, elec_arrow_tower, tower.x, tower.y);
                 }
             }
 
             if (listeDeButton[9].isPressed){
                 listeDeButton[8].isPressed = false;
-                for (const auto& tower : towers){
+                for (const auto& tower : elec_towers){
                     create_tower(map, elec_arrow_tower, tower.x, tower.y);
+                }
+                for (const auto& tower : normal_towers){
+                    create_tower(map, normal_arrow_tower, tower.x, tower.y);
                 }
             }
         
