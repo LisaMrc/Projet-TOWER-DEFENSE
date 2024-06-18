@@ -118,13 +118,9 @@ struct tower
     double lastShotTime;
 };
 
-// bool in_range(Enemy Enemy, tower tour);
-// void fire(Enemy Enemy, tower tour);
-void create_tower(Map &map, tower &tour, float x, float y);
-
 struct Player
 {
     int gold;
-
-    void analyses_ennemies(std::vector<Enemy> ennemies_in_wave);
 };
+
+void create_tower(Map &map, tower &tour, float x, float y, Player &player);

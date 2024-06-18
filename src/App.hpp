@@ -81,8 +81,9 @@ public:
         std::vector<Button> listeDeButton;
 
     //Entities 
-        tower normal_arrow_tower{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
+        tower normal_arrow_tower{ProjectileKind::Arrow, 2, 4, 0, 0, 100};
         tower elec_arrow_tower{ProjectileKind::Arrow, 2, 4, 0, 0, 200};
+        Player player{500};
 
 private:
     void render();
@@ -103,8 +104,6 @@ private:
 
         GLuint projectile1_texture;
         GLuint projectile2_texture;
-
-        Player player{200};
 
     // Text
         SimpleText TextRenderer {};

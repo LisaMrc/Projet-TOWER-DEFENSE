@@ -123,25 +123,6 @@ void Enemy::reset()
     target_node_id = 1;
 }
 
-void Player::analyses_ennemies(std::vector<Enemy> ennemies_in_wave)
-{
-    for (Enemy enemy : ennemies_in_wave)
-    {
-        if (enemy.is_dead == 1)
-        {
-            gold+= enemy.gold;
-        }
-    }  
-}
-
-// void damage(Enemy enemy, int damage)
-// {
-//     enemy.health -= damage;
-//     if (enemy.health <= 0) {
-//         enemy.is_dead = true;
-//     }
-// }
-
 // __________________________________________ KING ___________________________________________________
 
 void King::reset()
@@ -162,70 +143,15 @@ void King::ko()
 
 // __________________________________________ TOWERS ___________________________________________________
 
-void create_tower(Map &map, tower &tour, float x, float y)
+void create_tower(Map &map, tower &tour, float x, float y, Player &player)
 {
-        gold_earned -= tour.price;
-        tour.lastShotTime = 0.0;
-        draw_quad_with_texture(tour._arrow, x, y, map);   
+    // player.gold -= tour.price;
+    tour.lastShotTime = 0.0;
+    draw_quad_with_texture(tour._arrow, x, y, map);
 }
 
-// bool in_range(Enemy enemy, tower tour) {
-//     float dx = tour.x - enemy.x;
-//     float dy = tour.y - enemy.y;
-//     float distance = sqrt(dx * dx + dy * dy); // Correction ici
-//     return distance <= tour.range;
-// }
-
-
-// void fire(Enemy enemy, tower tour)
-// {
-//     bool range {in_range(enemy, tour)};
-//     bool death {enemy.is_dead};
-
-//     while (range == true || death == false)
-//     {
-//         range = in_range(enemy, tour);
-//         death = enemy.is_dead;
-//         auto now {std::chrono::steady_clock::now()};
-//         std::chrono::duration<double> elapsed = now - tour.lastFireTime;
-//         if (elapsed.count() >= tour.rate) {
-//             if (tour.projectile == ProjectileKind::Arrow) {
-//                 Projectile newProjectile{ProjectileKind::Arrow, 10, 5, tour.x, tour.y, enemy};
-//                 tour.projectiles.push_back(newProjectile);
-//             }
-//             else if (tour.projectile == ProjectileKind::Lightning_arrow) {
-//                 Projectile newProjectile{ProjectileKind::Lightning_arrow, 15, 7, tour.x, tour.y, enemy};
-//                 tour.projectiles.push_back(newProjectile);
-//             }
-//         tour.lastTime = now;
-//     }
-//     }
-// }
-
-// bool Projectile::is_enemy_hit() {
-//     if (cible.x == x || cible.y == y) {
-//         return true;
-//     } else {
-//         return false;
-//     }
-// }
-
-// void Projectile::move(const double & elapsedTime) {
-//     float dx = cible.x - x;
-//     float dy = cible.y - y;
-//     float distance = sqrt(dx * dx + dy * dy);
-
-//     if (distance < speed * elapsedTime) {
-//         x = cible.x;
-//         y = cible.y;
-//     } else {
-//         x += dx / distance * speed * elapsedTime;
-//         y += dy / distance * speed * elapsedTime;
-//     }
-// }
-
-
-void Enemy::update(double elapsedTime) {
+void Enemy::update(double elapsedTime)
+{
     // Mise à jour de la position de l'ennemi
 }
 
@@ -246,13 +172,12 @@ void Projectile::update(double elapsedTime)
     }
 }
 
-bool Projectile::hasHitTarget() const {
+bool Projectile::hasHitTarget() const
+{
     return x == target->x && y == target->y;
 }
 
 void Enemy::takeDamage(int damage)
 {
-    std::cout << health << std::endl;
     this->health -= damage;
-    std::cout << "DAMAGE :" << damage << std::endl;
 }
