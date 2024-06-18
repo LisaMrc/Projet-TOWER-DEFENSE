@@ -99,8 +99,9 @@ private:
 
         Projectile arrow{ProjectileKind::Arrow, 10, 5, 0, 0};
         Projectile ligthening_arrow{ProjectileKind::Lightning_arrow, 40, 10, 0, 0};
-
         GLuint projectile_texture;
+
+        Player player{200};
 
     // Text
         SimpleText TextRenderer {};

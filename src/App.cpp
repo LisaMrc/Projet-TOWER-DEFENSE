@@ -252,7 +252,7 @@ void App::update() {
                         // Incrémenter l'or si l'ennemi est mort
                         if (projectile.target->is_dead)
                         {
-                            // player.gold += projectile.target.gold;
+                            player.gold += projectile.target->gold;
                             std::cout << "Bye looser";
                         }
                     }
@@ -306,7 +306,7 @@ void App::render()
             draw_quad_with_texture(kinger._king, kinger.x, kinger.y, map);
 
             // Render player's gold number
-            std::string GOLD_Label{" GOLD : " + std::to_string(kinger.player_gold) + " "};
+            std::string GOLD_Label{" GOLD : " + std::to_string(player.gold) + " "};
             this->player_gold_text.Label(GOLD_Label.c_str() , _width / 80, 100, SimpleText::LEFT);
             this->player_gold_text.Render();
 
